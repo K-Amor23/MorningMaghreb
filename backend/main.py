@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 
 from routers import markets, financials, macro, portfolio, newsletter, chat, auth
+from api.routes import etl
 from database import init_db
 from utils.auth import verify_token
 
@@ -46,6 +47,7 @@ app.include_router(portfolio.router, prefix="/api/portfolio", tags=["portfolio"]
 app.include_router(newsletter.router, prefix="/api/newsletter", tags=["newsletter"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(etl.router, prefix="/api/etl", tags=["etl"])
 
 @app.get("/")
 async def root():

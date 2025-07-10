@@ -1,0 +1,118 @@
+# French to GAAP Label Mapping Dictionary
+# Casablanca Insight ETL Pipeline
+
+# Revenue Items
+revenue:
+  "Revenus nets": "Revenue"
+  "Chiffre d'affaires": "Revenue"
+  "Ventes": "Sales"
+  "Produits d'exploitation": "Operating Revenue"
+  "Revenus bancaires": "Banking Revenue"
+  "Revenus d'assurance": "Insurance Revenue"
+  "Revenus financiers": "Financial Revenue"
+  "Revenus d'investissement": "Investment Revenue"
+  "Commissions": "Commissions"
+  "Frais de service": "Service Fees"
+
+# Expense Items
+expenses:
+  "Charges d'exploitation": "Operating Expenses"
+  "Frais de personnel": "Personnel Expenses"
+  "Salaires et charges sociales": "Salaries and Social Charges"
+  "Charges sociales": "Social Charges"
+  "Impôts et taxes": "Taxes and Duties"
+  "Frais généraux": "General Expenses"
+  "Frais administratifs": "Administrative Expenses"
+  "Frais de commercialisation": "Marketing Expenses"
+  "Frais de recherche et développement": "Research and Development"
+  "Amortissements": "Depreciation"
+  "Provisions": "Provisions"
+  "Charges financières": "Financial Expenses"
+  "Intérêts": "Interest Expense"
+  "Frais de gestion": "Management Fees"
+
+# Profit & Loss
+profit_loss:
+  "Résultat d'exploitation": "Operating Income"
+  "Résultat financier": "Financial Income"
+  "Résultat exceptionnel": "Exceptional Income"
+  "Résultat net": "Net Income"
+  "Bénéfice net": "Net Profit"
+  "Perte nette": "Net Loss"
+  "Résultat avant impôts": "Income Before Taxes"
+  "Résultat après impôts": "Income After Taxes"
+  "EBIT": "EBIT"
+  "EBITDA": "EBITDA"
+
+# Balance Sheet - Assets
+assets:
+  "Actif": "Assets"
+  "Actifs": "Assets"
+  "Actif immobilisé": "Fixed Assets"
+  "Immobilisations incorporelles": "Intangible Assets"
+  "Immobilisations corporelles": "Tangible Assets"
+  "Immobilisations financières": "Financial Assets"
+  "Actif circulant": "Current Assets"
+  "Stocks": "Inventory"
+  "Créances clients": "Accounts Receivable"
+  "Créances": "Receivables"
+  "Trésorerie": "Cash and Cash Equivalents"
+  "Disponibilités": "Cash"
+  "Banques": "Bank Deposits"
+  "Placements": "Investments"
+  "Titres et valeurs de placement": "Marketable Securities"
+
+# Balance Sheet - Liabilities
+liabilities:
+  "Passif": "Liabilities"
+  "Passifs": "Liabilities"
+  "Capitaux propres": "Shareholders' Equity"
+  "Capital social": "Share Capital"
+  "Réserves": "Reserves"
+  "Résultat de l'exercice": "Current Year Earnings"
+  "Report à nouveau": "Retained Earnings"
+  "Dettes": "Liabilities"
+  "Dettes financières": "Financial Liabilities"
+  "Dettes fournisseurs": "Accounts Payable"
+  "Dettes fiscales": "Tax Liabilities"
+  "Dettes sociales": "Social Liabilities"
+  "Emprunts": "Loans"
+  "Obligations": "Bonds"
+
+# Cash Flow
+cash_flow:
+  "Flux de trésorerie": "Cash Flow"
+  "Flux de trésorerie d'exploitation": "Operating Cash Flow"
+  "Flux de trésorerie d'investissement": "Investing Cash Flow"
+  "Flux de trésorerie de financement": "Financing Cash Flow"
+  "Variation de trésorerie": "Cash Change"
+  "Trésorerie d'ouverture": "Opening Cash"
+  "Trésorerie de clôture": "Closing Cash"
+
+# Ratios and Metrics
+ratios:
+  "Marge brute": "Gross Margin"
+  "Marge d'exploitation": "Operating Margin"
+  "Marge nette": "Net Margin"
+  "ROE": "ROE"
+  "ROA": "ROA"
+  "Ratio de liquidité": "Liquidity Ratio"
+  "Ratio de solvabilité": "Solvency Ratio"
+  "Ratio d'endettement": "Debt Ratio"
+
+# Common Abbreviations
+abbreviations:
+  "CA": "Revenue"
+  "EBE": "EBIT"
+  "RN": "Net Income"
+  "CP": "Shareholders' Equity"
+  "DET": "Debt"
+  "TRE": "Cash"
+
+# Currency and Units
+currency:
+  "MAD": "MAD"
+  "Dirhams": "MAD"
+  "Millions de dirhams": "Million MAD"
+  "Milliards de dirhams": "Billion MAD"
+  "K dirhams": "Thousand MAD" 
