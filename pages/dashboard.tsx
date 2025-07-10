@@ -4,11 +4,36 @@ import { useTranslation } from 'react-i18next'
 import { 
   ChartBarIcon, 
   CurrencyDollarIcon, 
-  TrendingUpIcon, 
-  TrendingDownIcon,
+  ArrowTrendingUpIcon, 
+  ArrowTrendingDownIcon,
   ClockIcon
 } from '@heroicons/react/24/outline'
 import { formatCurrency, formatPercent, getColorForChange } from '@/lib/utils'
+
+// Client-side time component to prevent hydration errors
+function ClientTime() {
+  const [mounted, setMounted] = useState(false)
+  const [time, setTime] = useState<string>('')
+
+  useEffect(() => {
+    setMounted(true)
+    const updateTime = () => {
+      setTime(new Date().toLocaleTimeString())
+    }
+    
+    updateTime()
+    const interval = setInterval(updateTime, 1000)
+    
+    return () => clearInterval(interval)
+  }, [])
+
+  // Show a placeholder during SSR and initial render
+  if (!mounted) {
+    return <span>--:--:--</span>
+  }
+
+  return <span>{time}</span>
+}
 
 // Mock data - in real app, this would come from API
 const mockMarketData = [
@@ -37,7 +62,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Simulate real-time updates
+    // Simulate real-time updates - only run on client side
     const interval = setInterval(() => {
       setMarketData(prev => prev.map(item => ({
         ...item,
@@ -72,7 +97,7 @@ export default function Dashboard() {
               </div>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
                 <ClockIcon className="h-4 w-4" />
-                <span>Last updated: {new Date().toLocaleTimeString()}</span>
+                <span>Last updated: <ClientTime /></span>
               </div>
             </div>
           </div>
@@ -139,7 +164,7 @@ export default function Dashboard() {
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <TrendingUpIcon className="h-6 w-6 text-green-500" />
+                    <ArrowTrendingUpIcon className="h-6 w-6 text-green-500" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
