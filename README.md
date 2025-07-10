@@ -19,7 +19,7 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
   GPT‑4 summaries of IFRS→GAAP adjustments, natural-language Q\&A “Investor Chatbot,” and narrative snippets in your newsletter.
 
 * **Macro & Central-Bank Module**
-  Bank Al Maghrib policy rates, reserves, money supply, CPI, trade balance, policy calendar, and scenario simulator.
+  Automated scraping of Bank Al-Maghrib (BAM) economic data including policy rates, foreign exchange reserves, inflation (CPI), money supply (M1/M2/M3), balance of payments, and credit to economy. Real-time data fetching with intelligent parsing and RESTful API endpoints.
 
 * **Portfolio Toolkit**
   Import holdings (CSV/API), P/L attribution, performance metrics (Sharpe, Sortino, Beta), drawdown curves, Monte Carlo simulations, and mean‑variance optimization.
@@ -38,7 +38,7 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 | ------------------- | ----------------------------------------------------- |
 | **Frontend**        | Next.js, React, Tailwind CSS, Recharts, React‑i18next |
 | **Backend**         | FastAPI (Python) or Node.js microservices             |
-| **ETL & Scraping**  | Python (requests, BeautifulSoup, Tabula‑Py)           |
+| **ETL & Scraping**  | Python (requests, BeautifulSoup, Tabula‑Py, pandas)   |
 | **Database**        | PostgreSQL + TimescaleDB; Redis (cache)               |
 | **Email**           | SendGrid or Mailgun                                   |
 | **Auth & Billing**  | Supabase Auth / Firebase Auth; Stripe                 |
@@ -66,16 +66,13 @@ yarn install
 
 ### 3. Configure environment
 
-Create a `.env.local` file at the project root with the following variables:
+Copy the environment template and configure your variables:
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_KEY=your_supabase_service_role_key
-OPENAI_API_KEY=your_openai_api_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
-SENDGRID_API_KEY=your_sendgrid_api_key
+```bash
+cp env.template .env.local
 ```
+
+Edit `.env.local` with your actual API keys and configuration.
 
 ### 4. Run the development server
 
@@ -87,25 +84,44 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+## 🚀 Deployment
+
+For production deployment, see the comprehensive [Deployment Guide](DEPLOYMENT.md) which covers:
+
+- **Frontend**: Vercel deployment
+- **Backend**: Render deployment with FastAPI
+- **Database**: Supabase setup
+- **ETL Jobs**: Background workers
+- **CI/CD**: GitHub Actions automation
+
+### Quick Deploy
+
+1. **Frontend**: Connect your GitHub repo to Vercel
+2. **Backend**: Deploy to Render using the `render.yaml` configuration
+3. **Database**: Set up Supabase project and run the schema
+4. **Environment**: Configure all environment variables in your hosting platforms
+
 ---
 
 ## 🧩 Project Structure
 
 ```
-my-casablanca-insight/
-├── pages/                # Next.js pages (routes)
-│   ├── _app.js           # Application wrapper
-│   ├── index.js          # Home page
-│   ├── signup.js         # Newsletter signup page
-│   └── api/newsletter.js # Newsletter dispatch endpoint
-├── components/           # Reusable UI components
-├── lib/                  # Library and utility modules (Supabase, OpenAI)
-├── styles/               # Global and component-specific styles
-├── scripts/              # ETL, scraping, and newsletter automation scripts
-├── .env.local            # Environment variables (not committed)
-├── next.config.js        # Next.js configuration
-├── tailwind.config.js    # Tailwind CSS configuration
-└── package.json          # Project metadata and scripts
+casablanca-insights/
+├── apps/
+│   ├── backend/          # FastAPI backend with ETL pipeline
+│   │   ├── etl/          # ETL modules (financials, economic data)
+│   │   ├── models/       # Pydantic data models
+│   │   ├── routers/      # FastAPI route handlers
+│   │   ├── data/         # Configuration files
+│   │   └── main.py       # FastAPI application entry point
+│   ├── web/              # Next.js frontend application
+│   │   ├── pages/        # Next.js pages (routes)
+│   │   ├── components/   # Reusable UI components
+│   │   └── lib/          # Utility modules
+│   └── mobile/           # React Native mobile app
+├── database/             # Database schemas and migrations
+├── docs/                 # Documentation and guides
+└── .github/              # GitHub Actions workflows
 ```
 
 ---
@@ -114,9 +130,30 @@ my-casablanca-insight/
 
 * **Explore Market Data**: View live equity quotes and macro series.
 * **Analyze Financials**: Access GAAP‑converted statements and key ratios.
+* **Monitor Economic Data**: Track BAM indicators including policy rates, inflation, and foreign exchange reserves.
 * **Interact with AI**: Summarize reports or ask questions via chat.
 * **Manage Portfolio**: Import holdings and run simulations.
 * **Subscribe**: Sign up for “Morning Maghreb” to receive daily insights by email.
+
+### Economic Data API
+
+The backend provides comprehensive economic data endpoints:
+
+```bash
+# Get available economic indicators
+GET /api/economic-data/indicators
+
+# Get latest policy rate
+GET /api/economic-data/key_policy_rate/latest
+
+# Fetch new data from BAM
+POST /api/economic-data/fetch
+
+# Get economic dashboard
+GET /api/economic-data/dashboard/overview
+```
+
+For detailed API documentation, see [Economic Data README](apps/backend/README_ECONOMIC_DATA.md).
 
 ---
 

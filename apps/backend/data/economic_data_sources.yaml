@@ -1,0 +1,167 @@
+# Economic Data Sources Configuration
+# Bank Al-Maghrib (BAM) Data Sources
+
+sources:
+  key_policy_rate:
+    name: "Key Policy Rate"
+    url: "https://www.bkam.ma/Marche-des-capitaux/Taux-et-cours/Taux-directeur"
+    frequency: "monthly"
+    format: "xls"
+    description: "Interest rate decisions, 7-day rate"
+    category: "monetary_policy"
+    units: "percent"
+    priority: "high"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "mois", "annee"]
+      value_column_patterns: ["taux", "rate", "directeur", "7"]
+      expected_columns: ["date", "taux_directeur"]
+
+  foreign_exchange_reserves:
+    name: "Foreign Exchange Reserves"
+    url: "https://www.bkam.ma/Marche-des-capitaux/Taux-et-cours/Reserves-de-change"
+    frequency: "weekly"
+    format: "xls"
+    description: "In MAD and foreign currencies"
+    category: "external_sector"
+    units: "MAD_millions"
+    priority: "high"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "semaine"]
+      value_column_patterns: ["reserves", "change", "mad", "devises"]
+      expected_columns: ["date", "reserves_mad", "reserves_foreign"]
+
+  inflation_cpi:
+    name: "Inflation (CPI)"
+    url: "https://www.bkam.ma/Statistiques/Statistiques-monetaires-et-financieres/Indices-des-prix"
+    frequency: "monthly"
+    format: "xls"
+    description: "From High Commission of Planning"
+    category: "prices"
+    units: "index"
+    priority: "high"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "mois"]
+      value_column_patterns: ["cpi", "inflation", "indice", "prix"]
+      expected_columns: ["date", "cpi_index", "inflation_rate"]
+
+  money_supply:
+    name: "Money Supply (M1/M2/M3)"
+    url: "https://www.bkam.ma/Statistiques/Statistiques-monetaires-et-financieres/Aggregats-monetaires"
+    frequency: "monthly"
+    format: "xls"
+    description: "Downloadable from BAM"
+    category: "monetary"
+    units: "MAD_millions"
+    priority: "medium"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "mois"]
+      value_column_patterns: ["m1", "m2", "m3", "agregat"]
+      expected_columns: ["date", "m1", "m2", "m3"]
+
+  balance_of_payments:
+    name: "Balance of Payments"
+    url: "https://www.bkam.ma/Statistiques/Statistiques-monetaires-et-financieres/Balance-des-paiements"
+    frequency: "quarterly"
+    format: "xls"
+    description: "Foreign trade and capital flows"
+    category: "external_sector"
+    units: "MAD_millions"
+    priority: "medium"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "trimestre"]
+      value_column_patterns: ["balance", "paiements", "compte", "courant"]
+      expected_columns: ["date", "current_account", "capital_account", "financial_account"]
+
+  credit_to_economy:
+    name: "Credit to Economy"
+    url: "https://www.bkam.ma/Statistiques/Statistiques-monetaires-et-financieres/Credit-a-leconomie"
+    frequency: "monthly"
+    format: "xls"
+    description: "Sectoral lending breakdown"
+    category: "banking"
+    units: "MAD_millions"
+    priority: "medium"
+    retry_attempts: 3
+    timeout_seconds: 30
+    parsing_rules:
+      date_column_patterns: ["date", "periode", "mois"]
+      value_column_patterns: ["credit", "economie", "pret", "financement"]
+      expected_columns: ["date", "total_credit", "private_sector", "public_sector"]
+
+# Global settings
+settings:
+  base_url: "https://www.bkam.ma"
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  request_delay_min: 1
+  request_delay_max: 3
+  max_files_per_indicator: 5
+  data_retention_days: 365
+  backup_enabled: true
+  
+# Parsing configurations
+parsing:
+  date_formats:
+    - "%Y-%m-%d"
+    - "%d/%m/%Y"
+    - "%m/%d/%Y"
+    - "%Y-%m"
+    - "%B %Y"
+    - "%b %Y"
+  
+  number_formats:
+    decimal_separator: "."
+    thousands_separator: ","
+    currency_symbols: ["MAD", "DH", "د.م"]
+  
+  column_mapping:
+    date_columns:
+      - "date"
+      - "periode"
+      - "mois"
+      - "annee"
+      - "trimestre"
+      - "semaine"
+    
+    value_columns:
+      - "valeur"
+      - "montant"
+      - "taux"
+      - "indice"
+      - "pourcentage"
+      - "evolution"
+
+# Data validation rules
+validation:
+  required_fields: ["date", "value"]
+  date_range:
+    min_year: 2000
+    max_year: 2030
+  value_ranges:
+    key_policy_rate:
+      min: 0.0
+      max: 20.0
+    inflation_cpi:
+      min: -50.0
+      max: 100.0
+    foreign_exchange_reserves:
+      min: 0.0
+      max: 1000000.0
+    money_supply:
+      min: 0.0
+      max: 10000000.0
+    balance_of_payments:
+      min: -1000000.0
+      max: 1000000.0
+    credit_to_economy:
+      min: 0.0
+      max: 10000000.0 
