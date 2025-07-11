@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,6 +10,10 @@ export default async function handler(
   }
 
   try {
+    // Check supabase config
+    if (!isSupabaseConfigured() || !supabase) {
+      return res.status(500).json({ error: 'Database connection not configured' })
+    }
     // Get user from auth header
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -119,6 +123,10 @@ export default async function handler(
 
 async function updateSentimentAggregate(ticker: string) {
   try {
+    if (!isSupabaseConfigured() || !supabase) {
+      console.error('Supabase not configured')
+      return
+    }
     // Get all votes for the ticker
     const { data: votes } = await supabase
       .from('sentiment_votes')

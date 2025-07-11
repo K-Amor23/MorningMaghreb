@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { 
   ChartBarIcon, 
   GlobeAltIcon,
@@ -13,8 +13,41 @@ import ThemeToggle from './ThemeToggle'
 import SearchBar from './SearchBar'
 
 export default function Header() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [showLangDropdown, setShowLangDropdown] = useState(false)
+  const langDropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        langDropdownRef.current &&
+        !langDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowLangDropdown(false)
+      }
+    }
+    if (showLangDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showLangDropdown])
+
+  const languages = [
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'ar', label: 'العربية', flag: '🇲🇦' },
+  ]
+
+  const handleLanguageChange = (code: string) => {
+    i18n.changeLanguage(code)
+    setShowLangDropdown(false)
+  }
 
   return (
     <header className="bg-white dark:bg-dark-card shadow-sm border-b border-gray-200 dark:border-dark-border">
@@ -68,8 +101,8 @@ export default function Header() {
               Advanced
             </Link>
             <Link 
-              href="/premium-features" 
-              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-3 py-2 text-sm font-medium transition-colors"
+              href="/premium" 
+              className="text-sm text-yellow-600 font-semibold hover:underline px-3 py-2 transition-colors"
             >
               Premium
             </Link>
@@ -89,9 +122,28 @@ export default function Header() {
             <ThemeToggle />
             
             {/* Language selector */}
-            <button className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors">
-              <GlobeAltIcon className="h-5 w-5" />
-            </button>
+            <div className="relative" ref={langDropdownRef}>
+              <button
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors"
+                onClick={() => setShowLangDropdown((v) => !v)}
+                aria-label="Select language"
+              >
+                <GlobeAltIcon className="h-5 w-5" />
+              </button>
+              {showLangDropdown && (
+                <div className="absolute right-0 mt-2 w-36 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-50">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors ${i18n.language === lang.code ? 'font-bold' : ''}`}
+                    >
+                      <span className="mr-2 text-lg">{lang.flag}</span> {lang.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             
             {/* Notifications */}
             <button className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors relative">

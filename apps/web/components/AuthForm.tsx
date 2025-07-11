@@ -176,7 +176,7 @@ export default function AuthForm({ mode, onSuccess }: AuthFormProps) {
           </div>
 
           <div className="text-sm">
-            <a href="#" className="font-medium text-casablanca-blue hover:text-blue-500">
+            <a href="/auth/forgot-password" className="font-medium text-casablanca-blue hover:text-blue-500">
               Forgot your password?
             </a>
           </div>

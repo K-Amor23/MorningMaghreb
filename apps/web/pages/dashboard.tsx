@@ -11,7 +11,7 @@ import {
   UserIcon
 } from '@heroicons/react/24/outline'
 import { formatCurrency, formatPercent, getColorForChange } from '@/lib/utils'
-import { supabase } from '@/lib/supabase'
+import { useUser } from '@/lib/useUser'
 import Watchlist from '@/components/Watchlist'
 import AddTickerForm from '@/components/AddTickerForm'
 import toast from 'react-hot-toast'
@@ -64,59 +64,13 @@ const mockPortfolio = {
 export default function Dashboard() {
   const { t } = useTranslation()
   const router = useRouter()
+  const { user, profile, dashboard, loading: authLoading, signOut } = useUser()
   const [marketData, setMarketData] = useState(mockMarketData)
   const [portfolio, setPortfolio] = useState(mockPortfolio)
   const [loading, setLoading] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [authLoading, setAuthLoading] = useState(true)
   const [watchlistRefresh, setWatchlistRefresh] = useState(0)
 
-  // Check authentication on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        if (!supabase) {
-          console.error('Supabase not configured')
-          setAuthLoading(false)
-          return
-        }
-
-        const { data: { session } } = await supabase.auth.getSession()
-        
-        if (!session) {
-          router.replace('/login')
-          return
-        }
-
-        setUser(session.user)
-      } catch (error) {
-        console.error('Auth check error:', error)
-        router.replace('/login')
-      } finally {
-        setAuthLoading(false)
-      }
-    }
-
-    checkAuth()
-
-    // Listen for auth changes
-    if (supabase) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          if (event === 'SIGNED_OUT') {
-            setUser(null)
-            router.replace('/login')
-          } else if (session) {
-            setUser(session.user)
-          }
-        }
-      )
-
-      return () => subscription.unsubscribe()
-    }
-  }, [router])
-
-  // Redirect if not authenticated (after auth check is complete)
+  // Redirect if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
       router.replace('/login')
@@ -125,12 +79,9 @@ export default function Dashboard() {
 
   const handleSignOut = async () => {
     try {
-      if (!supabase) {
-        toast.error('Supabase not configured')
-        return
-      }
-      await supabase.auth.signOut()
+      await signOut()
       toast.success('Signed out successfully')
+      router.push('/')
     } catch (error) {
       toast.error('Error signing out')
       console.error('Sign out error:', error)
@@ -201,8 +152,23 @@ export default function Dashboard() {
                 <div className="flex items-center space-x-3">
                   <div className="flex items-center space-x-2 text-sm text-gray-700 dark:text-dark-text">
                     <UserIcon className="h-4 w-4" />
-                    <span>{user.email}</span>
+                    <span>{profile?.full_name || user.email}</span>
+                    {profile?.tier && (
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        profile.tier === 'pro' ? 'bg-green-100 text-green-800' :
+                        profile.tier === 'admin' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {profile.tier.toUpperCase()}
+                      </span>
+                    )}
                   </div>
+                  <button
+                    onClick={() => router.push('/account/settings')}
+                    className="text-sm text-gray-500 hover:text-gray-700 dark:text-dark-text-secondary dark:hover:text-dark-text"
+                  >
+                    Settings
+                  </button>
                   <button
                     onClick={handleSignOut}
                     className="text-sm text-gray-500 hover:text-gray-700 dark:text-dark-text-secondary dark:hover:text-dark-text"
@@ -299,6 +265,91 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
+
+          {/* User Stats Section */}
+          {dashboard && (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+              <div className="bg-white dark:bg-dark-card overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <UserIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-dark-text-secondary truncate">
+                          Account Tier
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900 dark:text-dark-text">
+                          {dashboard.tier.toUpperCase()}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-dark-card overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <ChartBarIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-dark-text-secondary truncate">
+                          Watchlist Items
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900 dark:text-dark-text">
+                          {dashboard.watchlist_count}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-dark-card overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <ArrowTrendingUpIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-dark-text-secondary truncate">
+                          Active Alerts
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900 dark:text-dark-text">
+                          {dashboard.active_alerts_count}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-dark-card overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <ClockIcon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 dark:text-dark-text-secondary truncate">
+                          Newsletter
+                        </dt>
+                        <dd className="text-lg font-medium text-gray-900 dark:text-dark-text">
+                          {dashboard.newsletter_active ? 'Active' : 'Inactive'}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Watchlist Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">

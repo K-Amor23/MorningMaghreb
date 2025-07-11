@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
 interface AddTickerFormProps {
@@ -16,6 +16,11 @@ export default function AddTickerForm({ userId, onTickerAdded }: AddTickerFormPr
     
     if (!ticker.trim()) {
       toast.error('Please enter a ticker symbol')
+      return
+    }
+
+    if (!isSupabaseConfigured() || !supabase) {
+      toast.error('Database connection not configured')
       return
     }
 

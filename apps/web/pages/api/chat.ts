@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { handleChatQuery } from '@/lib/openai'
 
 export default async function handler(
@@ -11,6 +11,10 @@ export default async function handler(
   }
 
   try {
+    // Check supabase config
+    if (!isSupabaseConfigured() || !supabase) {
+      return res.status(500).json({ error: 'Database connection not configured' })
+    }
     // Get user from auth header
     const authHeader = req.headers.authorization
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
