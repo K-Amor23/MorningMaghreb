@@ -40,6 +40,23 @@ export default function Login() {
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back()
+              } else {
+                router.push('/')
+              }
+            }}
+            className="mb-4 text-casablanca-blue hover:underline flex items-center"
+          >
+            <svg className="h-5 w-5 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
           <div className="flex justify-center">
             <div className="flex items-center space-x-2">
               <div className="h-10 w-10 bg-casablanca-blue rounded-lg flex items-center justify-center">
