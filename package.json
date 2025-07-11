@@ -1,48 +1,45 @@
 {
-  "name": "casablanca-insight",
+  "name": "casablanca-insight-monorepo",
   "version": "1.0.0",
-  "description": "A Morocco-focused market research & analytics webapp",
+  "description": "Casablanca Insight - Morocco Market Research & Analytics Platform",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:mobile": "cd apps/mobile && npm start",
+    "dev:backend": "cd apps/backend && uvicorn main:app --reload",
+    "build:web": "cd apps/web && npm run build",
+    "build:mobile": "cd apps/mobile && npm run build",
+    "test:web": "cd apps/web && npm test",
+    "test:mobile": "cd apps/mobile && npm test",
+    "lint:web": "cd apps/web && npm run lint",
+    "lint:mobile": "cd apps/mobile && npm run lint",
+    "install:all": "npm install && cd apps/web && npm install && cd ../mobile && npm install && cd ../backend && pip install -r requirements.txt",
+    "clean": "rm -rf node_modules && cd apps/web && rm -rf node_modules && cd ../mobile && rm -rf node_modules",
+    "start": "npm run dev:web"
   },
-  "dependencies": {
-    "@headlessui/react": "^1.7.17",
-    "@heroicons/react": "^2.0.18",
-    "@hookform/resolvers": "^3.3.2",
-    "@supabase/supabase-js": "^2.38.0",
-    "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/typography": "^0.5.10",
-    "autoprefixer": "^10.4.16",
-    "axios": "^1.6.0",
-    "clsx": "^2.0.0",
-    "date-fns": "^2.30.0",
-    "i18next": "^23.7.0",
-    "next": "^15.3.5",
-    "nodemailer": "^6.9.7",
-    "openai": "^4.20.0",
-    "postcss": "^8.4.32",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.47.0",
-    "react-hot-toast": "^2.4.1",
-    "react-i18next": "^13.5.0",
-    "recharts": "^2.8.0",
-    "stripe": "^14.7.0",
-    "tailwind-merge": "^2.0.0",
-    "tailwindcss": "^3.3.0",
-    "zod": "^3.22.4"
-  },
+  "keywords": [
+    "morocco",
+    "casablanca",
+    "stock-exchange",
+    "financial",
+    "market-research",
+    "analytics",
+    "react-native",
+    "nextjs",
+    "fastapi"
+  ],
+  "author": "Casablanca Insight Team",
+  "license": "MIT",
   "devDependencies": {
-    "@types/node": "^20.9.0",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "eslint": "^8.53.0",
-    "eslint-config-next": "^14.0.0",
-    "typescript": "^5.2.2"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
-}
+} 

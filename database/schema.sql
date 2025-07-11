@@ -15,14 +15,119 @@ CREATE TABLE users (
 CREATE TABLE user_profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    subscription_tier VARCHAR(20) DEFAULT 'free' CHECK (subscription_tier IN ('free', 'pro')),
+    subscription_tier VARCHAR(20) DEFAULT 'free' CHECK (subscription_tier IN ('free', 'pro', 'institutional')),
     subscription_status VARCHAR(20) DEFAULT 'active' CHECK (subscription_status IN ('active', 'canceled', 'past_due')),
     stripe_customer_id VARCHAR(255),
     stripe_subscription_id VARCHAR(255),
     preferences JSONB DEFAULT '{}',
+    language_preference VARCHAR(10) DEFAULT 'en' CHECK (language_preference IN ('en', 'fr', 'ar')),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- API Keys for Premium Access
+CREATE TABLE api_keys (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    key_name VARCHAR(255) NOT NULL,
+    api_key_hash VARCHAR(255) NOT NULL UNIQUE,
+    permissions JSONB DEFAULT '{}',
+    rate_limit_per_hour INTEGER DEFAULT 1000,
+    is_active BOOLEAN DEFAULT TRUE,
+    last_used TIMESTAMPTZ,
+    expires_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_api_keys_user_id ON api_keys (user_id);
+CREATE INDEX idx_api_keys_hash ON api_keys (api_key_hash);
+
+-- Data Exports
+CREATE TABLE data_exports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    export_type VARCHAR(50) NOT NULL, -- 'financials', 'macro', 'portfolio', 'custom'
+    file_format VARCHAR(10) NOT NULL CHECK (file_format IN ('csv', 'xlsx', 'json')),
+    file_path VARCHAR(500),
+    file_size_bytes BIGINT,
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+    filters JSONB DEFAULT '{}',
+    download_count INTEGER DEFAULT 0,
+    expires_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    completed_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_data_exports_user_id ON data_exports (user_id);
+CREATE INDEX idx_data_exports_status ON data_exports (status);
+
+-- Custom Reports
+CREATE TABLE custom_reports (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    report_name VARCHAR(255) NOT NULL,
+    company_ticker VARCHAR(10) REFERENCES companies(ticker),
+    report_type VARCHAR(50) NOT NULL, -- 'investment_summary', 'financial_analysis', 'risk_profile'
+    content JSONB DEFAULT '{}',
+    pdf_path VARCHAR(500),
+    status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'generating', 'completed', 'failed')),
+    download_count INTEGER DEFAULT 0,
+    expires_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    completed_at TIMESTAMPTZ
+);
+
+CREATE INDEX idx_custom_reports_user_id ON custom_reports (user_id);
+CREATE INDEX idx_custom_reports_status ON custom_reports (status);
+
+-- Webhook Subscriptions
+CREATE TABLE webhook_subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    webhook_url VARCHAR(500) NOT NULL,
+    events JSONB NOT NULL, -- ['price_alert', 'earnings_release', 'dividend_payment']
+    secret_key VARCHAR(255),
+    is_active BOOLEAN DEFAULT TRUE,
+    last_delivery TIMESTAMPTZ,
+    delivery_count INTEGER DEFAULT 0,
+    failure_count INTEGER DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_webhook_subscriptions_user_id ON webhook_subscriptions (user_id);
+
+-- Translation Cache
+CREATE TABLE translations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source_text TEXT NOT NULL,
+    source_language VARCHAR(10) NOT NULL,
+    target_language VARCHAR(10) NOT NULL,
+    translated_text TEXT NOT NULL,
+    translation_provider VARCHAR(50) DEFAULT 'openai',
+    confidence_score DECIMAL(3,2),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(source_text, source_language, target_language)
+);
+
+CREATE INDEX idx_translations_lookup ON translations (source_text, source_language, target_language);
+
+-- Admin Panel - Data Quality Flags
+CREATE TABLE data_quality_flags (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    data_type VARCHAR(50) NOT NULL, -- 'financial_report', 'quote', 'macro_data'
+    entity_id VARCHAR(100) NOT NULL, -- ticker, report_id, etc.
+    flag_type VARCHAR(50) NOT NULL, -- 'missing_data', 'inconsistent', 'outlier', 'duplicate'
+    severity VARCHAR(20) DEFAULT 'medium' CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+    description TEXT NOT NULL,
+    status VARCHAR(20) DEFAULT 'open' CHECK (status IN ('open', 'investigating', 'resolved', 'ignored')),
+    assigned_to UUID REFERENCES users(id),
+    resolved_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_data_quality_flags_status ON data_quality_flags (status);
+CREATE INDEX idx_data_quality_flags_type ON data_quality_flags (data_type, entity_id);
 
 -- Market Data (Time-series)
 CREATE TABLE quotes (
@@ -176,21 +281,18 @@ CREATE TABLE chat_queries (
 
 CREATE INDEX idx_chat_queries_user_time ON chat_queries (user_id, created_at DESC);
 
--- Watchlists
+-- Watchlists (Simple version for direct user-ticker mapping)
 CREATE TABLE watchlists (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    name VARCHAR(255) NOT NULL DEFAULT 'My Watchlist',
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    ticker VARCHAR(10) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id, ticker)
 );
 
-CREATE TABLE watchlist_items (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    watchlist_id UUID REFERENCES watchlists(id) ON DELETE CASCADE,
-    ticker VARCHAR(10) REFERENCES companies(ticker),
-    added_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(watchlist_id, ticker)
-);
+-- Create index for efficient queries
+CREATE INDEX idx_watchlists_user_id ON watchlists (user_id);
+CREATE INDEX idx_watchlists_ticker ON watchlists (ticker);
 
 -- Alert System
 CREATE TABLE price_alerts (
