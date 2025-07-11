@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { DocumentTextIcon, ClockIcon, CheckCircleIcon, XCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline'
+import { DocumentTextIcon, EyeIcon, ArrowDownTrayIcon, ClockIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
+import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
 
 interface Report {
   id: string
@@ -50,7 +51,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
   ]
 
   useEffect(() => {
-    if (userSubscriptionTier === 'pro' || userSubscriptionTier === 'institutional') {
+    if (checkPremiumAccess(userSubscriptionTier)) {
       fetchReports()
       fetchTemplates()
     }
@@ -234,7 +235,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
     }
   }
 
-  if (userSubscriptionTier !== 'pro' && userSubscriptionTier !== 'institutional') {
+  if (!checkPremiumAccess(userSubscriptionTier)) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -245,12 +246,14 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-medium text-yellow-800">
-              Pro Tier Required
+              {isPremiumEnforced() ? 'Pro Tier Required' : 'Feature Disabled'}
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                Custom reports are available for Pro and Institutional tier subscribers. 
-                Upgrade your subscription to access this feature.
+                {isPremiumEnforced() 
+                  ? 'Custom reports are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
+                  : 'Custom reports are currently disabled. Contact support for access.'
+                }
               </p>
             </div>
           </div>

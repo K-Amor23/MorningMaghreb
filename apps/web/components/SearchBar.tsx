@@ -19,6 +19,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [loading, setLoading] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
@@ -77,6 +78,14 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
         !resultsRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false)
+        // Collapse search bar when clicking outside (only if no query)
+        if (!query.trim()) {
+          setIsExpanded(false)
+          // Dispatch custom event to notify header
+          document.dispatchEvent(new CustomEvent('searchStateChange', { 
+            detail: { isExpanded: false } 
+          }))
+        }
       }
     }
 
@@ -85,6 +94,11 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault()
         inputRef.current?.focus()
+        setIsExpanded(true)
+        // Dispatch custom event to notify header
+        document.dispatchEvent(new CustomEvent('searchStateChange', { 
+          detail: { isExpanded: true } 
+        }))
       }
     }
 
@@ -95,7 +109,18 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       document.removeEventListener('mousedown', handleClickOutside)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [query])
+
+  // Cleanup effect to reset header state when component unmounts
+  useEffect(() => {
+    return () => {
+      if (isExpanded) {
+        document.dispatchEvent(new CustomEvent('searchStateChange', { 
+          detail: { isExpanded: false } 
+        }))
+      }
+    }
+  }, [isExpanded])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) return
@@ -120,8 +145,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
         }
         break
       case 'Escape':
-        setIsOpen(false)
-        inputRef.current?.blur()
+        handleEscape()
         break
     }
   }
@@ -140,24 +164,76 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
     inputRef.current?.focus()
   }
 
+  const handleFocus = () => {
+    setIsExpanded(true)
+    if (query.trim()) {
+      setIsOpen(true)
+    }
+    // Dispatch custom event to notify header
+    document.dispatchEvent(new CustomEvent('searchStateChange', { 
+      detail: { isExpanded: true } 
+    }))
+  }
+
+  const handleBlur = () => {
+    // Only collapse if there's no query and no results are open
+    if (!query.trim() && !isOpen) {
+      // Delay collapse to allow for result clicks
+      setTimeout(() => {
+        if (!query.trim()) {
+          setIsExpanded(false)
+          // Dispatch custom event to notify header
+          document.dispatchEvent(new CustomEvent('searchStateChange', { 
+            detail: { isExpanded: false } 
+          }))
+        }
+      }, 200)
+    }
+  }
+
+  const handleEscape = () => {
+    setIsOpen(false)
+    inputRef.current?.blur()
+    // Collapse search bar on escape (only if no query)
+    if (!query.trim()) {
+      setIsExpanded(false)
+      // Dispatch custom event to notify header
+      document.dispatchEvent(new CustomEvent('searchStateChange', { 
+        detail: { isExpanded: false } 
+      }))
+    }
+  }
+
   return (
-    <div className={`relative ${className}`}>
-      <div className="relative">
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+    <div className={`relative search-bar-wrapper w-full ${className}`}>
+      <div className={`relative search-bar-container transition-all duration-300 ease-in-out w-full ${
+        isExpanded ? 'w-full' : 'w-12'
+      }`}>
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          onFocus={() => query.trim() && setIsOpen(true)}
-          placeholder="Search companies... (⌘K)"
-          className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:border-transparent"
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          placeholder={isExpanded ? "Search companies... (⌘K)" : ""}
+          className={`search-bar-input w-full pl-10 pr-10 py-3 text-sm border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:border-transparent transition-all duration-300 ease-in-out ${
+            !isExpanded ? 'cursor-pointer' : ''
+          }`}
+          style={{
+            width: isExpanded ? '100%' : '48px',
+            minWidth: isExpanded ? 'auto' : '48px',
+            maxWidth: '100%',
+            height: '44px',
+            minHeight: '44px'
+          }}
         />
-        {query && (
+        {query && isExpanded && (
           <button
             onClick={handleClear}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors z-10"
           >
             <XMarkIcon className="h-4 w-4" />
           </button>
@@ -165,10 +241,10 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       </div>
 
       {/* Results dropdown */}
-      {isOpen && (
+      {isOpen && isExpanded && (
         <div
           ref={resultsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
+          className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-[100] max-h-60 overflow-y-auto min-w-0"
         >
           {loading ? (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
@@ -185,17 +261,17 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                     index === selectedIndex ? 'bg-gray-50 dark:bg-dark-hover' : ''
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">
+                  <div className="flex items-center justify-between min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-gray-900 dark:text-white truncate">
                         {company.ticker}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
                         {company.name}
                       </div>
                     </div>
                     {company.sector && (
-                      <div className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-dark-border px-2 py-1 rounded">
+                      <div className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-dark-border px-2 py-1 rounded flex-shrink-0 ml-2">
                         {company.sector}
                       </div>
                     )}

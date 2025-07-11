@@ -111,13 +111,88 @@ class CurrencyScraper:
         except Exception as e:
             logger.error(f"Error fetching Western Union rate: {e}")
             return None
+
+    async def fetch_transferwise_rate(self, currency_pair: str = "USD/MAD", amount: Decimal = Decimal("1000")) -> Optional[Dict]:
+        """Scrape TransferWise exchange rate"""
+        try:
+            # Mock TransferWise scraping
+            mock_rate = {
+                "service_name": "TransferWise",
+                "currency_pair": currency_pair,
+                "rate": Decimal("10.18"),
+                "fee_amount": Decimal("4.25"),
+                "fee_currency": "USD",
+                "fee_type": "fixed",
+                "transfer_amount": amount,
+                "effective_rate": Decimal("10.14"),
+                "rate_date": date.today(),
+                "scraped_at": datetime.now()
+            }
+            
+            logger.info(f"Fetched TransferWise rate: {mock_rate['rate']}")
+            return mock_rate
+            
+        except Exception as e:
+            logger.error(f"Error fetching TransferWise rate: {e}")
+            return None
+
+    async def fetch_cih_bank_rate(self, currency_pair: str = "USD/MAD", amount: Decimal = Decimal("1000")) -> Optional[Dict]:
+        """Scrape CIH Bank exchange rate"""
+        try:
+            # Mock CIH Bank scraping
+            mock_rate = {
+                "service_name": "CIH Bank",
+                "currency_pair": currency_pair,
+                "rate": Decimal("10.22"),
+                "fee_amount": Decimal("15.00"),
+                "fee_currency": "MAD",
+                "fee_type": "fixed",
+                "transfer_amount": amount,
+                "effective_rate": Decimal("10.07"),
+                "rate_date": date.today(),
+                "scraped_at": datetime.now()
+            }
+            
+            logger.info(f"Fetched CIH Bank rate: {mock_rate['rate']}")
+            return mock_rate
+            
+        except Exception as e:
+            logger.error(f"Error fetching CIH Bank rate: {e}")
+            return None
+
+    async def fetch_attijari_bank_rate(self, currency_pair: str = "USD/MAD", amount: Decimal = Decimal("1000")) -> Optional[Dict]:
+        """Scrape Attijari Bank exchange rate"""
+        try:
+            # Mock Attijari Bank scraping
+            mock_rate = {
+                "service_name": "Attijari Bank",
+                "currency_pair": currency_pair,
+                "rate": Decimal("10.24"),
+                "fee_amount": Decimal("20.00"),
+                "fee_currency": "MAD",
+                "fee_type": "fixed",
+                "transfer_amount": amount,
+                "effective_rate": Decimal("10.04"),
+                "rate_date": date.today(),
+                "scraped_at": datetime.now()
+            }
+            
+            logger.info(f"Fetched Attijari Bank rate: {mock_rate['rate']}")
+            return mock_rate
+            
+        except Exception as e:
+            logger.error(f"Error fetching Attijari Bank rate: {e}")
+            return None
     
     async def fetch_all_remittance_rates(self, currency_pair: str = "USD/MAD", amount: Decimal = Decimal("1000")) -> List[Dict]:
         """Fetch rates from all remittance services"""
         tasks = [
             self.fetch_remitly_rate(currency_pair, amount),
             self.fetch_wise_rate(currency_pair, amount),
-            self.fetch_western_union_rate(currency_pair, amount)
+            self.fetch_western_union_rate(currency_pair, amount),
+            self.fetch_transferwise_rate(currency_pair, amount),
+            self.fetch_cih_bank_rate(currency_pair, amount),
+            self.fetch_attijari_bank_rate(currency_pair, amount)
         ]
         
         results = await asyncio.gather(*tasks, return_exceptions=True)

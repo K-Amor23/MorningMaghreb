@@ -39,7 +39,7 @@ export default function TickerBar() {
   }, [])
 
   return (
-    <div className="bg-white border-b border-gray-200 overflow-hidden">
+    <div className="bg-white border-b border-gray-200 overflow-hidden relative z-10">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center h-12 bg-gradient-to-r from-casablanca-blue to-blue-600 text-white px-4">
           <span className="text-sm font-medium mr-4">Live Markets</span>

@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useUser, useProAccess } from '@/lib/useUser'
+import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
 import { 
   KeyIcon, 
   DocumentArrowDownIcon, 
@@ -18,17 +21,18 @@ import DataExporter from '@/components/premium/DataExporter'
 import ReportBuilder from '@/components/premium/ReportBuilder'
 import WebhookManager from '@/components/premium/WebhookManager'
 import TranslationManager from '@/components/premium/TranslationManager'
-import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
 type ActiveTab = 'api-keys' | 'exports' | 'reports' | 'webhooks' | 'translations'
 
 export default function PremiumFeatures() {
   const router = useRouter()
+  const { user, profile, loading } = useUser()
+  const isPro = useProAccess()
   const [activeTab, setActiveTab] = useState<ActiveTab>('api-keys')
-  const [user, setUser] = useState<any>(null)
-  const [userSubscriptionTier, setUserSubscriptionTier] = useState<string>('free')
-  const [authLoading, setAuthLoading] = useState(true)
+
+  // Get user subscription tier from profile
+  const userSubscriptionTier = profile?.tier || 'free'
 
   const tabs = [
     {
@@ -36,7 +40,7 @@ export default function PremiumFeatures() {
       name: 'API Keys',
       icon: KeyIcon,
       description: 'Manage API keys for programmatic access',
-      tier: 'institutional'
+      tier: 'admin'
     },
     {
       id: 'exports' as ActiveTab,
@@ -57,7 +61,7 @@ export default function PremiumFeatures() {
       name: 'Webhooks',
       icon: BellIcon,
       description: 'Set up real-time data delivery',
-      tier: 'institutional'
+      tier: 'admin'
     },
     {
       id: 'translations' as ActiveTab,
@@ -68,54 +72,43 @@ export default function PremiumFeatures() {
     }
   ]
 
-  // Check authentication on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        if (!supabase) {
-          console.error('Supabase not configured')
-          setAuthLoading(false)
-          return
-        }
+  // Check access control
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-casablanca-blue"></div>
+      </div>
+    )
+  }
 
-        const { data: { session } } = await supabase.auth.getSession()
-        
-        if (!session) {
-          router.replace('/login')
-          return
-        }
-
-        setUser(session.user)
-        
-        // Mock subscription tier - replace with actual database query
-        setUserSubscriptionTier('pro') // or 'institutional' for testing
-        
-      } catch (error) {
-        console.error('Auth check error:', error)
-        router.replace('/login')
-      } finally {
-        setAuthLoading(false)
-      }
-    }
-
-    checkAuth()
-
-    // Listen for auth changes
-    if (supabase) {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          if (event === 'SIGNED_OUT') {
-            setUser(null)
-            router.replace('/login')
-          } else if (session) {
-            setUser(session.user)
-          }
-        }
-      )
-
-      return () => subscription.unsubscribe()
-    }
-  }, [router])
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <Header />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+              {isPremiumEnforced() ? 'Premium Required' : 'Feature Disabled'}
+            </h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+              {isPremiumEnforced() 
+                ? 'Upgrade to Premium to access advanced features including API keys, data exports, custom reports, webhooks, and multilingual support.'
+                : 'Advanced features are currently disabled. Contact support for access.'
+              }
+            </p>
+            {isPremiumEnforced() && (
+              <Link href="/premium">
+                <button className="px-6 py-3 bg-casablanca-blue hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                  See Premium Plans
+                </button>
+              </Link>
+            )}
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
 
   const renderActiveComponent = () => {
     switch (activeTab) {
@@ -136,7 +129,7 @@ export default function PremiumFeatures() {
 
   const getTierColor = (tier: string) => {
     switch (tier) {
-      case 'institutional':
+      case 'admin':
         return 'text-purple-600 bg-purple-100 dark:text-purple-400 dark:bg-purple-900/20'
       case 'pro':
         return 'text-blue-600 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/20'
@@ -147,22 +140,13 @@ export default function PremiumFeatures() {
 
   const getTierLabel = (tier: string) => {
     switch (tier) {
-      case 'institutional':
+      case 'admin':
         return 'Institutional'
       case 'pro':
         return 'Pro'
       default:
         return 'Free'
     }
-  }
-
-  // Show loading while checking authentication
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-dark-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-casablanca-blue"></div>
-      </div>
-    )
   }
 
   // Don't render anything if not authenticated
@@ -297,7 +281,7 @@ export default function PremiumFeatures() {
                 {tabs.map((tab) => {
                   const Icon = tab.icon
                   const hasAccess = userSubscriptionTier === tab.tier || 
-                    (tab.tier === 'pro' && userSubscriptionTier === 'institutional')
+                    (tab.tier === 'pro' && userSubscriptionTier === 'admin')
                   
                   return (
                     <button

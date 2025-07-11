@@ -237,6 +237,93 @@ CREATE TABLE portfolio_performance (
 
 SELECT create_hypertable('portfolio_performance', 'date');
 
+-- Paper Trading System
+CREATE TABLE paper_trading_accounts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    account_name VARCHAR(255) NOT NULL DEFAULT 'Paper Trading Account',
+    initial_balance DECIMAL(15,2) NOT NULL DEFAULT 100000.00, -- Start with 100,000 MAD
+    current_balance DECIMAL(15,2) NOT NULL DEFAULT 100000.00,
+    total_pnl DECIMAL(15,2) DEFAULT 0.00,
+    total_pnl_percent DECIMAL(8,6) DEFAULT 0.00,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id, account_name)
+);
+
+CREATE TABLE paper_trading_orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID REFERENCES paper_trading_accounts(id) ON DELETE CASCADE,
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    order_type VARCHAR(10) NOT NULL CHECK (order_type IN ('buy', 'sell')),
+    order_status VARCHAR(20) NOT NULL DEFAULT 'pending' CHECK (order_status IN ('pending', 'filled', 'cancelled', 'rejected')),
+    quantity DECIMAL(15,6) NOT NULL,
+    price DECIMAL(12,4) NOT NULL,
+    total_amount DECIMAL(15,2) NOT NULL,
+    commission DECIMAL(10,2) DEFAULT 0.00,
+    filled_quantity DECIMAL(15,6) DEFAULT 0.00,
+    filled_price DECIMAL(12,4),
+    filled_at TIMESTAMPTZ,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE paper_trading_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID REFERENCES paper_trading_accounts(id) ON DELETE CASCADE,
+    order_id UUID REFERENCES paper_trading_orders(id),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    transaction_type VARCHAR(10) NOT NULL CHECK (transaction_type IN ('buy', 'sell')),
+    quantity DECIMAL(15,6) NOT NULL,
+    price DECIMAL(12,4) NOT NULL,
+    total_amount DECIMAL(15,2) NOT NULL,
+    commission DECIMAL(10,2) DEFAULT 0.00,
+    net_amount DECIMAL(15,2) NOT NULL,
+    balance_before DECIMAL(15,2) NOT NULL,
+    balance_after DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE paper_trading_positions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID REFERENCES paper_trading_accounts(id) ON DELETE CASCADE,
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    quantity DECIMAL(15,6) NOT NULL DEFAULT 0.00,
+    avg_cost DECIMAL(12,4) NOT NULL DEFAULT 0.00,
+    total_cost DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    current_value DECIMAL(15,2) DEFAULT 0.00,
+    unrealized_pnl DECIMAL(15,2) DEFAULT 0.00,
+    unrealized_pnl_percent DECIMAL(8,6) DEFAULT 0.00,
+    last_updated TIMESTAMPTZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(account_id, ticker)
+);
+
+CREATE TABLE paper_trading_cash_transactions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    account_id UUID REFERENCES paper_trading_accounts(id) ON DELETE CASCADE,
+    transaction_type VARCHAR(20) NOT NULL CHECK (transaction_type IN ('deposit', 'withdrawal', 'dividend', 'commission')),
+    amount DECIMAL(15,2) NOT NULL,
+    description TEXT,
+    balance_before DECIMAL(15,2) NOT NULL,
+    balance_after DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create indexes for paper trading tables
+CREATE INDEX idx_paper_trading_accounts_user_id ON paper_trading_accounts(user_id);
+CREATE INDEX idx_paper_trading_orders_account_id ON paper_trading_orders(account_id);
+CREATE INDEX idx_paper_trading_orders_ticker ON paper_trading_orders(ticker);
+CREATE INDEX idx_paper_trading_orders_status ON paper_trading_orders(order_status);
+CREATE INDEX idx_paper_trading_transactions_account_id ON paper_trading_transactions(account_id);
+CREATE INDEX idx_paper_trading_transactions_ticker ON paper_trading_transactions(ticker);
+CREATE INDEX idx_paper_trading_positions_account_id ON paper_trading_positions(account_id);
+CREATE INDEX idx_paper_trading_positions_ticker ON paper_trading_positions(ticker);
+CREATE INDEX idx_paper_trading_cash_transactions_account_id ON paper_trading_cash_transactions(account_id);
+
 -- Newsletter Management
 CREATE TABLE newsletter_subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

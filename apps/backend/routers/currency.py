@@ -105,6 +105,131 @@ async def get_remittance_rates(
         logger.error(f"Error fetching remittance rates: {e}")
         raise HTTPException(status_code=500, detail="Error fetching remittance rates")
 
+@router.get("/trends/{currency_pair}")
+async def get_rate_trends(
+    currency_pair: str = "USD/MAD",
+    days: int = Query(7, description="Number of days of trend data")
+):
+    """Get rate trend data for charting"""
+    try:
+        # Mock trend data - in production, fetch from database
+        trends = []
+        base_date = date.today()
+        base_bam_rate = Decimal("10.25")
+        base_best_rate = Decimal("10.15")
+        
+        for i in range(days):
+            trend_date = base_date - timedelta(days=i)
+            # Add some realistic variation
+            variation = (i % 3 - 1) * Decimal("0.02")  # Small variations
+            
+            trends.append({
+                "date": trend_date.isoformat(),
+                "bam_rate": float(base_bam_rate + variation),
+                "best_rate": float(base_best_rate + variation),
+                "avg_rate": float(base_bam_rate + variation * Decimal("0.5"))
+            })
+        
+        return {"trends": trends}
+        
+    except Exception as e:
+        logger.error(f"Error fetching rate trends: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching rate trends")
+
+@router.get("/insights/{currency_pair}")
+async def get_crowdsource_insights(
+    currency_pair: str = "USD/MAD",
+    limit: int = Query(10, description="Number of insights to return")
+):
+    """Get crowdsourced insights and tips"""
+    try:
+        # Mock crowdsource data - in production, fetch from database
+        insights = [
+            {
+                "id": "1",
+                "user_type": "Frequent User",
+                "message": "Remitly usually has the best rates on Tuesdays and Wednesdays. Avoid weekends!",
+                "rating": 4.8,
+                "timestamp": "2 hours ago",
+                "likes": 23,
+                "helpful_count": 15
+            },
+            {
+                "id": "2", 
+                "user_type": "Expat",
+                "message": "I always check Bank Al-Maghrib rate first, then compare with Wise. Usually saves me 1-2%",
+                "rating": 4.6,
+                "timestamp": "5 hours ago",
+                "likes": 18,
+                "helpful_count": 12
+            },
+            {
+                "id": "3",
+                "user_type": "Business Owner", 
+                "message": "Western Union has good rates for large amounts (>$5000). Smaller amounts, go with Remitly.",
+                "rating": 4.4,
+                "timestamp": "1 day ago",
+                "likes": 15,
+                "helpful_count": 8
+            },
+            {
+                "id": "4",
+                "user_type": "Student",
+                "message": "CIH Bank has the best rates for students with student accounts. Check their special programs!",
+                "rating": 4.7,
+                "timestamp": "2 days ago", 
+                "likes": 12,
+                "helpful_count": 6
+            }
+        ]
+        
+        return {"insights": insights[:limit]}
+        
+    except Exception as e:
+        logger.error(f"Error fetching crowdsource insights: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching insights")
+
+@router.get("/forecast/{currency_pair}")
+async def get_ai_forecast(
+    currency_pair: str = "USD/MAD",
+    days: int = Query(3, description="Number of days to forecast")
+):
+    """Get AI-powered rate forecast"""
+    try:
+        # Mock AI forecast - in production, use ML model
+        forecast = {
+            "currency_pair": currency_pair,
+            "forecast_date": date.today().isoformat(),
+            "predictions": [],
+            "confidence": 0.78,
+            "model_version": "v1.0",
+            "factors": [
+                "BAM policy rate stability",
+                "USD strength index", 
+                "Moroccan trade balance",
+                "Global market sentiment"
+            ]
+        }
+        
+        base_rate = Decimal("10.25")
+        for i in range(1, days + 1):
+            # Simple trend prediction
+            trend = Decimal("0.01") if i % 2 == 0 else Decimal("-0.005")
+            predicted_rate = base_rate + trend * i
+            
+            forecast["predictions"].append({
+                "date": (date.today() + timedelta(days=i)).isoformat(),
+                "predicted_rate": float(predicted_rate),
+                "confidence_interval": [float(predicted_rate - Decimal("0.02")), float(predicted_rate + Decimal("0.02"))],
+                "trend": "up" if trend > 0 else "down"
+            })
+        
+        return forecast
+        
+    except Exception as e:
+        logger.error(f"Error generating AI forecast: {e}")
+        raise HTTPException(status_code=500, detail="Error generating forecast")
+
 @router.post("/alerts", response_model=RateAlertResponse)
 async def create_rate_alert(
     alert: RateAlertCreate,

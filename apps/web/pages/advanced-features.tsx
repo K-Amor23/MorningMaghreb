@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
+import { useUser } from '@/lib/useUser'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CompanyComparison from '@/components/advanced/CompanyComparison'
@@ -18,7 +20,17 @@ import {
 type ActiveTab = 'comparison' | 'earnings' | 'dividends' | 'economic' | 'screens'
 
 export default function AdvancedFeatures() {
+  const { user, profile, loading } = useUser()
   const [activeTab, setActiveTab] = useState<ActiveTab>('comparison')
+
+  // Check access control
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-casablanca-blue"></div>
+      </div>
+    )
+  }
 
   const tabs = [
     {

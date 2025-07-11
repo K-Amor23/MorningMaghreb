@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ArrowDownTrayIcon, DocumentArrowDownIcon, ClockIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
+import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
 
 interface Export {
   id: string
@@ -49,7 +50,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
   const mockTickers = ['ATW', 'IAM', 'BCP', 'BMCE', 'WAA', 'CIH', 'CMT', 'CTM']
 
   useEffect(() => {
-    if (userSubscriptionTier === 'pro' || userSubscriptionTier === 'institutional') {
+    if (checkPremiumAccess(userSubscriptionTier)) {
       fetchExports()
     }
   }, [userSubscriptionTier])
@@ -214,7 +215,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
     }
   }
 
-  if (userSubscriptionTier !== 'pro' && userSubscriptionTier !== 'institutional') {
+  if (!checkPremiumAccess(userSubscriptionTier)) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -225,12 +226,14 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-medium text-yellow-800">
-              Pro Tier Required
+              {isPremiumEnforced() ? 'Pro Tier Required' : 'Feature Disabled'}
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                Data exports are available for Pro and Institutional tier subscribers. 
-                Upgrade your subscription to access this feature.
+                {isPremiumEnforced() 
+                  ? 'Data exports are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
+                  : 'Data exports are currently disabled. Contact support for access.'
+                }
               </p>
             </div>
           </div>
