@@ -32,17 +32,14 @@ export default async function handler(
   }
 
   try {
-    const { currency_pair } = req.query
+    const currency_pair = req.query.currency_pair as string || 'USD/MAD'
     const amount = parseFloat(req.query.amount as string) || 1000
     
     console.log('Currency pair:', currency_pair, 'Amount:', amount)
-    
-    // Handle the currency pair format (e.g., "USD/MAD")
-    const pair = Array.isArray(currency_pair) ? currency_pair[0] : currency_pair || 'USD/MAD'
 
     // Enhanced mock data with all services
     const mockComparison: CurrencyComparison = {
-      currency_pair: pair,
+      currency_pair: currency_pair,
       bam_rate: 10.25,
       services: [
         {

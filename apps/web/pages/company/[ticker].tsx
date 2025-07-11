@@ -12,6 +12,7 @@ import FinancialChart from '@/components/company/FinancialChart'
 import FinancialTable from '@/components/company/FinancialTable'
 import AiSummary from '@/components/company/AiSummary'
 import CorporateActions from '@/components/company/CorporateActions'
+import SentimentVoting from '@/components/SentimentVoting'
 
 interface CompanyData {
   ticker: string
@@ -347,6 +348,7 @@ export default function CompanyPage() {
 
             {/* Sidebar */}
             <div className="space-y-6">
+              <SentimentVoting ticker={companyData.ticker} companyName={companyData.name} />
               <CorporateActions actions={companyData.corporateActions} />
               
               {/* Filing Downloads */}

@@ -104,3 +104,89 @@ body {
 .animate-scroll {
   animation: scroll 30s linear infinite;
 }
+
+/* Search bar expansion behavior */
+.search-bar-container {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-bar-input {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.search-bar-input:focus {
+  transform: scale(1.02);
+}
+
+/* Ensure search bar maintains proper width during transition */
+.search-bar-wrapper {
+  min-width: 48px;
+  max-width: 100%;
+  overflow: visible;
+  position: relative;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Ensure search results don't get cut off */
+.search-bar-wrapper .absolute {
+  overflow: visible;
+}
+
+/* Header transitions for search expansion */
+.header-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Smooth opacity and scale transitions for header elements */
+.header-element {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Search expansion animation */
+.search-expand {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Z-index management for proper layering */
+/* Base layer for ticker bar */
+.ticker-bar {
+  z-index: 10;
+}
+
+/* Header layer */
+.header-layer {
+  z-index: 20;
+}
+
+/* Dropdown and modal layers */
+.dropdown-layer {
+  z-index: 150;
+}
+
+.modal-layer {
+  z-index: 200;
+}
+
+/* Ensure dropdowns always appear above other content */
+.dropdown-menu {
+  position: relative;
+  z-index: 150;
+}
+
+/* Ensure modals appear above everything */
+.modal-overlay {
+  position: fixed;
+  z-index: 200;
+}

@@ -1,15 +1,34 @@
+import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import AuthForm from '@/components/AuthForm'
+import { 
+  UserIcon, 
+  EnvelopeIcon, 
+  LockClosedIcon,
+  EyeIcon,
+  EyeSlashIcon
+} from '@heroicons/react/24/outline'
 
 export default function Login() {
-  const { t } = useTranslation()
   const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSuccess = () => {
-    router.push('/dashboard')
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    // For development, simulate login
+    setTimeout(() => {
+      setLoading(false)
+      // Redirect to dashboard or home
+      router.push('/dashboard')
+    }, 1000)
   }
 
   return (
@@ -19,60 +38,140 @@ export default function Login() {
         <meta name="description" content="Sign in to your Casablanca Insight account" />
       </Head>
 
-      <div className="min-h-screen bg-casablanca-light dark:bg-dark-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        {/* Back button */}
-        <div className="absolute top-4 left-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back
-          </button>
-        </div>
-        
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <Link href="/" className="flex justify-center">
-            <h1 className="text-3xl font-bold text-casablanca-blue">
-              Casablanca Insight
-            </h1>
-          </Link>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-dark-text">
+          <div className="flex justify-center">
+            <div className="flex items-center space-x-2">
+              <div className="h-10 w-10 bg-casablanca-blue rounded-lg flex items-center justify-center">
+                <UserIcon className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-casablanca-blue">
+                Casablanca Insight
+              </span>
+            </div>
+          </div>
+          <h2 className="mt-6 text-center text-3xl font-bold text-gray-900 dark:text-white">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600 dark:text-dark-text-secondary">
+          <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Or{' '}
-            <Link
-              href="/signup"
-              className="font-medium text-casablanca-blue hover:text-blue-500"
-            >
+            <Link href="/signup" className="font-medium text-casablanca-blue hover:text-casablanca-blue/80">
               create a new account
             </Link>
           </p>
         </div>
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white dark:bg-dark-card py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <AuthForm mode="login" onSuccess={handleSuccess} />
+          <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              {error && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+                  <div className="text-sm text-red-600 dark:text-red-400">
+                    {error}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Email address
+                </label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
+                    placeholder="Enter your email"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Password
+                </label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    className="h-4 w-4 text-casablanca-blue focus:ring-casablanca-blue border-gray-300 rounded"
+                  />
+                  <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                    Remember me
+                  </label>
+                </div>
+
+                <div className="text-sm">
+                  <Link href="/forgot-password" className="font-medium text-casablanca-blue hover:text-casablanca-blue/80">
+                    Forgot your password?
+                  </Link>
+                </div>
+              </div>
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-casablanca-blue hover:bg-casablanca-blue/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-casablanca-blue disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {loading ? 'Signing in...' : 'Sign in'}
+                </button>
+              </div>
+            </form>
 
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
+                  <div className="w-full border-t border-gray-300 dark:border-gray-600" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
-                    Or continue with
-                  </span>
+                  <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">Or continue with</span>
                 </div>
               </div>
 
               <div className="mt-6">
                 <button
                   type="button"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

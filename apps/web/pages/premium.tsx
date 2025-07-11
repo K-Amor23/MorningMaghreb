@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { 
   CheckIcon,
@@ -25,27 +26,32 @@ export default function Premium() {
     {
       icon: DocumentTextIcon,
       title: 'GAAP Financials',
-      description: 'Access to GAAP financials for 100+ companies with detailed analysis'
+      description: 'Access to GAAP financials for 100+ companies with detailed analysis',
+      href: '/company/IAM' // Example company page with GAAP data
     },
     {
       icon: StarIcon,
       title: 'AI Summaries & Earnings',
-      description: 'AI-powered earnings recaps and company summaries'
+      description: 'AI-powered earnings recaps and company summaries',
+      href: '/company/ATW' // Example company page with AI summaries
     },
     {
       icon: ChartBarIcon,
       title: 'Portfolio Statistics',
-      description: 'Advanced portfolio metrics including Sharpe ratio and Monte Carlo analysis'
+      description: 'Advanced portfolio metrics including Sharpe ratio and Monte Carlo analysis',
+      href: '/portfolio'
     },
     {
       icon: CurrencyDollarIcon,
       title: 'Smart FX Converter',
-      description: 'Intelligent currency conversion with real-time alerts'
+      description: 'Intelligent currency conversion with real-time alerts',
+      href: '/convert'
     },
     {
       icon: GlobeAltIcon,
       title: 'Newsletter Customization',
-      description: 'Personalized newsletter with your preferred content and frequency'
+      description: 'Personalized newsletter with your preferred content and frequency',
+      href: '/dashboard' // Dashboard has newsletter settings
     }
   ]
 
@@ -196,8 +202,12 @@ export default function Premium() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {features.map((feature, index) => (
-                  <div key={index} className="text-center p-6 rounded-lg bg-gray-50 dark:bg-dark-bg">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-casablanca-blue text-white rounded-full mb-4">
+                  <Link 
+                    key={index} 
+                    href={feature.href}
+                    className="text-center p-6 rounded-lg bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors cursor-pointer group"
+                  >
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-casablanca-blue text-white rounded-full mb-4 group-hover:bg-blue-600 transition-colors">
                       <feature.icon className="w-8 h-8" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
@@ -206,7 +216,10 @@ export default function Premium() {
                     <p className="text-gray-600 dark:text-gray-400">
                       {feature.description}
                     </p>
-                  </div>
+                    <div className="mt-4 text-sm text-casablanca-blue group-hover:text-blue-600 transition-colors">
+                      Try it now →
+                    </div>
+                  </Link>
                 ))}
               </div>
             </div>

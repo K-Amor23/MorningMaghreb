@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { PlusIcon, TrashIcon, EyeIcon, EyeSlashIcon, ClipboardIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-hot-toast'
+import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
 
 interface ApiKey {
   id: string
@@ -38,7 +39,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
   ]
 
   useEffect(() => {
-    if (userSubscriptionTier === 'institutional') {
+    if (checkPremiumAccess(userSubscriptionTier)) {
       fetchApiKeys()
     }
   }, [userSubscriptionTier])
@@ -140,7 +141,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
     })
   }
 
-  if (userSubscriptionTier !== 'institutional') {
+  if (!checkPremiumAccess(userSubscriptionTier)) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -151,12 +152,14 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
           </div>
           <div className="ml-3">
             <h3 className="text-sm font-medium text-yellow-800">
-              Institutional Tier Required
+              {isPremiumEnforced() ? 'Institutional Tier Required' : 'Feature Disabled'}
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                API key management is available for institutional tier subscribers. 
-                Upgrade your subscription to access this feature.
+                {isPremiumEnforced() 
+                  ? 'API key management is available for institutional tier subscribers. Upgrade your subscription to access this feature.'
+                  : 'API key management is currently disabled. Contact support for access.'
+                }
               </p>
             </div>
           </div>

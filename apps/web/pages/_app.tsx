@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 import { ThemeProvider } from '@/lib/theme'
 import '@/lib/i18n'
+import FeatureFlagsDebug from '@/components/FeatureFlagsDebug'
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function App({ Component, pageProps }: AppProps) {
           },
         }}
       />
+      <FeatureFlagsDebug />
     </ThemeProvider>
   )
 }
