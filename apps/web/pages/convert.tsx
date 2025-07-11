@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import Link from 'next/link'
+import { useUser } from '@/lib/useUser'
 import { 
   CurrencyDollarIcon, 
   ChartBarIcon, 
@@ -33,15 +35,41 @@ interface CurrencyComparison {
 
 export default function CurrencyConverter() {
   const router = useRouter()
+  const { user, profile, loading } = useUser()
   const [amount, setAmount] = useState(1000)
   const [currencyPair, setCurrencyPair] = useState('USD/MAD')
   const [comparison, setComparison] = useState<CurrencyComparison | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [loadingComparison, setLoadingComparison] = useState(false)
   const [alertRate, setAlertRate] = useState('')
   const [showAlertForm, setShowAlertForm] = useState(false)
 
+  // Dev bypass for premium access
+  if (loading) return <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">Loading...</div>
+
+  const isPro = profile?.tier === "pro" || process.env.NEXT_PUBLIC_ENV === "dev"
+
+  if (!isPro) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Premium Required</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+              Upgrade to Premium to use the Smart FX Converter and get AI-powered remittance recommendations.
+            </p>
+            <Link href="/premium">
+              <button className="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors">
+                See Premium Plans
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const fetchComparison = async () => {
-    setLoading(true)
+    setLoadingComparison(true)
     try {
       const response = await fetch(`/api/currency/compare/${currencyPair}?amount=${amount}`)
       if (response.ok) {
@@ -51,7 +79,7 @@ export default function CurrencyConverter() {
     } catch (error) {
       console.error('Error fetching comparison:', error)
     } finally {
-      setLoading(false)
+      setLoadingComparison(false)
     }
   }
 
@@ -137,10 +165,10 @@ export default function CurrencyConverter() {
               <div className="flex items-end">
                 <button
                   onClick={fetchComparison}
-                  disabled={loading}
+                  disabled={loadingComparison}
                   className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-md transition-colors"
                 >
-                  {loading ? 'Updating...' : 'Compare Rates'}
+                  {loadingComparison ? 'Updating...' : 'Compare Rates'}
                 </button>
               </div>
             </div>

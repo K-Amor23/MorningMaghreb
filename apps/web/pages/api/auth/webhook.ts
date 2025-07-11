@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { buffer } from 'micro'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { handleWebhook } from '@/lib/stripe'
 
 export const config = {
@@ -64,6 +64,11 @@ async function handleCheckoutCompleted(session: any) {
     return
   }
 
+  if (!isSupabaseConfigured() || !supabase) {
+    console.error('Supabase not configured')
+    return
+  }
+
   // Update user subscription status
   const { error } = await supabase
     .from('user_profiles')
@@ -84,6 +89,11 @@ async function handleCheckoutCompleted(session: any) {
 async function handlePaymentSucceeded(invoice: any) {
   const { customer, subscription } = invoice
   
+  if (!isSupabaseConfigured() || !supabase) {
+    console.error('Supabase not configured')
+    return
+  }
+
   // Update subscription status
   const { error } = await supabase
     .from('user_profiles')
@@ -101,6 +111,11 @@ async function handlePaymentSucceeded(invoice: any) {
 async function handlePaymentFailed(invoice: any) {
   const { customer } = invoice
   
+  if (!isSupabaseConfigured() || !supabase) {
+    console.error('Supabase not configured')
+    return
+  }
+
   // Update subscription status
   const { error } = await supabase
     .from('user_profiles')
@@ -118,6 +133,11 @@ async function handlePaymentFailed(invoice: any) {
 async function handleSubscriptionUpdated(subscription: any) {
   const { customer, status } = subscription
   
+  if (!isSupabaseConfigured() || !supabase) {
+    console.error('Supabase not configured')
+    return
+  }
+
   // Update subscription status
   const { error } = await supabase
     .from('user_profiles')
@@ -135,6 +155,11 @@ async function handleSubscriptionUpdated(subscription: any) {
 async function handleSubscriptionDeleted(subscription: any) {
   const { customer } = subscription
   
+  if (!isSupabaseConfigured() || !supabase) {
+    console.error('Supabase not configured')
+    return
+  }
+
   // Downgrade to free tier
   const { error } = await supabase
     .from('user_profiles')

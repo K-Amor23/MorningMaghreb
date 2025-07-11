@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ArrowUpIcon, ArrowRightIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
 interface SentimentVotingProps {
@@ -54,6 +54,10 @@ const SentimentVoting: React.FC<SentimentVotingProps> = ({
 
   const loadUserVote = async () => {
     try {
+      if (!isSupabaseConfigured() || !supabase) {
+        toast.error('Database connection not configured')
+        return
+      }
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
@@ -76,6 +80,10 @@ const SentimentVoting: React.FC<SentimentVotingProps> = ({
   const handleVote = async (sentiment: string) => {
     try {
       setVoting(true)
+      if (!isSupabaseConfigured() || !supabase) {
+        toast.error('Database connection not configured')
+        return
+      }
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         toast.error('Please sign in to vote')
