@@ -27,6 +27,12 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 * **“Morning Maghreb” Newsletter**
   Daily email digest with top market movers, corporate actions, macro highlights, and AI-generated commentary.
 
+* **Smart Currency Converter & Remittance Rate Advisor**
+  Compare USD→MAD exchange rates across Remitly, Wise, Western Union against official BAM rates. Get AI-powered recommendations for the best time to transfer money and set rate alerts.
+
+* **AI Content Moderation with Cultural Guardrails**
+  Automated content screening to ensure all generated content respects Moroccan cultural sensitivities and legal requirements. Detects and replaces sensitive topics while maintaining business focus.
+
 * **Freemium & Pro Tiers**
   Subscriber management via Supabase Auth + Stripe; role-based access and billing.
 
