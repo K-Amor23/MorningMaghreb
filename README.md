@@ -8,30 +8,72 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 
 ## 🚀 Features
 
+### **Core Market Features**
 * **Real-time Market Data**
   Live quotes, volumes, and sector indices (MASI, MADEX, MASI-ESG).
-  Watchlists, price alerts, and interactive charts.
+  Watchlists, price alerts, and interactive charts with advanced search functionality.
 
 * **Financials & GAAP Conversion**
   Automated PDF scraping (Tabula‑Py) → IFRS tables → JSON/YAML-driven U.S. GAAP mapping → key ratio calculations.
 
 * **AI-Powered Insights**
-  GPT‑4 summaries of IFRS→GAAP adjustments, natural-language Q\&A “Investor Chatbot,” and narrative snippets in your newsletter.
+  GPT‑4 summaries of IFRS→GAAP adjustments, natural-language Q&A "Investor Chatbot," and narrative snippets in your newsletter.
 
-* **Macro & Central-Bank Module**
-  Automated scraping of Bank Al-Maghrib (BAM) economic data including policy rates, foreign exchange reserves, inflation (CPI), money supply (M1/M2/M3), balance of payments, and credit to economy. Real-time data fetching with intelligent parsing and RESTful API endpoints.
+### **Advanced Trading & Portfolio Features**
+* **Paper Trading Platform**
+  Full-featured paper trading with virtual accounts, real-time order execution, portfolio tracking, and performance analytics. Includes order history, position management, and trading performance metrics.
 
 * **Portfolio Toolkit**
   Import holdings (CSV/API), P/L attribution, performance metrics (Sharpe, Sortino, Beta), drawdown curves, Monte Carlo simulations, and mean‑variance optimization.
 
-* **“Morning Maghreb” Newsletter**
-  Daily email digest with top market movers, corporate actions, macro highlights, and AI-generated commentary.
+* **Advanced Features Dashboard**
+  Company comparison tools, custom screens, dividend tracking, earnings calendar, and economic indicator tracking.
 
+### **Currency & Economic Features**
 * **Smart Currency Converter & Remittance Rate Advisor**
   Compare USD→MAD exchange rates across Remitly, Wise, Western Union against official BAM rates. Get AI-powered recommendations for the best time to transfer money and set rate alerts.
 
+* **Currency Analysis Tools**
+  Currency pair comparison, trend analysis, forecasting, and insights with historical data visualization.
+
+* **Macro & Central-Bank Module**
+  Automated scraping of Bank Al-Maghrib (BAM) economic data including policy rates, foreign exchange reserves, inflation (CPI), money supply (M1/M2/M3), balance of payments, and credit to economy. Real-time data fetching with intelligent parsing and RESTful API endpoints.
+
+### **Premium Features**
+* **API Key Management**
+  Generate and manage API keys for programmatic access to market data and analytics.
+
+* **Data Export Tools**
+  Export market data, financial statements, and portfolio analytics in multiple formats (CSV, JSON, Excel).
+
+* **Custom Report Builder**
+  Create personalized reports with custom metrics, charts, and data visualizations.
+
+* **Translation Management**
+  Multi-language support with custom translation management for French, Arabic, and English content.
+
+* **Webhook Integration**
+  Set up webhooks for real-time notifications on market events, price alerts, and portfolio changes.
+
+### **Content & Communication**
+* **"Morning Maghreb" Newsletter**
+  Daily email digest with top market movers, corporate actions, macro highlights, and AI-generated commentary.
+
 * **AI Content Moderation with Cultural Guardrails**
   Automated content screening to ensure all generated content respects Moroccan cultural sensitivities and legal requirements. Detects and replaces sensitive topics while maintaining business focus.
+
+* **Sentiment Analysis & Voting**
+  Community-driven sentiment analysis with voting system for stocks and market indicators.
+
+### **User Experience & Management**
+* **Advanced Search & Navigation**
+  Intelligent search bar with company lookup, keyboard shortcuts (⌘K), and smooth expansion animations.
+
+* **Account Management**
+  Comprehensive user account management with profile settings, preferences, and subscription management.
+
+* **Feature Flags System**
+  Dynamic feature toggling for A/B testing and gradual feature rollouts.
 
 * **Freemium & Pro Tiers**
   Subscriber management via Supabase Auth + Stripe; role-based access and billing.
@@ -42,14 +84,14 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 
 | Layer               | Technology                                            |
 | ------------------- | ----------------------------------------------------- |
-| **Frontend**        | Next.js, React, Tailwind CSS, Recharts, React‑i18next |
-| **Backend**         | FastAPI (Python) or Node.js microservices             |
+| **Frontend**        | Next.js 15, React, Tailwind CSS, Recharts, React‑i18next |
+| **Backend**         | FastAPI (Python) with comprehensive ETL pipeline     |
 | **ETL & Scraping**  | Python (requests, BeautifulSoup, Tabula‑Py, pandas)   |
 | **Database**        | PostgreSQL + TimescaleDB; Redis (cache)               |
 | **Email**           | SendGrid or Mailgun                                   |
-| **Auth & Billing**  | Supabase Auth / Firebase Auth; Stripe                 |
+| **Auth & Billing**  | Supabase Auth; Stripe integration                     |
 | **AI & NLP**        | OpenAI GPT‑4o‑mini / GPT‑4; Cursor; Codex             |
-| **Hosting & CI/CD** | Vercel / Netlify (frontend); Render / AWS Cloud Run   |
+| **Hosting & CI/CD** | Vercel (frontend); Render (backend)                   |
 
 ---
 
@@ -65,9 +107,14 @@ cd casablanca-insight
 ### 2. Install dependencies
 
 ```bash
-npm install
-# or
-yarn install
+# Install web app dependencies
+cd apps/web && npm install
+
+# Install backend dependencies
+cd ../backend && pip install -r requirements.txt
+
+# Install mobile app dependencies (optional)
+cd ../mobile && npm install
 ```
 
 ### 3. Configure environment
@@ -80,25 +127,36 @@ cp env.template .env.local
 
 Edit `.env.local` with your actual API keys and configuration.
 
-### 4. Run the development server
+### 4. Set up the database
 
 ```bash
-npm run dev
-# or
-yarn dev
+# Run the database schema
+psql -d your_database -f database/schema.sql
+```
+
+### 5. Run the development servers
+
+```bash
+# Start the web app
+cd apps/web && npm run dev
+
+# Start the backend (in another terminal)
+cd apps/backend && python main.py
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
 
 ## 🚀 Deployment
 
 For production deployment, see the comprehensive [Deployment Guide](DEPLOYMENT.md) which covers:
 
-- **Frontend**: Vercel deployment
-- **Backend**: Render deployment with FastAPI
-- **Database**: Supabase setup
-- **ETL Jobs**: Background workers
-- **CI/CD**: GitHub Actions automation
+- **Frontend**: Vercel deployment with Next.js optimization
+- **Backend**: Render deployment with FastAPI and background workers
+- **Database**: Supabase setup with real-time subscriptions
+- **ETL Jobs**: Automated data pipeline with error handling
+- **CI/CD**: GitHub Actions automation with testing
 
 ### Quick Deploy
 
@@ -115,14 +173,17 @@ For production deployment, see the comprehensive [Deployment Guide](DEPLOYMENT.m
 casablanca-insights/
 ├── apps/
 │   ├── backend/          # FastAPI backend with ETL pipeline
-│   │   ├── etl/          # ETL modules (financials, economic data)
+│   │   ├── etl/          # ETL modules (financials, economic data, currency)
 │   │   ├── models/       # Pydantic data models
 │   │   ├── routers/      # FastAPI route handlers
 │   │   ├── data/         # Configuration files
 │   │   └── main.py       # FastAPI application entry point
 │   ├── web/              # Next.js frontend application
-│   │   ├── pages/        # Next.js pages (routes)
+│   │   ├── pages/        # Next.js pages and API routes
 │   │   ├── components/   # Reusable UI components
+│   │   │   ├── paper-trading/  # Paper trading components
+│   │   │   ├── premium/        # Premium feature components
+│   │   │   └── advanced/       # Advanced feature components
 │   │   └── lib/          # Utility modules
 │   └── mobile/           # React Native mobile app
 ├── database/             # Database schemas and migrations
@@ -134,14 +195,29 @@ casablanca-insights/
 
 ## 📈 Usage
 
-* **Explore Market Data**: View live equity quotes and macro series.
-* **Analyze Financials**: Access GAAP‑converted statements and key ratios.
-* **Monitor Economic Data**: Track BAM indicators including policy rates, inflation, and foreign exchange reserves.
-* **Interact with AI**: Summarize reports or ask questions via chat.
-* **Manage Portfolio**: Import holdings and run simulations.
-* **Subscribe**: Sign up for “Morning Maghreb” to receive daily insights by email.
+### **Market Data & Analysis**
+* **Explore Market Data**: View live equity quotes and macro series with advanced filtering
+* **Analyze Financials**: Access GAAP‑converted statements and key ratios
+* **Monitor Economic Data**: Track BAM indicators including policy rates, inflation, and foreign exchange reserves
+* **Currency Analysis**: Compare exchange rates, analyze trends, and get transfer recommendations
 
-### Economic Data API
+### **Trading & Portfolio**
+* **Paper Trading**: Practice trading with virtual accounts and real-time market data
+* **Portfolio Management**: Import holdings and run advanced analytics and simulations
+* **Advanced Features**: Use company comparison tools, custom screens, and dividend tracking
+
+### **Premium Features**
+* **API Access**: Generate API keys for programmatic data access
+* **Data Export**: Export market data and analytics in multiple formats
+* **Custom Reports**: Build personalized reports with custom metrics and visualizations
+* **Webhooks**: Set up real-time notifications for market events
+
+### **AI & Communication**
+* **AI Chat**: Interact with AI for market insights and analysis
+* **Content Moderation**: Automated content screening with cultural sensitivity
+* **Newsletter**: Subscribe to "Morning Maghreb" for daily insights
+
+### **Economic Data API**
 
 The backend provides comprehensive economic data endpoints:
 
@@ -157,9 +233,44 @@ POST /api/economic-data/fetch
 
 # Get economic dashboard
 GET /api/economic-data/dashboard/overview
+
+# Currency comparison
+GET /api/currency/compare/USD/MAD
+
+# Paper trading accounts
+GET /api/paper-trading/accounts
 ```
 
 For detailed API documentation, see [Economic Data README](apps/backend/README_ECONOMIC_DATA.md).
+
+---
+
+## 🔧 Recent Updates
+
+### **Search Bar & UI Improvements**
+- Fixed search bar cutoff issue in header layout
+- Improved responsive design and mobile experience
+- Enhanced keyboard shortcuts and accessibility
+- Better visual hierarchy and spacing
+
+### **Premium Features Implementation**
+- Complete API key management system
+- Advanced data export capabilities
+- Custom report builder with visualization tools
+- Multi-language translation management
+- Webhook integration for real-time notifications
+
+### **Paper Trading Platform**
+- Full virtual trading environment
+- Real-time order execution and portfolio tracking
+- Performance analytics and reporting
+- Order history and position management
+
+### **Currency & Economic Enhancements**
+- Advanced currency comparison tools
+- Trend analysis and forecasting
+- Remittance rate optimization
+- Enhanced economic data visualization
 
 ---
 
@@ -173,8 +284,25 @@ Contributions are welcome! Please open issues for bugs or feature requests and s
 4. Push to your branch (`git push origin feature/YourFeature`)
 5. Open a pull request
 
+### Development Guidelines
+- Follow the existing code style and conventions
+- Add tests for new features
+- Update documentation for API changes
+- Ensure all features work across supported languages
+
 ---
 
 ## 📝 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## 📞 Support
+
+For support, please:
+- Check the [documentation](docs/)
+- Open an issue on GitHub
+- Contact the development team
+
+**Built with ❤️ for the Moroccan investment community**
