@@ -324,6 +324,118 @@ CREATE INDEX idx_paper_trading_positions_account_id ON paper_trading_positions(a
 CREATE INDEX idx_paper_trading_positions_ticker ON paper_trading_positions(ticker);
 CREATE INDEX idx_paper_trading_cash_transactions_account_id ON paper_trading_cash_transactions(account_id);
 
+-- CSE Trading Rules and Compliance System
+CREATE TABLE trading_rules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    rule_type VARCHAR(50) NOT NULL CHECK (rule_type IN (
+        'daily_price_limit', 'circuit_breaker', 'trading_halt', 
+        'order_restriction', 'market_segment_rule'
+    )),
+    rule_name VARCHAR(255) NOT NULL,
+    rule_description TEXT,
+    daily_price_limit_percent DECIMAL(5,2), -- e.g., 10.00 for ±10%
+    circuit_breaker_threshold DECIMAL(5,2), -- e.g., 15.00 for 15% drop
+    halt_conditions JSONB, -- Complex conditions for trading halts
+    order_restrictions JSONB, -- Order type restrictions
+    is_active BOOLEAN DEFAULT TRUE,
+    effective_date DATE NOT NULL,
+    expiry_date DATE,
+    source VARCHAR(100) DEFAULT 'CSE', -- CSE, regulatory, admin
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    created_by UUID REFERENCES users(id),
+    UNIQUE(ticker, rule_type, effective_date)
+);
+
+CREATE TABLE trading_rule_violations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    rule_id UUID REFERENCES trading_rules(id),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    violation_type VARCHAR(50) NOT NULL,
+    violation_details JSONB,
+    order_id UUID REFERENCES paper_trading_orders(id),
+    user_id UUID REFERENCES users(id),
+    price_at_violation DECIMAL(12,4),
+    price_limit DECIMAL(12,4),
+    violation_timestamp TIMESTAMPTZ DEFAULT NOW(),
+    resolved_at TIMESTAMPTZ,
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'resolved', 'ignored'))
+);
+
+CREATE TABLE trading_halts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    halt_type VARCHAR(50) NOT NULL CHECK (halt_type IN (
+        'circuit_breaker', 'news_pending', 'regulatory', 'technical', 'volatility'
+    )),
+    halt_reason TEXT NOT NULL,
+    halt_start TIMESTAMPTZ NOT NULL,
+    halt_end TIMESTAMPTZ,
+    price_at_halt DECIMAL(12,4),
+    volume_at_halt BIGINT,
+    source VARCHAR(100) DEFAULT 'CSE',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE price_movement_alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    alert_type VARCHAR(50) NOT NULL CHECK (alert_type IN (
+        'approaching_limit', 'circuit_breaker_warning', 'volatility_alert'
+    )),
+    current_price DECIMAL(12,4) NOT NULL,
+    price_change_percent DECIMAL(8,4),
+    threshold_percent DECIMAL(8,4),
+    alert_message TEXT,
+    is_triggered BOOLEAN DEFAULT FALSE,
+    triggered_at TIMESTAMPTZ,
+    acknowledged_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE compliance_dashboard_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    log_type VARCHAR(50) NOT NULL CHECK (log_type IN (
+        'rule_violation', 'trading_halt', 'price_alert', 'circuit_breaker', 'admin_action'
+    )),
+    ticker VARCHAR(10) REFERENCES companies(ticker),
+    user_id UUID REFERENCES users(id),
+    action_details JSONB,
+    severity VARCHAR(20) DEFAULT 'medium' CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+    timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Create indexes for trading rules and compliance
+CREATE INDEX idx_trading_rules_ticker ON trading_rules(ticker);
+CREATE INDEX idx_trading_rules_type ON trading_rules(rule_type);
+CREATE INDEX idx_trading_rules_active ON trading_rules(is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_trading_rule_violations_ticker ON trading_rule_violations(ticker);
+CREATE INDEX idx_trading_rule_violations_timestamp ON trading_rule_violations(violation_timestamp);
+CREATE INDEX idx_trading_halts_ticker ON trading_halts(ticker);
+CREATE INDEX idx_trading_halts_active ON trading_halts(is_active) WHERE is_active = TRUE;
+CREATE INDEX idx_price_movement_alerts_ticker ON price_movement_alerts(ticker);
+CREATE INDEX idx_price_movement_alerts_triggered ON price_movement_alerts(is_triggered) WHERE is_triggered = TRUE;
+CREATE INDEX idx_compliance_dashboard_logs_ticker ON compliance_dashboard_logs(ticker);
+CREATE INDEX idx_compliance_dashboard_logs_timestamp ON compliance_dashboard_logs(timestamp);
+
+-- Insert default CSE trading rules
+INSERT INTO trading_rules (ticker, rule_type, rule_name, rule_description, daily_price_limit_percent, effective_date, source) VALUES
+-- General market rules (apply to all stocks)
+(NULL, 'daily_price_limit', 'CSE Daily Price Limit', 'Standard daily price movement limit for all listed securities', 10.00, '2024-01-01', 'CSE'),
+(NULL, 'circuit_breaker', 'CSE Circuit Breaker', 'Automatic trading halt when price drops 15% or more', 15.00, '2024-01-01', 'CSE'),
+
+-- Specific rules for major stocks
+('ATW', 'daily_price_limit', 'ATW Price Limit', 'Daily price movement limit for Attijariwafa Bank', 10.00, '2024-01-01', 'CSE'),
+('IAM', 'daily_price_limit', 'IAM Price Limit', 'Daily price movement limit for Maroc Telecom', 10.00, '2024-01-01', 'CSE'),
+('BCP', 'daily_price_limit', 'BCP Price Limit', 'Daily price movement limit for Banque Centrale Populaire', 10.00, '2024-01-01', 'CSE'),
+('BMCE', 'daily_price_limit', 'BMCE Price Limit', 'Daily price movement limit for BMCE Bank', 10.00, '2024-01-01', 'CSE'),
+('ONA', 'daily_price_limit', 'ONA Price Limit', 'Daily price movement limit for Omnium Nord Africain', 10.00, '2024-01-01', 'CSE'),
+('CMT', 'daily_price_limit', 'CMT Price Limit', 'Daily price movement limit for Ciments du Maroc', 10.00, '2024-01-01', 'CSE'),
+('LAFA', 'daily_price_limit', 'LAFA Price Limit', 'Daily price movement limit for Lafarge Ciments', 10.00, '2024-01-01', 'CSE');
+
 -- Newsletter Management
 CREATE TABLE newsletter_subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

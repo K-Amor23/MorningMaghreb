@@ -6,7 +6,7 @@ import logging
 
 # Import routers
 from routers import markets, financials, macro, portfolio, newsletter, chat, auth, etl, economic_data, advanced_features
-from routers import premium_api, exports, reports, translations, webhooks, currency, moderation, paper_trading
+from routers import premium_api, exports, reports, translations, webhooks, currency, moderation, paper_trading, compliance
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -74,6 +74,7 @@ app.include_router(webhooks.router, prefix="/api/webhooks", tags=["webhook-integ
 app.include_router(currency.router, prefix="/api/currency", tags=["currency"])
 app.include_router(moderation.router, prefix="/api/moderation", tags=["moderation"])
 app.include_router(paper_trading.router, prefix="/api", tags=["paper-trading"])
+app.include_router(compliance.router, prefix="/api", tags=["compliance"])
 
 @app.get("/")
 async def root():
