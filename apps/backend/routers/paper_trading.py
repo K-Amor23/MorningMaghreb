@@ -9,9 +9,11 @@ from models.paper_trading import (
     PaperTradingAccount, PaperTradingAccountCreate, PaperTradingOrder,
     PaperTradingOrderCreate, PaperTradingTransaction, PaperTradingPosition,
     PaperTradingCashTransaction, PaperTradingCashTransactionCreate,
-    TradingAccountSummary, OrderHistory, TransactionHistory, TradingPerformance
+    TradingAccountSummary, OrderHistory, TransactionHistory, TradingPerformance,
+    TradingRuleValidation, TradingRuleValidationResult
 )
 from utils.auth import get_current_user
+from utils.trading_rules import trading_rules_service
 
 router = APIRouter(prefix="/paper-trading", tags=["Paper Trading"])
 
@@ -150,6 +152,46 @@ async def place_order(
                 status_code=400,
                 detail=f"No position found for {order_data.ticker}"
             )
+    
+    # Validate order against CSE trading rules
+    validation = TradingRuleValidation(
+        ticker=order_data.ticker,
+        order_type=order_data.order_type,
+        quantity=order_data.quantity,
+        price=order_data.price,
+        current_market_price=order_data.price,  # Mock current price
+        daily_price_change_percent=Decimal("5.0")  # Mock daily change
+    )
+    
+    validation_result = trading_rules_service.validate_order(validation)
+    
+    if not validation_result.is_valid:
+        # Log the violation
+        for rule in trading_rules_service.trading_rules.values():
+            if rule.ticker == order_data.ticker or rule.ticker is None:
+                trading_rules_service.log_violation({
+                    "rule_id": rule.id,
+                    "ticker": order_data.ticker,
+                    "violation_type": "price_limit_exceeded",
+                    "order_id": None,  # Will be set after order creation
+                    "user_id": current_user.id,
+                    "price_at_violation": order_data.price,
+                    "price_limit": None,
+                    "violation_details": {
+                        "blocked_reasons": validation_result.blocked_reasons,
+                        "warnings": validation_result.warnings
+                    }
+                })
+        
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "message": "Order blocked by CSE trading rules",
+                "blocked_reasons": validation_result.blocked_reasons,
+                "warnings": validation_result.warnings,
+                "violations": validation_result.violations
+            }
+        )
     
     # Create order
     order_id = str(uuid.uuid4())
