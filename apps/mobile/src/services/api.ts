@@ -1,33 +1,21 @@
-import { MarketData, MacroData, NewsItem } from '../store/useStore'
+import { BaseApiService } from '@casablanca-insight/shared'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000'
-
-class ApiService {
-  private baseUrl: string
-
+export class MobileApiService extends BaseApiService {
   constructor() {
-    this.baseUrl = API_BASE_URL
+    super(
+      process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000',
+      async () => {
+        const token = await AsyncStorage.getItem('auth_token')
+        return token 
+          ? { 'Authorization': `Bearer ${token}` }
+          : {} as Record<string, string>
+      }
+    )
   }
 
-  private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
-      ...options,
-    })
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`)
-    }
-
-    return response.json()
-  }
-
-  // Market Data
-  async getMarketData(): Promise<MarketData[]> {
+  // Override methods to provide mock data for development
+  async getMarketData(): Promise<any[]> {
     try {
       // For now, return mock data. Replace with actual API call
       return [
@@ -78,8 +66,7 @@ class ApiService {
     }
   }
 
-  // Macro Data
-  async getMacroData(): Promise<MacroData[]> {
+  async getMacroData(): Promise<any[]> {
     try {
       return [
         {
@@ -113,8 +100,7 @@ class ApiService {
     }
   }
 
-  // News
-  async getNews(): Promise<NewsItem[]> {
+  async getNews(): Promise<any[]> {
     try {
       return [
         {
@@ -155,20 +141,6 @@ class ApiService {
       return []
     }
   }
-
-  // Newsletter signup
-  async signupNewsletter(email: string): Promise<{ success: boolean; message: string }> {
-    try {
-      const response = await this.request('/api/newsletter/signup', {
-        method: 'POST',
-        body: JSON.stringify({ email }),
-      })
-      return { success: true, message: 'Successfully signed up for newsletter!' }
-    } catch (error) {
-      console.error('Error signing up for newsletter:', error)
-      return { success: false, message: 'Failed to sign up. Please try again.' }
-    }
-  }
 }
 
-export const apiService = new ApiService() 
+export const apiService = new MobileApiService() 

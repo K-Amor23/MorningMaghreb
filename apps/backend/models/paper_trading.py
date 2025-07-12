@@ -24,8 +24,8 @@ class PaperTradingOrder(BaseModel):
     id: UUID
     account_id: UUID
     ticker: str
-    order_type: str = Field(..., regex="^(buy|sell)$")
-    order_status: str = Field(default="pending", regex="^(pending|filled|cancelled|rejected)$")
+    order_type: str = Field(..., pattern="^(buy|sell)$")
+    order_status: str = Field(default="pending", pattern="^(pending|filled|cancelled|rejected)$")
     quantity: Decimal = Field(..., gt=0)
     price: Decimal = Field(..., gt=0)
     total_amount: Decimal
@@ -39,7 +39,7 @@ class PaperTradingOrder(BaseModel):
 
 class PaperTradingOrderCreate(BaseModel):
     ticker: str = Field(..., min_length=1, max_length=10)
-    order_type: str = Field(..., regex="^(buy|sell)$")
+    order_type: str = Field(..., pattern="^(buy|sell)$")
     quantity: Decimal = Field(..., gt=0)
     price: Decimal = Field(..., gt=0)
     notes: Optional[str] = None
@@ -49,7 +49,7 @@ class PaperTradingTransaction(BaseModel):
     account_id: UUID
     order_id: Optional[UUID] = None
     ticker: str
-    transaction_type: str = Field(..., regex="^(buy|sell)$")
+    transaction_type: str = Field(..., pattern="^(buy|sell)$")
     quantity: Decimal = Field(..., gt=0)
     price: Decimal = Field(..., gt=0)
     total_amount: Decimal
@@ -76,7 +76,7 @@ class PaperTradingPosition(BaseModel):
 class PaperTradingCashTransaction(BaseModel):
     id: UUID
     account_id: UUID
-    transaction_type: str = Field(..., regex="^(deposit|withdrawal|dividend|commission)$")
+    transaction_type: str = Field(..., pattern="^(deposit|withdrawal|dividend|commission)$")
     amount: Decimal
     description: Optional[str] = None
     balance_before: Decimal
@@ -84,7 +84,7 @@ class PaperTradingCashTransaction(BaseModel):
     created_at: datetime
 
 class PaperTradingCashTransactionCreate(BaseModel):
-    transaction_type: str = Field(..., regex="^(deposit|withdrawal)$")
+    transaction_type: str = Field(..., pattern="^(deposit|withdrawal)$")
     amount: Decimal = Field(..., gt=0)
     description: Optional[str] = None
 

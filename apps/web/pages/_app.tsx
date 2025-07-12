@@ -2,8 +2,11 @@ import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { SWRConfig } from 'swr'
 import { supabase } from '@/lib/supabase'
 import { ThemeProvider } from '@/lib/theme'
+import { swrConfig } from '@/lib/swr'
+import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 import '@/lib/i18n'
 import FeatureFlagsDebug from '@/components/FeatureFlagsDebug'
 
@@ -27,19 +30,22 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   return (
-    <ThemeProvider>
-      <Component {...pageProps} />
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-        }}
-      />
-      <FeatureFlagsDebug />
-    </ThemeProvider>
+    <SWRConfig value={swrConfig}>
+      <ThemeProvider>
+        <Component {...pageProps} />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
+        <KeyboardShortcuts />
+        <FeatureFlagsDebug />
+      </ThemeProvider>
+    </SWRConfig>
   )
 }

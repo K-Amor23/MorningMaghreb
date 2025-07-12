@@ -5,13 +5,13 @@ from decimal import Decimal
 from datetime import date, datetime, timedelta
 import logging
 
-from ..models.currency import (
+from models.currency import (
     BAMRate, RemittanceRate, RateAlert, RateAnalysis, 
     CurrencyComparison, RateAlertCreate, RateAlertResponse
 )
-from ..etl.currency_scraper import CurrencyScraper
-from ..lib.database import get_db
-from ..lib.auth import get_current_user
+from etl.currency_scraper import CurrencyScraper
+from database.database import get_db
+from utils.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 
