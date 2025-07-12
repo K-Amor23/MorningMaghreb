@@ -136,14 +136,24 @@ export default function Premium() {
         }),
       })
 
+      if (!response.ok) {
+        const errorData = await response.json()
+        if (errorData.error === 'Payment processing is not configured') {
+          // Show a message that payment is not configured
+          alert('Payment processing is not configured. Please contact support to set up payment processing.')
+          return
+        }
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
       const { url } = await response.json()
       if (url) {
         window.location.href = url
       }
     } catch (error) {
       console.error('Error creating checkout session:', error)
-      // Fallback to account billing page
-      router.push('/account/billing')
+      // Show user-friendly error message
+      alert('Unable to process payment at this time. Please try again later or contact support.')
     }
   }
 

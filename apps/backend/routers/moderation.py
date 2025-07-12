@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import logging
 
-from ..models.moderation import (
+from models.moderation import (
     ModerationRequest, ModerationResponse, ContentType, 
     CulturalGuideline, ModerationLog, SafeContentTemplate
 )
-from ..lib.ai_moderation import moderation_service
-from ..lib.database import get_db
-from ..lib.auth import get_current_user
+from lib.ai_moderation import moderation_service
+from database.database import get_db
+from utils.auth import get_current_user
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   View,
   Text,
@@ -7,7 +7,8 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native'
-import { apiService } from '../services/api'
+import { SentimentVoting as SharedSentimentVoting } from '@casablanca-insight/shared'
+import { webApiService } from '../services/webApi'
 
 interface SentimentVotingProps {
   ticker: string
@@ -15,195 +16,138 @@ interface SentimentVotingProps {
   onVoteChange?: (sentiment: string) => void
 }
 
-interface SentimentData {
-  ticker: string
-  bullish_count: number
-  neutral_count: number
-  bearish_count: number
-  total_votes: number
-  bullish_percentage: number
-  neutral_percentage: number
-  bearish_percentage: number
-  average_confidence: number
-  last_updated: string
-}
-
-const SentimentVoting: React.FC<SentimentVotingProps> = ({
-  ticker,
-  companyName,
-  onVoteChange,
-}) => {
-  const [sentimentData, setSentimentData] = useState<SentimentData | null>(null)
-  const [userVote, setUserVote] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-  const [voting, setVoting] = useState(false)
-
-  useEffect(() => {
-    loadSentimentData()
-    loadUserVote()
-  }, [ticker])
-
-  const loadSentimentData = async () => {
-    try {
-      setLoading(true)
-      const data = await apiService.getSentimentAggregate(ticker)
-      setSentimentData(data)
-    } catch (error) {
-      console.error('Error loading sentiment data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const loadUserVote = async () => {
-    try {
-      const votes = await apiService.getMySentimentVotes()
-      const userVoteForTicker = votes.find(vote => vote.ticker === ticker)
-      setUserVote(userVoteForTicker?.sentiment || null)
-    } catch (error) {
-      console.error('Error loading user vote:', error)
-    }
-  }
-
-  const handleVote = async (sentiment: string) => {
-    try {
-      setVoting(true)
-      await apiService.voteSentiment({
-        ticker,
-        sentiment,
-        confidence: 3, // Default confidence
-      })
-      
-      setUserVote(sentiment)
-      await loadSentimentData() // Refresh aggregate data
-      
-      if (onVoteChange) {
-        onVoteChange(sentiment)
+const SentimentVoting: React.FC<SentimentVotingProps> = (props) => {
+  const renderButton = ({
+    sentiment,
+    label,
+    icon,
+    isSelected,
+    isLoading,
+    onPress
+  }: {
+    sentiment: string
+    label: string
+    icon: React.ReactNode
+    isSelected: boolean
+    isLoading: boolean
+    onPress: () => void
+  }) => {
+    const getSentimentColor = (sentiment: string) => {
+      switch (sentiment) {
+        case 'bullish':
+          return '#10b981' // Green
+        case 'neutral':
+          return '#6b7280' // Gray
+        case 'bearish':
+          return '#ef4444' // Red
+        default:
+          return '#6b7280'
       }
+    }
+
+    const getSentimentEmoji = (sentiment: string) => {
+      switch (sentiment) {
+        case 'bullish':
+          return '📈'
+        case 'neutral':
+          return '➡️'
+        case 'bearish':
+          return '📉'
+        default:
+          return '❓'
+      }
+    }
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.voteButton,
+          isSelected && styles.selectedVoteButton,
+          { borderColor: getSentimentColor(sentiment) }
+        ]}
+        onPress={onPress}
+        disabled={isLoading}
+      >
+        <Text style={styles.voteEmoji}>{getSentimentEmoji(sentiment)}</Text>
+        <Text style={[
+          styles.voteText,
+          { color: getSentimentColor(sentiment) },
+          isSelected && styles.selectedVoteText
+        ]}>
+          {label}
+        </Text>
+        {isLoading && isSelected && (
+          <ActivityIndicator size="small" color={getSentimentColor(sentiment)} />
+        )}
+      </TouchableOpacity>
+    )
+  }
+
+  const renderResults = ({ sentimentData }: { sentimentData: any }) => (
+    <View style={styles.resultsContainer}>
+      <Text style={styles.resultsTitle}>Community Results</Text>
       
-      Alert.alert('Vote Recorded', `Your ${sentiment} vote for ${ticker} has been recorded!`)
-    } catch (error) {
-      console.error('Error voting:', error)
-      Alert.alert('Error', 'Failed to record your vote. Please try again.')
-    } finally {
-      setVoting(false)
-    }
-  }
+      <View style={styles.resultRow}>
+        <Text style={styles.resultLabel}>📈 Bullish</Text>
+        <Text style={styles.resultValue}>
+          {sentimentData.bullish_count} ({sentimentData.bullish_percentage.toFixed(1)}%)
+        </Text>
+      </View>
+      
+      <View style={styles.resultRow}>
+        <Text style={styles.resultLabel}>➡️ Neutral</Text>
+        <Text style={styles.resultValue}>
+          {sentimentData.neutral_count} ({sentimentData.neutral_percentage.toFixed(1)}%)
+        </Text>
+      </View>
+      
+      <View style={styles.resultRow}>
+        <Text style={styles.resultLabel}>📉 Bearish</Text>
+        <Text style={styles.resultValue}>
+          {sentimentData.bearish_count} ({sentimentData.bearish_percentage.toFixed(1)}%)
+        </Text>
+      </View>
+      
+      <View style={styles.resultRow}>
+        <Text style={styles.resultLabel}>Total Votes</Text>
+        <Text style={styles.resultValue}>{sentimentData.total_votes}</Text>
+      </View>
+      
+      <View style={styles.resultRow}>
+        <Text style={styles.resultLabel}>Avg Confidence</Text>
+        <Text style={styles.resultValue}>
+          {sentimentData.average_confidence.toFixed(1)}/5
+        </Text>
+      </View>
+    </View>
+  )
 
-  const getSentimentColor = (sentiment: string) => {
-    switch (sentiment) {
-      case 'bullish':
-        return '#10b981' // Green
-      case 'neutral':
-        return '#6b7280' // Gray
-      case 'bearish':
-        return '#ef4444' // Red
-      default:
-        return '#6b7280'
-    }
-  }
+  const renderLoading = () => (
+    <View style={styles.container}>
+      <ActivityIndicator size="small" color="#1e3a8a" />
+      <Text style={styles.loadingText}>Loading sentiment data...</Text>
+    </View>
+  )
 
-  const getSentimentEmoji = (sentiment: string) => {
-    switch (sentiment) {
-      case 'bullish':
-        return '📈'
-      case 'neutral':
-        return '➡️'
-      case 'bearish':
-        return '📉'
-      default:
-        return '❓'
-    }
-  }
-
-  if (loading) {
+  const renderError = (error: string) => {
+    Alert.alert('Error', error)
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="small" color="#1e3a8a" />
-        <Text style={styles.loadingText}>Loading sentiment data...</Text>
+        <Text style={styles.errorText}>{error}</Text>
       </View>
     )
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Community Sentiment</Text>
-      {companyName && <Text style={styles.subtitle}>{companyName} ({ticker})</Text>}
-      
-      {/* Voting Buttons */}
-      <View style={styles.votingButtons}>
-        {['bullish', 'neutral', 'bearish'].map((sentiment) => (
-          <TouchableOpacity
-            key={sentiment}
-            style={[
-              styles.voteButton,
-              userVote === sentiment && styles.selectedVoteButton,
-              { borderColor: getSentimentColor(sentiment) }
-            ]}
-            onPress={() => handleVote(sentiment)}
-            disabled={voting}
-          >
-            <Text style={styles.voteEmoji}>{getSentimentEmoji(sentiment)}</Text>
-            <Text style={[
-              styles.voteText,
-              { color: getSentimentColor(sentiment) },
-              userVote === sentiment && styles.selectedVoteText
-            ]}>
-              {sentiment.charAt(0).toUpperCase() + sentiment.slice(1)}
-            </Text>
-            {voting && userVote === sentiment && (
-              <ActivityIndicator size="small" color={getSentimentColor(sentiment)} />
-            )}
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* Sentiment Results */}
-      {sentimentData && sentimentData.total_votes > 0 && (
-        <View style={styles.resultsContainer}>
-          <Text style={styles.resultsTitle}>Community Results</Text>
-          
-          <View style={styles.resultRow}>
-            <Text style={styles.resultLabel}>📈 Bullish</Text>
-            <Text style={styles.resultValue}>
-              {sentimentData.bullish_count} ({sentimentData.bullish_percentage.toFixed(1)}%)
-            </Text>
-          </View>
-          
-          <View style={styles.resultRow}>
-            <Text style={styles.resultLabel}>➡️ Neutral</Text>
-            <Text style={styles.resultValue}>
-              {sentimentData.neutral_count} ({sentimentData.neutral_percentage.toFixed(1)}%)
-            </Text>
-          </View>
-          
-          <View style={styles.resultRow}>
-            <Text style={styles.resultLabel}>📉 Bearish</Text>
-            <Text style={styles.resultValue}>
-              {sentimentData.bearish_count} ({sentimentData.bearish_percentage.toFixed(1)}%)
-            </Text>
-          </View>
-          
-          <View style={styles.resultRow}>
-            <Text style={styles.resultLabel}>Total Votes</Text>
-            <Text style={styles.resultValue}>{sentimentData.total_votes}</Text>
-          </View>
-          
-          <View style={styles.resultRow}>
-            <Text style={styles.resultLabel}>Avg Confidence</Text>
-            <Text style={styles.resultValue}>
-              {sentimentData.average_confidence.toFixed(1)}/5
-            </Text>
-          </View>
-        </View>
-      )}
-
-      {sentimentData && sentimentData.total_votes === 0 && (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyText}>No votes yet</Text>
-          <Text style={styles.emptySubtext}>Be the first to vote!</Text>
-        </View>
-      )}
+      <SharedSentimentVoting
+        {...props}
+        apiService={webApiService}
+        renderButton={renderButton}
+        renderResults={renderResults}
+        renderLoading={renderLoading}
+        renderError={renderError}
+      />
     </View>
   )
 }
@@ -252,16 +196,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f3f4f6',
   },
   voteEmoji: {
-    fontSize: 16,
-    marginRight: 4,
+    fontSize: 20,
+    marginRight: 8,
   },
   voteText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    textTransform: 'uppercase',
   },
   selectedVoteText: {
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   resultsContainer: {
     borderTopWidth: 1,
@@ -278,11 +221,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 4,
+    marginBottom: 8,
   },
   resultLabel: {
     fontSize: 14,
-    color: '#4b5563',
+    color: '#6b7280',
   },
   resultValue: {
     fontSize: 14,
@@ -303,10 +246,14 @@ const styles = StyleSheet.create({
     color: '#9ca3af',
   },
   loadingText: {
+    marginTop: 8,
     fontSize: 14,
     color: '#6b7280',
-    marginTop: 8,
+  },
+  errorText: {
+    color: '#ef4444',
     textAlign: 'center',
+    fontSize: 14,
   },
 })
 

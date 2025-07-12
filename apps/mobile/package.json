@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@casablanca-insight/shared": "file:../../packages/shared",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
@@ -19,6 +20,12 @@
     "expo-linking": "^7.1.7",
     "expo-notifications": "^0.31.4",
     "expo-status-bar": "~2.2.3",
+    "expo-local-authentication": "^14.0.0",
+    "expo-secure-store": "^14.0.0",
+    "expo-network": "^7.0.0",
+    "expo-sqlite": "^13.3.0",
+    "expo-background-fetch": "^12.0.0",
+    "expo-task-manager": "^12.0.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
     "react-native": "0.79.5",

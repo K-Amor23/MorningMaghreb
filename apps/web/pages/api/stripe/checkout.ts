@@ -1,9 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+// Check if Stripe is configured
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY
+if (!stripeSecretKey) {
+  console.warn('STRIPE_SECRET_KEY is not configured. Stripe checkout will not work.')
+}
+
+const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
-})
+}) : null
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,6 +17,15 @@ export default async function handler(
 ) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
+  }
+
+  // Check if Stripe is configured
+  if (!stripe) {
+    console.error('Stripe is not configured. Please set STRIPE_SECRET_KEY environment variable.')
+    return res.status(500).json({ 
+      error: 'Payment processing is not configured',
+      message: 'Please contact support to set up payment processing.'
+    })
   }
 
   try {

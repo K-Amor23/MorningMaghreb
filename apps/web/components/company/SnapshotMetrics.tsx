@@ -1,3 +1,5 @@
+import { formatCurrency } from '@/lib/utils'
+
 interface SnapshotMetricsProps {
   company: {
     marketCap: number
@@ -10,30 +12,24 @@ interface SnapshotMetricsProps {
 }
 
 export default function SnapshotMetrics({ company }: SnapshotMetricsProps) {
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000000) {
-      return `${(value / 1000000000).toFixed(1)}B MAD`
-    } else if (value >= 1000000) {
-      return `${(value / 1000000).toFixed(1)}M MAD`
-    } else {
-      return `${value.toLocaleString()} MAD`
-    }
+  const formatCurrencyMAD = (value: number) => {
+    return formatCurrency(value, 'MAD')
   }
 
   const metrics = [
     {
       label: 'Market Cap',
-      value: formatCurrency(company.marketCap),
+      value: formatCurrencyMAD(company.marketCap),
       description: 'Total market value'
     },
     {
       label: 'Revenue (TTM)',
-      value: formatCurrency(company.revenue),
+      value: formatCurrencyMAD(company.revenue),
       description: 'Trailing 12 months'
     },
     {
       label: 'Net Income',
-      value: formatCurrency(company.netIncome),
+      value: formatCurrencyMAD(company.netIncome),
       description: 'Annual profit'
     },
     {
