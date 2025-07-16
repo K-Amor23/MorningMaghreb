@@ -1,0 +1,133 @@
+{
+  "audit_summary": {
+    "start_time": "2025-07-16T23:36:49.220931",
+    "end_time": "2025-07-16T23:36:49.317571",
+    "duration_seconds": 0.09664,
+    "total_tests": 11,
+    "passed": 0,
+    "failed": 10,
+    "warnings": 1,
+    "success_rate": 0.0
+  },
+  "test_results": [
+    {
+      "test_name": "Server Health Check",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.268064",
+      "details": {
+        "error": "All connection attempts failed",
+        "suggestion": "Make sure server is running with: uvicorn main:app --reload"
+      }
+    },
+    {
+      "test_name": "Environment Variables Check",
+      "status": "WARN",
+      "timestamp": "2025-07-16 23:36:49.268537",
+      "details": {
+        "test_variables": [
+          "BC_TENANT_ID",
+          "BC_COMPANY_ID",
+          "BC_CLIENT_ID",
+          "BC_CLIENT_SECRET",
+          "ZOHO_CLIENT_ID",
+          "ZOHO_CLIENT_SECRET",
+          "ZOHO_REFRESH_TOKEN"
+        ],
+        "suggestion": "Replace test values with actual credentials"
+      }
+    },
+    {
+      "test_name": "Inventory Health Check",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.276282",
+      "details": {
+        "endpoint": "/api/inventory/health",
+        "error": "All connection attempts failed"
+      }
+    },
+    {
+      "test_name": "Business Central Connection Test",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.277302",
+      "details": {
+        "endpoint": "/api/inventory/test-bc-connection",
+        "error": "All connection attempts failed"
+      }
+    },
+    {
+      "test_name": "Zoho Connection Test",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.278380",
+      "details": {
+        "endpoint": "/api/inventory/test-zoho-connection",
+        "error": "All connection attempts failed"
+      }
+    },
+    {
+      "test_name": "Sync History",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.279457",
+      "details": {
+        "endpoint": "/api/inventory/history",
+        "error": "All connection attempts failed"
+      }
+    },
+    {
+      "test_name": "Sync Logs",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.280559",
+      "details": {
+        "endpoint": "/api/inventory/logs",
+        "error": "All connection attempts failed"
+      }
+    },
+    {
+      "test_name": "Business Central OAuth Token",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.289199",
+      "details": {
+        "error": "All connection attempts failed",
+        "suggestion": "Check network connectivity and BC configuration"
+      }
+    },
+    {
+      "test_name": "Zoho OAuth Token",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.297259",
+      "details": {
+        "error": "All connection attempts failed",
+        "suggestion": "Check network connectivity and Zoho configuration"
+      }
+    },
+    {
+      "test_name": "Full Inventory Sync",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.305671",
+      "details": {
+        "error": "All connection attempts failed",
+        "suggestion": "Check both BC and Zoho configurations"
+      }
+    },
+    {
+      "test_name": "Server Logs Check",
+      "status": "FAIL",
+      "timestamp": "2025-07-16 23:36:49.316174",
+      "details": {
+        "error": "All connection attempts failed"
+      }
+    }
+  ],
+  "recommendations": [
+    "Start the server with: cd apps/backend && uvicorn main:app --reload",
+    "Configure Business Central OAuth credentials in environment variables",
+    "Verify Azure AD app registration and permissions",
+    "Check if application user is created in Business Central",
+    "Configure Zoho OAuth credentials in environment variables",
+    "Verify Zoho app registration and refresh token",
+    "Set all required environment variables with actual values",
+    "Replace test values with production credentials",
+    "Ensure both Business Central and Zoho connections are working",
+    "Check API permissions and user roles",
+    "Review the troubleshooting guide for 403 errors"
+  ]
+}
