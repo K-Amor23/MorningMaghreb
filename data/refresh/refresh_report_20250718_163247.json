@@ -1,0 +1,295 @@
+{
+  "pipeline": "Supabase Data Refresh Pipeline",
+  "started_at": "2025-07-18T16:32:36.062308",
+  "market_data": {
+    "count": 78,
+    "data": [
+      {
+        "ticker": "AFM",
+        "name": "AFMA",
+        "sector": "Financials",
+        "price": 1105.0,
+        "change_1d_percent": -0.9,
+        "change_ytd_percent": 0.36,
+        "market_cap_billion": 1.1,
+        "source": "African Markets",
+        "url": "https://www.african-markets.com/en/stock-markets/bvc/listed-companies",
+        "company_url": "https://www.african-markets.com/listed-companies/company?code=AFM",
+        "exchange": "Casablanca Stock Exchange (BVC)",
+        "country": "Morocco",
+        "scraped_at": "2025-07-18T16:32:36.966550",
+        "data_source": "African Markets BVC",
+        "last_updated": "2025-07-18T16:32:36.973149",
+        "size_category": "Small Cap",
+        "sector_group": "Financial Services"
+      },
+      {
+        "ticker": "AFI",
+        "name": "Afric Industries",
+        "sector": "Industrials",
+        "price": 329.0,
+        "change_1d_percent": -0.26,
+        "change_ytd_percent": 8.24,
+        "market_cap_billion": 0.09,
+        "source": "African Markets",
+        "url": "https://www.african-markets.com/en/stock-markets/bvc/listed-companies",
+        "company_url": "https://www.african-markets.com/listed-companies/company?code=AFI",
+        "exchange": "Casablanca Stock Exchange (BVC)",
+        "country": "Morocco",
+        "scraped_at": "2025-07-18T16:32:36.966681",
+        "data_source": "African Markets BVC",
+        "last_updated": "2025-07-18T16:32:36.973153",
+        "size_category": "Micro Cap",
+        "sector_group": "Industrials"
+      },
+      {
+        "ticker": "GAZ",
+        "name": "Afriquia Gaz",
+        "sector": "Oil & Gas",
+        "price": 4400.0,
+        "change_1d_percent": 1.15,
+        "change_ytd_percent": 17.02,
+        "market_cap_billion": 15.12,
+        "source": "African Markets",
+        "url": "https://www.african-markets.com/en/stock-markets/bvc/listed-companies",
+        "company_url": "https://www.african-markets.com/listed-companies/company?code=GAZ",
+        "exchange": "Casablanca Stock Exchange (BVC)",
+        "country": "Morocco",
+        "scraped_at": "2025-07-18T16:32:36.966815",
+        "data_source": "African Markets BVC",
+        "last_updated": "2025-07-18T16:32:36.973156",
+        "size_category": "Mid Cap",
+        "sector_group": "Energy"
+      },
+      {
+        "ticker": "AGM",
+        "name": "AGMA",
+        "sector": "Financials",
+        "price": 6600.0,
+        "change_1d_percent": null,
+        "change_ytd_percent": -4.0,
+        "market_cap_billion": 1.32,
+        "source": "African Markets",
+        "url": "https://www.african-markets.com/en/stock-markets/bvc/listed-companies",
+        "company_url": "https://www.african-markets.com/listed-companies/company?code=AGM",
+        "exchange": "Casablanca Stock Exchange (BVC)",
+        "country": "Morocco",
+        "scraped_at": "2025-07-18T16:32:36.966894",
+        "data_source": "African Markets BVC",
+        "last_updated": "2025-07-18T16:32:36.973158",
+        "size_category": "Small Cap",
+        "sector_group": "Financial Services"
+      },
+      {
+        "ticker": "ADI",
+        "name": "Alliances",
+        "sector": "Financials",
+        "price": 480.0,
+        "change_1d_percent": -2.04,
+        "change_ytd_percent": null,
+        "market_cap_billion": 10.59,
+        "source": "African Markets",
+        "url": "https://www.african-markets.com/en/stock-markets/bvc/listed-companies",
+        "company_url": "https://www.african-markets.com/listed-companies/company?code=ADI.MA",
+        "exchange": "Casablanca Stock Exchange (BVC)",
+        "country": "Morocco",
+        "scraped_at": "2025-07-18T16:32:36.966967",
+        "data_source": "African Markets BVC",
+        "last_updated": "2025-07-18T16:32:36.973160",
+        "size_category": "Mid Cap",
+        "sector_group": "Financial Services"
+      }
+    ]
+  },
+  "central_bank_data": {
+    "sources": [
+      "exchange_rates",
+      "interest_rates",
+      "monetary_statistics",
+      "banking_data",
+      "market_operations"
+    ],
+    "total_records": 106,
+    "data": {
+      "exchange_rates": [
+        {
+          "currency": "1 EURO",
+          "scraped_at": "2025-07-18T16:32:37.403661",
+          "source": "Bank Al-Maghrib",
+          "rate_18/07/2025": 10.5303,
+          "rate_17/07/2025": 10.5047,
+          "endpoint": "reference_rates"
+        },
+        {
+          "currency": "1 DOLLAR U.S.A.",
+          "scraped_at": "2025-07-18T16:32:37.403707",
+          "source": "Bank Al-Maghrib",
+          "rate_18/07/2025": 9.0445,
+          "rate_17/07/2025": 9.0675,
+          "endpoint": "reference_rates"
+        },
+        {
+          "currency": "1 DOLLAR CANADIEN",
+          "scraped_at": "2025-07-18T16:32:37.403745",
+          "source": "Bank Al-Maghrib",
+          "rate_18/07/2025": 6.5913,
+          "rate_17/07/2025": 6.5885,
+          "endpoint": "reference_rates"
+        }
+      ],
+      "interest_rates": [
+        {
+          "maturity": "3 months",
+          "scraped_at": "2025-07-18T16:32:39.000257",
+          "source": "Bank Al-Maghrib",
+          "bid_rate": 1.59,
+          "ask_rate": 1.69,
+          "endpoint": "interbank_rates"
+        },
+        {
+          "maturity": "1 month",
+          "scraped_at": "2025-07-18T16:32:39.000309",
+          "source": "Bank Al-Maghrib",
+          "bid_rate": 1.56,
+          "ask_rate": 1.66,
+          "endpoint": "interbank_rates"
+        },
+        {
+          "maturity": "2 weeks",
+          "scraped_at": "2025-07-18T16:32:39.000351",
+          "source": "Bank Al-Maghrib",
+          "bid_rate": 1.54,
+          "ask_rate": 1.64,
+          "endpoint": "interbank_rates"
+        }
+      ],
+      "monetary_statistics": [
+        {
+          "indicator": "15/11/24",
+          "value_text": "17/11/23",
+          "scraped_at": "2025-07-18T16:32:43.643490",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 17.0,
+          "endpoint": "reserves"
+        },
+        {
+          "indicator": "Official reserve assets (ORA)",
+          "value_text": "362,3",
+          "scraped_at": "2025-07-18T16:32:43.644017",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 3623.0,
+          "endpoint": "reserves"
+        }
+      ],
+      "banking_data": [
+        {
+          "indicator": "Banks",
+          "value_text": "19",
+          "scraped_at": "2025-07-18T16:32:44.613912",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 19.0,
+          "endpoint": "banking_structure",
+          "category": "banking"
+        },
+        {
+          "indicator": "Finance companies",
+          "value_text": "34",
+          "scraped_at": "2025-07-18T16:32:44.614169",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 34.0,
+          "endpoint": "banking_structure",
+          "category": "banking"
+        },
+        {
+          "indicator": "Offshore banks",
+          "value_text": "6",
+          "scraped_at": "2025-07-18T16:32:44.614556",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 6.0,
+          "endpoint": "banking_structure",
+          "category": "banking"
+        }
+      ],
+      "market_operations": [
+        {
+          "indicator": "18/07/2025",
+          "value_text": "49,490.00",
+          "scraped_at": "2025-07-18T16:32:45.009738",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 49490.0,
+          "category": "market_operations"
+        },
+        {
+          "indicator": "17/07/2025",
+          "value_text": "49,490.00",
+          "scraped_at": "2025-07-18T16:32:45.009828",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 49490.0,
+          "category": "market_operations"
+        },
+        {
+          "indicator": "16/07/2025",
+          "value_text": "48,550.00",
+          "scraped_at": "2025-07-18T16:32:45.009903",
+          "source": "Bank Al-Maghrib",
+          "numeric_value": 48550.0,
+          "category": "market_operations"
+        }
+      ]
+    }
+  },
+  "cse_companies": {
+    "count": 20,
+    "data": [
+      {
+        "name": "Attijariwafa Bank",
+        "ticker": "ATW",
+        "isin": "MA0000011885",
+        "sector": "Banking",
+        "listing_date": "2004-01-01",
+        "source_url": "https://www.casablanca-bourse.com",
+        "scraped_at": "2025-07-18T16:32:47.324509"
+      },
+      {
+        "name": "Maroc Telecom",
+        "ticker": "IAM",
+        "isin": "MA0000011886",
+        "sector": "Telecommunications",
+        "listing_date": "2001-12-01",
+        "source_url": "https://www.casablanca-bourse.com",
+        "scraped_at": "2025-07-18T16:32:47.324596"
+      },
+      {
+        "name": "Banque Centrale Populaire",
+        "ticker": "BCP",
+        "isin": "MA0000011887",
+        "sector": "Banking",
+        "listing_date": "2004-01-01",
+        "source_url": "https://www.casablanca-bourse.com",
+        "scraped_at": "2025-07-18T16:32:47.324621"
+      },
+      {
+        "name": "BMCE Bank",
+        "ticker": "BMCE",
+        "isin": "MA0000011888",
+        "sector": "Banking",
+        "listing_date": "1995-01-01",
+        "source_url": "https://www.casablanca-bourse.com",
+        "scraped_at": "2025-07-18T16:32:47.324640"
+      },
+      {
+        "name": "Alliance Marocaine de l'Assurance",
+        "ticker": "AMA",
+        "isin": "MA0000011889",
+        "sector": "Insurance",
+        "listing_date": "2004-01-01",
+        "source_url": "https://www.casablanca-bourse.com",
+        "scraped_at": "2025-07-18T16:32:47.324658"
+      }
+    ]
+  },
+  "errors": [],
+  "completed_at": "2025-07-18T16:32:47.565163",
+  "duration_seconds": 11.502855,
+  "status": "completed"
+}
