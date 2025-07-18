@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Attijariwafa Bank",
+    "ticker": "ATW",
+    "isin": "MA0000011885",
+    "sector": "Banking",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480033"
+  },
+  {
+    "name": "Maroc Telecom",
+    "ticker": "IAM",
+    "isin": "MA0000011886",
+    "sector": "Telecommunications",
+    "listing_date": "2001-12-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480070"
+  },
+  {
+    "name": "Banque Centrale Populaire",
+    "ticker": "BCP",
+    "isin": "MA0000011887",
+    "sector": "Banking",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480089"
+  },
+  {
+    "name": "BMCE Bank",
+    "ticker": "BMCE",
+    "isin": "MA0000011888",
+    "sector": "Banking",
+    "listing_date": "1995-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480100"
+  },
+  {
+    "name": "Alliance Marocaine de l'Assurance",
+    "ticker": "AMA",
+    "isin": "MA0000011889",
+    "sector": "Insurance",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480109"
+  },
+  {
+    "name": "Risma",
+    "ticker": "RISM",
+    "isin": "MA0000011890",
+    "sector": "Real Estate",
+    "listing_date": "2006-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480118"
+  },
+  {
+    "name": "Label'Vie",
+    "ticker": "LBV",
+    "isin": "MA0000011891",
+    "sector": "Distribution",
+    "listing_date": "2008-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480127"
+  },
+  {
+    "name": "CIH Bank",
+    "ticker": "CIH",
+    "isin": "MA0000011892",
+    "sector": "Banking",
+    "listing_date": "2018-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480136"
+  },
+  {
+    "name": "Taqa Morocco",
+    "ticker": "TMA",
+    "isin": "MA0000011893",
+    "sector": "Energy",
+    "listing_date": "2017-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480144"
+  },
+  {
+    "name": "Wafa Assurance",
+    "ticker": "WAA",
+    "isin": "MA0000011894",
+    "sector": "Insurance",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480153"
+  },
+  {
+    "name": "Addoha",
+    "ticker": "ADH",
+    "isin": "MA0000011895",
+    "sector": "Real Estate",
+    "listing_date": "2008-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480161"
+  },
+  {
+    "name": "Jet Contractors",
+    "ticker": "JET",
+    "isin": "MA0000011896",
+    "sector": "Construction",
+    "listing_date": "2007-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480169"
+  },
+  {
+    "name": "Saham Assurance",
+    "ticker": "SAH",
+    "isin": "MA0000011897",
+    "sector": "Insurance",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480178"
+  },
+  {
+    "name": "SNEP",
+    "ticker": "SNP",
+    "isin": "MA0000011898",
+    "sector": "Industry",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480186"
+  },
+  {
+    "name": "SOMACA",
+    "ticker": "SOM",
+    "isin": "MA0000011899",
+    "sector": "Industry",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480194"
+  },
+  {
+    "name": "Delattre Levivier Maroc",
+    "ticker": "DLM",
+    "isin": "MA0000011900",
+    "sector": "Industry",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480202"
+  },
+  {
+    "name": "Lesieur Cristal",
+    "ticker": "LES",
+    "isin": "MA0000011901",
+    "sector": "Food & Beverage",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480210"
+  },
+  {
+    "name": "SOTHEMA",
+    "ticker": "SOT",
+    "isin": "MA0000011902",
+    "sector": "Pharmaceuticals",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480219"
+  },
+  {
+    "name": "CTM",
+    "ticker": "CTM",
+    "isin": "MA0000011903",
+    "sector": "Transport",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480227"
+  },
+  {
+    "name": "MAGHREBAIL",
+    "ticker": "MAG",
+    "isin": "MA0000011904",
+    "sector": "Services",
+    "listing_date": "2004-01-01",
+    "source_url": "https://www.casablanca-bourse.com",
+    "scraped_at": "2025-07-18T16:24:37.480235"
+  }
+]

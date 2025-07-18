@@ -1,0 +1,21 @@
+name,ticker,isin,sector,listing_date,source_url,scraped_at
+Attijariwafa Bank,ATW,MA0000011885,Banking,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480033
+Maroc Telecom,IAM,MA0000011886,Telecommunications,2001-12-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480070
+Banque Centrale Populaire,BCP,MA0000011887,Banking,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480089
+BMCE Bank,BMCE,MA0000011888,Banking,1995-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480100
+Alliance Marocaine de l'Assurance,AMA,MA0000011889,Insurance,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480109
+Risma,RISM,MA0000011890,Real Estate,2006-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480118
+Label'Vie,LBV,MA0000011891,Distribution,2008-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480127
+CIH Bank,CIH,MA0000011892,Banking,2018-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480136
+Taqa Morocco,TMA,MA0000011893,Energy,2017-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480144
+Wafa Assurance,WAA,MA0000011894,Insurance,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480153
+Addoha,ADH,MA0000011895,Real Estate,2008-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480161
+Jet Contractors,JET,MA0000011896,Construction,2007-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480169
+Saham Assurance,SAH,MA0000011897,Insurance,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480178
+SNEP,SNP,MA0000011898,Industry,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480186
+SOMACA,SOM,MA0000011899,Industry,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480194
+Delattre Levivier Maroc,DLM,MA0000011900,Industry,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480202
+Lesieur Cristal,LES,MA0000011901,Food & Beverage,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480210
+SOTHEMA,SOT,MA0000011902,Pharmaceuticals,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480219
+CTM,CTM,MA0000011903,Transport,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480227
+MAGHREBAIL,MAG,MA0000011904,Services,2004-01-01,https://www.casablanca-bourse.com,2025-07-18T16:24:37.480235
