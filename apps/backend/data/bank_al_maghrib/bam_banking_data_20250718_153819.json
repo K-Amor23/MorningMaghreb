@@ -1,0 +1,128 @@
+[
+  {
+    "indicator": "Banks",
+    "value_text": "19",
+    "scraped_at": "2025-07-18T15:38:19.515825",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 19.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Finance companies",
+    "value_text": "34",
+    "scraped_at": "2025-07-18T15:38:19.515981",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 34.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Offshore banks",
+    "value_text": "6",
+    "scraped_at": "2025-07-18T15:38:19.516716",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 6.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Microcredit associations",
+    "value_text": "13",
+    "scraped_at": "2025-07-18T15:38:19.516764",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 13.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Funds transfer companies",
+    "value_text": "10",
+    "scraped_at": "2025-07-18T15:38:19.516802",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 10.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Other institutions",
+    "value_text": "2",
+    "scraped_at": "2025-07-18T15:38:19.516843",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 2.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Total",
+    "value_text": "84",
+    "scraped_at": "2025-07-18T15:38:19.516886",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 84.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Banks",
+    "value_text": "19",
+    "scraped_at": "2025-07-18T15:38:19.517029",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 19.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Finance companies",
+    "value_text": "34",
+    "scraped_at": "2025-07-18T15:38:19.517147",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 34.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Offshore banks",
+    "value_text": "6",
+    "scraped_at": "2025-07-18T15:38:19.517362",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 6.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Microcredit associations",
+    "value_text": "13",
+    "scraped_at": "2025-07-18T15:38:19.517400",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 13.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Funds transfer companies",
+    "value_text": "10",
+    "scraped_at": "2025-07-18T15:38:19.517439",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 10.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Other institutions",
+    "value_text": "2",
+    "scraped_at": "2025-07-18T15:38:19.517477",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 2.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  },
+  {
+    "indicator": "Total",
+    "value_text": "84",
+    "scraped_at": "2025-07-18T15:38:19.517514",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 84.0,
+    "endpoint": "banking_structure",
+    "category": "banking"
+  }
+]

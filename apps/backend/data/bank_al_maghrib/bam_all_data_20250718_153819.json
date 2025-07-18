@@ -1,0 +1,863 @@
+{
+  "metadata": {
+    "source": "Bank Al-Maghrib",
+    "scraped_at": "2025-07-18T15:38:19.985266",
+    "total_records": 106,
+    "categories": [
+      "exchange_rates",
+      "interest_rates",
+      "monetary_statistics",
+      "banking_data",
+      "market_operations"
+    ]
+  },
+  "data": {
+    "exchange_rates": [
+      {
+        "currency": "1 EURO",
+        "scraped_at": "2025-07-18T15:38:08.801066",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 10.5303,
+        "rate_17/07/2025": 10.5047,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DOLLAR U.S.A.",
+        "scraped_at": "2025-07-18T15:38:08.801105",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 9.0445,
+        "rate_17/07/2025": 9.0675,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DOLLAR CANADIEN",
+        "scraped_at": "2025-07-18T15:38:08.801137",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 6.5913,
+        "rate_17/07/2025": 6.5885,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 LIVRE STERLING",
+        "scraped_at": "2025-07-18T15:38:08.801166",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 12.159,
+        "rate_17/07/2025": 12.15,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 LIVRE GIBRALTAR",
+        "scraped_at": "2025-07-18T15:38:08.801195",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 12.159,
+        "rate_17/07/2025": 12.15,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 FRANC SUISSE",
+        "scraped_at": "2025-07-18T15:38:08.801223",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 11.283,
+        "rate_17/07/2025": 11.271,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 COURONNES DANOISES",
+        "scraped_at": "2025-07-18T15:38:08.801252",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 141.09,
+        "rate_17/07/2025": 140.76,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 COURONNES SUEDOISES",
+        "scraped_at": "2025-07-18T15:38:08.801280",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 93.556,
+        "rate_17/07/2025": 92.871,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 COURONNES NORVEGIENNES",
+        "scraped_at": "2025-07-18T15:38:08.801307",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 88.634,
+        "rate_17/07/2025": 87.787,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 RIYAL SAOUDIEN",
+        "scraped_at": "2025-07-18T15:38:08.801333",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 2.4113,
+        "rate_17/07/2025": 2.4174,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DINAR KOWEITIEN",
+        "scraped_at": "2025-07-18T15:38:08.801360",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 29.59,
+        "rate_17/07/2025": 29.661,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DIRHAM E.A.U.",
+        "scraped_at": "2025-07-18T15:38:08.801387",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 2.4624,
+        "rate_17/07/2025": 2.4687,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 RIYAL QATARI",
+        "scraped_at": "2025-07-18T15:38:08.801416",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 2.4813,
+        "rate_17/07/2025": 2.4875,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DINAR BAHREINI",
+        "scraped_at": "2025-07-18T15:38:08.801443",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 23.989,
+        "rate_17/07/2025": 24.05,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 YENS JAPONAIS",
+        "scraped_at": "2025-07-18T15:38:08.801468",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 6.088,
+        "rate_17/07/2025": 6.0989,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "10 DINARS ALGERIENS",
+        "scraped_at": "2025-07-18T15:38:08.801494",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.6969,
+        "rate_17/07/2025": 0.6973,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DINAR TUNISIEN",
+        "scraped_at": "2025-07-18T15:38:08.801519",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 3.1241,
+        "rate_17/07/2025": 3.1264,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DINAR LIBYEN",
+        "scraped_at": "2025-07-18T15:38:08.801544",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 1.8851,
+        "rate_17/07/2025": 1.8884,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 OUGUIYAS MAURITANIENNES",
+        "scraped_at": "2025-07-18T15:38:08.801569",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 22.857,
+        "rate_17/07/2025": 22.915,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 RIYAL OMANI",
+        "scraped_at": "2025-07-18T15:38:08.801596",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 23.491,
+        "rate_17/07/2025": 23.551,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 REAL BRÉSILIEN",
+        "scraped_at": "2025-07-18T15:38:08.801620",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 1.6316,
+        "rate_17/07/2025": 1.6272,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 ROUBLE RUSSE",
+        "scraped_at": "2025-07-18T15:38:08.801645",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.1155,
+        "rate_17/07/2025": 0.1159,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 ROUPIE INDIENNE",
+        "scraped_at": "2025-07-18T15:38:08.801671",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.105,
+        "rate_17/07/2025": 0.1053,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 YUAN CHINOIS",
+        "scraped_at": "2025-07-18T15:38:08.801696",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 1.2602,
+        "rate_17/07/2025": 1.2627,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DOLLAR AUSTRALIEN",
+        "scraped_at": "2025-07-18T15:38:08.801722",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 5.898,
+        "rate_17/07/2025": 5.8614,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 RAND SUD-AFRICAIN",
+        "scraped_at": "2025-07-18T15:38:08.801748",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.5111,
+        "rate_17/07/2025": 0.5065,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 LIVRE TURQUE",
+        "scraped_at": "2025-07-18T15:38:08.801774",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.224,
+        "rate_17/07/2025": 0.2251,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 LIVRE EGYPTIENNE",
+        "scraped_at": "2025-07-18T15:38:08.801798",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 0.183,
+        "rate_17/07/2025": 0.1834,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 DINAR JORDANIEN",
+        "scraped_at": "2025-07-18T15:38:08.801822",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 12.766,
+        "rate_17/07/2025": 12.797,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "100 FRANC CFA",
+        "scraped_at": "2025-07-18T15:38:08.801847",
+        "source": "Bank Al-Maghrib",
+        "rate_18/07/2025": 1.6053,
+        "rate_17/07/2025": 1.6014,
+        "endpoint": "reference_rates"
+      },
+      {
+        "currency": "1 QATARI RIYAL",
+        "scraped_at": "2025-07-18T15:38:12.688501",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 2.5455,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 BAHREINI DINAR",
+        "scraped_at": "2025-07-18T15:38:12.688557",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 24.584,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 OMANI RIAL",
+        "scraped_at": "2025-07-18T15:38:12.688581",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 24.073,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 BRAZIL REAL",
+        "scraped_at": "2025-07-18T15:38:12.688605",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 2.8708,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 RUSSIAN RUBLE",
+        "scraped_at": "2025-07-18T15:38:12.688626",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 0.1634,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 INDIAN RUPEE",
+        "scraped_at": "2025-07-18T15:38:12.688647",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 0.1456,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 CHINESE YUAN",
+        "scraped_at": "2025-07-18T15:38:12.688668",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 1.4339,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 AUSTRALIAN DOLLAR",
+        "scraped_at": "2025-07-18T15:38:12.688687",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 3.6387,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 SOUTH AFRICAN RAND",
+        "scraped_at": "2025-07-18T15:38:12.688707",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 0.7445,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 TURKISH LIRA",
+        "scraped_at": "2025-07-18T15:38:12.688729",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 2.4593,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 EGYPTIAN POUND",
+        "scraped_at": "2025-07-18T15:38:12.688750",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 0.5233,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "1 JORDANIAN DINAR",
+        "scraped_at": "2025-07-18T15:38:12.688770",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 13.054,
+        "endpoint": "indicative_rates"
+      },
+      {
+        "currency": "100 CFA FRANC",
+        "scraped_at": "2025-07-18T15:38:12.688790",
+        "source": "Bank Al-Maghrib",
+        "rate_12/01/2018": 1.6185,
+        "endpoint": "indicative_rates"
+      }
+    ],
+    "interest_rates": [
+      {
+        "maturity": "3 months",
+        "scraped_at": "2025-07-18T15:38:13.060365",
+        "source": "Bank Al-Maghrib",
+        "bid_rate": 1.59,
+        "ask_rate": 1.69,
+        "endpoint": "interbank_rates"
+      },
+      {
+        "maturity": "1 month",
+        "scraped_at": "2025-07-18T15:38:13.060414",
+        "source": "Bank Al-Maghrib",
+        "bid_rate": 1.56,
+        "ask_rate": 1.66,
+        "endpoint": "interbank_rates"
+      },
+      {
+        "maturity": "2 weeks",
+        "scraped_at": "2025-07-18T15:38:13.060442",
+        "source": "Bank Al-Maghrib",
+        "bid_rate": 1.54,
+        "ask_rate": 1.64,
+        "endpoint": "interbank_rates"
+      },
+      {
+        "maturity": "1 week",
+        "scraped_at": "2025-07-18T15:38:13.060466",
+        "source": "Bank Al-Maghrib",
+        "bid_rate": 1.52,
+        "ask_rate": 1.62,
+        "endpoint": "interbank_rates"
+      },
+      {
+        "maturity": "Day to day",
+        "scraped_at": "2025-07-18T15:38:13.060490",
+        "source": "Bank Al-Maghrib",
+        "bid_rate": 1.5,
+        "ask_rate": 1.6,
+        "endpoint": "interbank_rates"
+      },
+      {
+        "maturity": "September-2016",
+        "scraped_at": "2025-07-18T15:38:14.001213",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.08,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "September-2016",
+        "scraped_at": "2025-07-18T15:38:14.001503",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.33,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "September-2016",
+        "scraped_at": "2025-07-18T15:38:14.001563",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.32,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "August-2016",
+        "scraped_at": "2025-07-18T15:38:14.001598",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.09,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "August-2016",
+        "scraped_at": "2025-07-18T15:38:14.001629",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.32,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "August-2016",
+        "scraped_at": "2025-07-18T15:38:14.001658",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.28,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "July-2016",
+        "scraped_at": "2025-07-18T15:38:14.001685",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.2,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "July-2016",
+        "scraped_at": "2025-07-18T15:38:14.001713",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.33,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "July-2016",
+        "scraped_at": "2025-07-18T15:38:14.001740",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.28,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "June-2016",
+        "scraped_at": "2025-07-18T15:38:14.001767",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.26,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "June-2016",
+        "scraped_at": "2025-07-18T15:38:14.001794",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.24,
+        "endpoint": "lending_rates"
+      },
+      {
+        "maturity": "June-2016",
+        "scraped_at": "2025-07-18T15:38:14.001820",
+        "source": "Bank Al-Maghrib",
+        "rate_Variation of the reference rates": -0.28,
+        "endpoint": "lending_rates"
+      }
+    ],
+    "monetary_statistics": [
+      {
+        "indicator": "15/11/24",
+        "value_text": "17/11/23",
+        "scraped_at": "2025-07-18T15:38:18.103750",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 17.0,
+        "endpoint": "reserves"
+      },
+      {
+        "indicator": "Official reserve assets (ORA)",
+        "value_text": "362,3",
+        "scraped_at": "2025-07-18T15:38:18.104280",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 3623.0,
+        "endpoint": "reserves"
+      }
+    ],
+    "banking_data": [
+      {
+        "indicator": "Banks",
+        "value_text": "19",
+        "scraped_at": "2025-07-18T15:38:19.515825",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 19.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Finance companies",
+        "value_text": "34",
+        "scraped_at": "2025-07-18T15:38:19.515981",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 34.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Offshore banks",
+        "value_text": "6",
+        "scraped_at": "2025-07-18T15:38:19.516716",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 6.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Microcredit associations",
+        "value_text": "13",
+        "scraped_at": "2025-07-18T15:38:19.516764",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 13.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Funds transfer companies",
+        "value_text": "10",
+        "scraped_at": "2025-07-18T15:38:19.516802",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 10.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Other institutions",
+        "value_text": "2",
+        "scraped_at": "2025-07-18T15:38:19.516843",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 2.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Total",
+        "value_text": "84",
+        "scraped_at": "2025-07-18T15:38:19.516886",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 84.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Banks",
+        "value_text": "19",
+        "scraped_at": "2025-07-18T15:38:19.517029",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 19.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Finance companies",
+        "value_text": "34",
+        "scraped_at": "2025-07-18T15:38:19.517147",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 34.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Offshore banks",
+        "value_text": "6",
+        "scraped_at": "2025-07-18T15:38:19.517362",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 6.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Microcredit associations",
+        "value_text": "13",
+        "scraped_at": "2025-07-18T15:38:19.517400",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 13.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Funds transfer companies",
+        "value_text": "10",
+        "scraped_at": "2025-07-18T15:38:19.517439",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 10.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Other institutions",
+        "value_text": "2",
+        "scraped_at": "2025-07-18T15:38:19.517477",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 2.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      },
+      {
+        "indicator": "Total",
+        "value_text": "84",
+        "scraped_at": "2025-07-18T15:38:19.517514",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 84.0,
+        "endpoint": "banking_structure",
+        "category": "banking"
+      }
+    ],
+    "market_operations": [
+      {
+        "indicator": "18/07/2025",
+        "value_text": "49,490.00",
+        "scraped_at": "2025-07-18T15:38:19.974131",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 49490.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "17/07/2025",
+        "value_text": "49,490.00",
+        "scraped_at": "2025-07-18T15:38:19.974222",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 49490.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "16/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974255",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "15/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974286",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "14/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974315",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "13/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974346",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "12/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974375",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "11/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974405",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "10/07/2025",
+        "value_text": "48,550.00",
+        "scraped_at": "2025-07-18T15:38:19.974435",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48550.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "09/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974464",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "08/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974494",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "07/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974523",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "06/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974552",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "05/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974582",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "04/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974611",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "03/07/2025",
+        "value_text": "53,400.00",
+        "scraped_at": "2025-07-18T15:38:19.974640",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53400.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "02/07/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974669",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "01/07/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974699",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "30/06/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974729",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "29/06/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974761",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "28/06/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974790",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "27/06/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974819",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "26/06/2025",
+        "value_text": "53,180.00",
+        "scraped_at": "2025-07-18T15:38:19.974848",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 53180.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "25/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.974877",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "24/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.974907",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "23/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.974936",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "22/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.974965",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "21/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.974994",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "20/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.975023",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      },
+      {
+        "indicator": "19/06/2025",
+        "value_text": "48,460.00",
+        "scraped_at": "2025-07-18T15:38:19.975052",
+        "source": "Bank Al-Maghrib",
+        "numeric_value": 48460.0,
+        "category": "market_operations"
+      }
+    ]
+  }
+}

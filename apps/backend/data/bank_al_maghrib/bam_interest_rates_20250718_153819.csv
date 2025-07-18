@@ -1,0 +1,18 @@
+maturity,scraped_at,source,bid_rate,ask_rate,endpoint,rate_Variation of the reference rates
+3 months,2025-07-18T15:38:13.060365,Bank Al-Maghrib,1.59,1.69,interbank_rates,
+1 month,2025-07-18T15:38:13.060414,Bank Al-Maghrib,1.56,1.66,interbank_rates,
+2 weeks,2025-07-18T15:38:13.060442,Bank Al-Maghrib,1.54,1.64,interbank_rates,
+1 week,2025-07-18T15:38:13.060466,Bank Al-Maghrib,1.52,1.62,interbank_rates,
+Day to day,2025-07-18T15:38:13.060490,Bank Al-Maghrib,1.5,1.6,interbank_rates,
+September-2016,2025-07-18T15:38:14.001213,Bank Al-Maghrib,,,lending_rates,-0.08
+September-2016,2025-07-18T15:38:14.001503,Bank Al-Maghrib,,,lending_rates,-0.33
+September-2016,2025-07-18T15:38:14.001563,Bank Al-Maghrib,,,lending_rates,-0.32
+August-2016,2025-07-18T15:38:14.001598,Bank Al-Maghrib,,,lending_rates,-0.09
+August-2016,2025-07-18T15:38:14.001629,Bank Al-Maghrib,,,lending_rates,-0.32
+August-2016,2025-07-18T15:38:14.001658,Bank Al-Maghrib,,,lending_rates,-0.28
+July-2016,2025-07-18T15:38:14.001685,Bank Al-Maghrib,,,lending_rates,-0.2
+July-2016,2025-07-18T15:38:14.001713,Bank Al-Maghrib,,,lending_rates,-0.33
+July-2016,2025-07-18T15:38:14.001740,Bank Al-Maghrib,,,lending_rates,-0.28
+June-2016,2025-07-18T15:38:14.001767,Bank Al-Maghrib,,,lending_rates,-0.26
+June-2016,2025-07-18T15:38:14.001794,Bank Al-Maghrib,,,lending_rates,-0.24
+June-2016,2025-07-18T15:38:14.001820,Bank Al-Maghrib,,,lending_rates,-0.28

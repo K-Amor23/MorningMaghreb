@@ -1,0 +1,28 @@
+ticker,name,sector,source,url,scraped_at,exchange,country
+ATW,Attijariwafa Bank,Banking,Known Major Companies,Manual Entry,2025-07-18T15:30:19.601975,Casablanca Stock Exchange,Morocco
+BCP,Banque Centrale Populaire,Banking,Known Major Companies,Manual Entry,2025-07-18T15:30:19.601990,Casablanca Stock Exchange,Morocco
+BMCE,BMCE Bank of Africa,Banking,Known Major Companies,Manual Entry,2025-07-18T15:30:19.601994,Casablanca Stock Exchange,Morocco
+CIH,Crédit Immobilier et Hôtelier,Banking,Known Major Companies,Manual Entry,2025-07-18T15:30:19.601997,Casablanca Stock Exchange,Morocco
+CDM,Crédit du Maroc,Banking,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602000,Casablanca Stock Exchange,Morocco
+IAM,Itissalat Al-Maghrib (Maroc Telecom),Telecommunications,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602003,Casablanca Stock Exchange,Morocco
+WAA,Wafa Assurance,Insurance,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602006,Casablanca Stock Exchange,Morocco
+SAH,Saham Assurance,Insurance,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602008,Casablanca Stock Exchange,Morocco
+ADH,Addoha,Real Estate,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602011,Casablanca Stock Exchange,Morocco
+RDS,Résidences Dar Saada,Real Estate,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602014,Casablanca Stock Exchange,Morocco
+LBV,Label Vie,Retail,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602017,Casablanca Stock Exchange,Morocco
+MAR,Marjane Holding,Retail,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602019,Casablanca Stock Exchange,Morocco
+LES,Lesieur Cristal,Food & Beverages,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602022,Casablanca Stock Exchange,Morocco
+CEN,Ciments du Maroc,Construction Materials,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602025,Casablanca Stock Exchange,Morocco
+HOL,Holcim Maroc,Construction Materials,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602028,Casablanca Stock Exchange,Morocco
+LAF,Lafarge Ciments,Construction Materials,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602030,Casablanca Stock Exchange,Morocco
+MSA,Managem,Mining,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602046,Casablanca Stock Exchange,Morocco
+SMI,SMI (Société Métallurgique d'Imiter),Mining,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602050,Casablanca Stock Exchange,Morocco
+TMA,Taqa Morocco,Energy,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602052,Casablanca Stock Exchange,Morocco
+SOT,Sothema,Pharmaceuticals,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602055,Casablanca Stock Exchange,Morocco
+COP,Cooper Pharma,Pharmaceuticals,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602058,Casablanca Stock Exchange,Morocco
+CTM,Compagnie de Transports au Maroc,Transportation,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602060,Casablanca Stock Exchange,Morocco
+HPS,HPS (High Payment Systems),Technology,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602063,Casablanca Stock Exchange,Morocco
+COL,Cosumar,Agriculture & Food,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602066,Casablanca Stock Exchange,Morocco
+SNA,Société Nationale d'Autoroutes,Infrastructure,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602068,Casablanca Stock Exchange,Morocco
+DEL,Delattre Levivier Maroc,Textiles,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602071,Casablanca Stock Exchange,Morocco
+RIS,Risma,Hotels & Tourism,Known Major Companies,Manual Entry,2025-07-18T15:30:19.602074,Casablanca Stock Exchange,Morocco

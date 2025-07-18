@@ -15,6 +15,7 @@ class JobType(str, Enum):
     EXTRACT = "extract"
     CLEAN = "clean"
     TRANSLATE = "translate"
+    LIVE_UPDATE = "live_update"
 
 class JobStatus(str, Enum):
     PENDING = "pending"

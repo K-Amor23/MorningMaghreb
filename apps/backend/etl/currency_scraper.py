@@ -61,7 +61,8 @@ class CurrencyScraper:
     def __init__(self, max_concurrent_requests: int = 5):
         self.session = httpx.AsyncClient(
             timeout=httpx.Timeout(30.0, connect=10.0),
-            limits=httpx.Limits(max_connections=max_concurrent_requests)
+            limits=httpx.Limits(max_connections=max_concurrent_requests),
+            verify=False  # Disable SSL verification for development
         )
         self.metrics: List[ScrapingMetrics] = []
         self.rate_limit_delays = {

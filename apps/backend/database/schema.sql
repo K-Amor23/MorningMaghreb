@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS label_mappings (
 -- ETL job tracking
 CREATE TABLE IF NOT EXISTS etl_jobs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    job_type TEXT NOT NULL, -- 'fetch', 'extract', 'clean', 'translate'
+    job_type TEXT NOT NULL, -- 'fetch', 'extract', 'clean', 'translate', 'live_update'
     status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'running', 'completed', 'failed'
     company TEXT,
     year INTEGER,
