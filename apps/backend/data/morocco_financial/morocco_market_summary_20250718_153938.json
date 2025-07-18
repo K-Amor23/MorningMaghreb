@@ -1,0 +1,167 @@
+{
+  "metadata": {
+    "pipeline": "Morocco Financial Data Pipeline",
+    "generated_at": "2025-07-18T15:39:38.771580",
+    "data_sources": [
+      "African Markets (Casablanca Stock Exchange)",
+      "Bank Al-Maghrib (Moroccan Central Bank)"
+    ],
+    "total_companies": 78,
+    "total_central_bank_indicators": 106
+  },
+  "market_overview": {
+    "exchange": "Casablanca Stock Exchange (BVC)",
+    "total_listed_companies": 78,
+    "sectors": {
+      "Financials": 23,
+      "Industrials": 14,
+      "Basic Materials": 10,
+      "Consumer Goods": 9,
+      "Technology": 8,
+      "Consumer Services": 6,
+      "Oil & Gas": 3,
+      "Health Care": 3,
+      "Telecom": 1,
+      "Utilities": 1
+    },
+    "market_cap_distribution": {
+      "total_market_cap_billion_mad": 987.7,
+      "average_market_cap_billion_mad": 12.83,
+      "largest_company_mcap_billion_mad": 155.97,
+      "smallest_company_mcap_billion_mad": 0.01,
+      "companies_with_mcap_data": 77
+    },
+    "exchange_rates": {
+      "EUR_MAD": 10.5303
+    },
+    "interest_rates": {
+      "3 months": {
+        "bid_rate": 1.59,
+        "ask_rate": 1.69
+      },
+      "1 month": {
+        "bid_rate": 1.56,
+        "ask_rate": 1.66
+      },
+      "2 weeks": {
+        "bid_rate": 1.54,
+        "ask_rate": 1.64
+      },
+      "1 week": {
+        "bid_rate": 1.52,
+        "ask_rate": 1.62
+      },
+      "Day to day": {
+        "bid_rate": 1.5,
+        "ask_rate": 1.6
+      },
+      "September-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "August-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "July-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "June-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      }
+    },
+    "banking_sector": {
+      "banks": 19.0,
+      "finance_companies": 34.0,
+      "offshore_banks": 6.0,
+      "microcredit_associations": 13.0,
+      "funds_transfer_companies": 10.0,
+      "other_institutions": 2.0,
+      "total": 84.0
+    }
+  },
+  "economic_indicators": {
+    "exchange_rates": {
+      "EUR_MAD": 10.5303
+    },
+    "interest_rates": {
+      "3 months": {
+        "bid_rate": 1.59,
+        "ask_rate": 1.69
+      },
+      "1 month": {
+        "bid_rate": 1.56,
+        "ask_rate": 1.66
+      },
+      "2 weeks": {
+        "bid_rate": 1.54,
+        "ask_rate": 1.64
+      },
+      "1 week": {
+        "bid_rate": 1.52,
+        "ask_rate": 1.62
+      },
+      "Day to day": {
+        "bid_rate": 1.5,
+        "ask_rate": 1.6
+      },
+      "September-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "August-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "July-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      },
+      "June-2016": {
+        "bid_rate": null,
+        "ask_rate": null
+      }
+    },
+    "banking_metrics": {
+      "banks": 19.0,
+      "finance_companies": 34.0,
+      "offshore_banks": 6.0,
+      "microcredit_associations": 13.0,
+      "funds_transfer_companies": 10.0,
+      "other_institutions": 2.0,
+      "total": 84.0
+    },
+    "market_operations": {
+      "latest_operations": [
+        {
+          "date": "18/07/2025",
+          "value": 49490.0,
+          "value_text": "49,490.00"
+        },
+        {
+          "date": "17/07/2025",
+          "value": 49490.0,
+          "value_text": "49,490.00"
+        },
+        {
+          "date": "16/07/2025",
+          "value": 48550.0,
+          "value_text": "48,550.00"
+        },
+        {
+          "date": "15/07/2025",
+          "value": 48550.0,
+          "value_text": "48,550.00"
+        },
+        {
+          "date": "14/07/2025",
+          "value": 48550.0,
+          "value_text": "48,550.00"
+        }
+      ],
+      "total_operations_tracked": 30
+    }
+  }
+}

@@ -1,0 +1,272 @@
+[
+  {
+    "ticker": "ATW",
+    "name": "Attijariwafa Bank",
+    "sector": "Banking",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.601975",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BCP",
+    "name": "Banque Centrale Populaire",
+    "sector": "Banking",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.601990",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BMCE",
+    "name": "BMCE Bank of Africa",
+    "sector": "Banking",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.601994",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CIH",
+    "name": "Crédit Immobilier et Hôtelier",
+    "sector": "Banking",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.601997",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CDM",
+    "name": "Crédit du Maroc",
+    "sector": "Banking",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602000",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "IAM",
+    "name": "Itissalat Al-Maghrib (Maroc Telecom)",
+    "sector": "Telecommunications",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602003",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "WAA",
+    "name": "Wafa Assurance",
+    "sector": "Insurance",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602006",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SAH",
+    "name": "Saham Assurance",
+    "sector": "Insurance",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602008",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ADH",
+    "name": "Addoha",
+    "sector": "Real Estate",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602011",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RDS",
+    "name": "Résidences Dar Saada",
+    "sector": "Real Estate",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602014",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LBV",
+    "name": "Label Vie",
+    "sector": "Retail",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602017",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MAR",
+    "name": "Marjane Holding",
+    "sector": "Retail",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602019",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LES",
+    "name": "Lesieur Cristal",
+    "sector": "Food & Beverages",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602022",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CEN",
+    "name": "Ciments du Maroc",
+    "sector": "Construction Materials",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602025",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "HOL",
+    "name": "Holcim Maroc",
+    "sector": "Construction Materials",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602028",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LAF",
+    "name": "Lafarge Ciments",
+    "sector": "Construction Materials",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602030",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MSA",
+    "name": "Managem",
+    "sector": "Mining",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602046",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SMI",
+    "name": "SMI (Société Métallurgique d'Imiter)",
+    "sector": "Mining",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602050",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "TMA",
+    "name": "Taqa Morocco",
+    "sector": "Energy",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602052",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SOT",
+    "name": "Sothema",
+    "sector": "Pharmaceuticals",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602055",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "COP",
+    "name": "Cooper Pharma",
+    "sector": "Pharmaceuticals",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602058",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CTM",
+    "name": "Compagnie de Transports au Maroc",
+    "sector": "Transportation",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602060",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "HPS",
+    "name": "HPS (High Payment Systems)",
+    "sector": "Technology",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602063",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "COL",
+    "name": "Cosumar",
+    "sector": "Agriculture & Food",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602066",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SNA",
+    "name": "Société Nationale d'Autoroutes",
+    "sector": "Infrastructure",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602068",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "DEL",
+    "name": "Delattre Levivier Maroc",
+    "sector": "Textiles",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602071",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RIS",
+    "name": "Risma",
+    "sector": "Hotels & Tourism",
+    "source": "Known Major Companies",
+    "url": "Manual Entry",
+    "scraped_at": "2025-07-18T15:30:19.602074",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  }
+]

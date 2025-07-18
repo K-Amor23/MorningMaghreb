@@ -24,15 +24,15 @@ class IRReportFetcher:
         # Moroccan companies with their IR pages
         self.company_ir_pages = {
             "ATW": {
-                "base_url": "https://www.attijariwafabank.com/fr/investisseurs",
+                "base_url": "https://ir.attijariwafabank.com/financial-information/financial-results",
                 "selectors": {
-                    "reports": "a[href*='.pdf']",
-                    "title": "h1, h2, h3",
-                    "date": ".date, .published-date"
+                    "reports": "a[href*='.pdf'], a[href*='/static-files/']",
+                    "title": "h1, h2, h3, td",
+                    "date": ".date, .published-date, td"
                 }
             },
             "IAM": {
-                "base_url": "https://www.iam.ma/fr/investisseurs",
+                "base_url": "https://www.iam.ma/fr/investisseurs/informations-financieres",
                 "selectors": {
                     "reports": "a[href*='.pdf']",
                     "title": "h1, h2, h3",
@@ -40,7 +40,7 @@ class IRReportFetcher:
                 }
             },
             "BCP": {
-                "base_url": "https://www.banquecentralepopulaire.ma/fr/investisseurs",
+                "base_url": "https://www.bcp.ma/fr/investisseurs/informations-financieres",
                 "selectors": {
                     "reports": "a[href*='.pdf']",
                     "title": "h1, h2, h3",
@@ -48,7 +48,71 @@ class IRReportFetcher:
                 }
             },
             "BMCE": {
-                "base_url": "https://www.bmcebank.ma/fr/investisseurs",
+                "base_url": "https://www.bmcebankofafrica.com/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "CIH": {
+                "base_url": "https://www.cih.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "WAA": {
+                "base_url": "https://www.wafaassurance.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "LBV": {
+                "base_url": "https://www.labelvie.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "TMA": {
+                "base_url": "https://www.taqamorocco.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "ADH": {
+                "base_url": "https://www.addoha.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "LES": {
+                "base_url": "https://www.lesieurcristal.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "SOT": {
+                "base_url": "https://www.sothema.ma/fr/investisseurs",
+                "selectors": {
+                    "reports": "a[href*='.pdf']",
+                    "title": "h1, h2, h3",
+                    "date": ".date, .published-date"
+                }
+            },
+            "CTM": {
+                "base_url": "https://www.ctm.ma/fr/investisseurs",
                 "selectors": {
                     "reports": "a[href*='.pdf']",
                     "title": "h1, h2, h3",
@@ -56,6 +120,9 @@ class IRReportFetcher:
                 }
             }
         }
+        
+        # Default URL template for companies not explicitly mapped
+        self.default_ir_url_template = "https://www.{company_name}.ma/fr/investisseurs"
         
         # Report type patterns
         self.report_patterns = {
@@ -81,8 +148,17 @@ class IRReportFetcher:
         }
     
     async def __aenter__(self):
+        import ssl
+        # Create SSL context that doesn't verify certificates (for development)
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        
+        connector = aiohttp.TCPConnector(ssl=ssl_context)
+        
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
+            connector=connector,
             headers={
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
             }
@@ -95,11 +171,11 @@ class IRReportFetcher:
     
     async def fetch_company_reports(self, company: str, year: Optional[int] = None) -> List[Dict]:
         """Fetch all available reports for a company"""
-        if company not in self.company_ir_pages:
+        company_config = self._get_company_config(company)
+        if not company_config:
             logger.warning(f"No IR page configured for company: {company}")
             return []
-        
-        company_config = self.company_ir_pages[company]
+
         reports = []
         
         try:
@@ -112,27 +188,73 @@ class IRReportFetcher:
                 html = await response.text()
                 soup = BeautifulSoup(html, 'html.parser')
                 
-                # Find PDF links
-                pdf_links = soup.select(company_config["selectors"]["reports"])
+                # Extract report links
+                report_links = soup.select(company_config["selectors"]["reports"])
                 
-                for link in pdf_links:
-                    href = link.get('href')
-                    if not href:
+                for link in report_links:
+                    href = link.get("href")
+                    if not href or not isinstance(href, str):
                         continue
+                        
+                    # Convert relative URLs to absolute
+                    if href.startswith("/"):
+                        report_url = urljoin(company_config["base_url"], href)
+                    elif href.startswith("http"):
+                        report_url = href
+                    else:
+                        report_url = urljoin(company_config["base_url"], href)
                     
-                    # Make URL absolute
-                    pdf_url = urljoin(company_config["base_url"], href)
+                    # Extract title and date
+                    title = link.get_text(strip=True)
+                    if not title:
+                        # Try to find title in parent elements
+                        parent = link.parent
+                        if parent:
+                            title = parent.get_text(strip=True)
                     
-                    # Extract report info
-                    report_info = await self._extract_report_info(link, pdf_url, company)
+                    # Try to extract date from various selectors
+                    date_text = None
+                    parent_element = link.find_parent()
+                    if parent_element:
+                        try:
+                            date_element = parent_element.find(class_="date")
+                            if date_element:
+                                date_text = date_element.get_text(strip=True)
+                        except:
+                            pass
                     
-                    if report_info and (year is None or report_info.get('year') == year):
-                        reports.append(report_info)
+                    # Only include PDF reports
+                    if report_url and isinstance(report_url, str) and (report_url.endswith('.pdf') or '/static-files/' in report_url):
+                        reports.append({
+                            "url": report_url,
+                            "title": title or "Financial Report",
+                            "date": date_text or "Unknown",
+                            "company": company,
+                            "type": "financial_report"
+                        })
         
         except Exception as e:
             logger.error(f"Error fetching reports for {company}: {e}")
         
         return reports
+    
+    def _get_company_config(self, company: str) -> Optional[Dict]:
+        """Get company IR page configuration with fallback to default template"""
+        if company in self.company_ir_pages:
+            return self.company_ir_pages[company]
+        
+        # Fallback to default template
+        company_name_lower = company.lower()
+        fallback_url = self.default_ir_url_template.format(company_name=company_name_lower)
+        
+        return {
+            "base_url": fallback_url,
+            "selectors": {
+                "reports": "a[href*='.pdf']",
+                "title": "h1, h2, h3",
+                "date": ".date, .published-date"
+            }
+        }
     
     async def _extract_report_info(self, link_element, pdf_url: str, company: str) -> Optional[Dict]:
         """Extract report information from link element"""

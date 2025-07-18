@@ -1,0 +1,18 @@
+[
+  {
+    "indicator": "15/11/24",
+    "value_text": "17/11/23",
+    "scraped_at": "2025-07-18T15:38:18.103750",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 17.0,
+    "endpoint": "reserves"
+  },
+  {
+    "indicator": "Official reserve assets (ORA)",
+    "value_text": "362,3",
+    "scraped_at": "2025-07-18T15:38:18.104280",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 3623.0,
+    "endpoint": "reserves"
+  }
+]

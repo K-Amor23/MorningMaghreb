@@ -1,0 +1,333 @@
+[
+  {
+    "currency": "1 EURO",
+    "scraped_at": "2025-07-18T15:38:08.801066",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 10.5303,
+    "rate_17/07/2025": 10.5047,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DOLLAR U.S.A.",
+    "scraped_at": "2025-07-18T15:38:08.801105",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 9.0445,
+    "rate_17/07/2025": 9.0675,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DOLLAR CANADIEN",
+    "scraped_at": "2025-07-18T15:38:08.801137",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 6.5913,
+    "rate_17/07/2025": 6.5885,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 LIVRE STERLING",
+    "scraped_at": "2025-07-18T15:38:08.801166",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 12.159,
+    "rate_17/07/2025": 12.15,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 LIVRE GIBRALTAR",
+    "scraped_at": "2025-07-18T15:38:08.801195",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 12.159,
+    "rate_17/07/2025": 12.15,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 FRANC SUISSE",
+    "scraped_at": "2025-07-18T15:38:08.801223",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 11.283,
+    "rate_17/07/2025": 11.271,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 COURONNES DANOISES",
+    "scraped_at": "2025-07-18T15:38:08.801252",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 141.09,
+    "rate_17/07/2025": 140.76,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 COURONNES SUEDOISES",
+    "scraped_at": "2025-07-18T15:38:08.801280",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 93.556,
+    "rate_17/07/2025": 92.871,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 COURONNES NORVEGIENNES",
+    "scraped_at": "2025-07-18T15:38:08.801307",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 88.634,
+    "rate_17/07/2025": 87.787,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 RIYAL SAOUDIEN",
+    "scraped_at": "2025-07-18T15:38:08.801333",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 2.4113,
+    "rate_17/07/2025": 2.4174,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DINAR KOWEITIEN",
+    "scraped_at": "2025-07-18T15:38:08.801360",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 29.59,
+    "rate_17/07/2025": 29.661,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DIRHAM E.A.U.",
+    "scraped_at": "2025-07-18T15:38:08.801387",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 2.4624,
+    "rate_17/07/2025": 2.4687,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 RIYAL QATARI",
+    "scraped_at": "2025-07-18T15:38:08.801416",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 2.4813,
+    "rate_17/07/2025": 2.4875,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DINAR BAHREINI",
+    "scraped_at": "2025-07-18T15:38:08.801443",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 23.989,
+    "rate_17/07/2025": 24.05,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 YENS JAPONAIS",
+    "scraped_at": "2025-07-18T15:38:08.801468",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 6.088,
+    "rate_17/07/2025": 6.0989,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "10 DINARS ALGERIENS",
+    "scraped_at": "2025-07-18T15:38:08.801494",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.6969,
+    "rate_17/07/2025": 0.6973,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DINAR TUNISIEN",
+    "scraped_at": "2025-07-18T15:38:08.801519",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 3.1241,
+    "rate_17/07/2025": 3.1264,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DINAR LIBYEN",
+    "scraped_at": "2025-07-18T15:38:08.801544",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 1.8851,
+    "rate_17/07/2025": 1.8884,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 OUGUIYAS MAURITANIENNES",
+    "scraped_at": "2025-07-18T15:38:08.801569",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 22.857,
+    "rate_17/07/2025": 22.915,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 RIYAL OMANI",
+    "scraped_at": "2025-07-18T15:38:08.801596",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 23.491,
+    "rate_17/07/2025": 23.551,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 REAL BRÉSILIEN",
+    "scraped_at": "2025-07-18T15:38:08.801620",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 1.6316,
+    "rate_17/07/2025": 1.6272,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 ROUBLE RUSSE",
+    "scraped_at": "2025-07-18T15:38:08.801645",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.1155,
+    "rate_17/07/2025": 0.1159,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 ROUPIE INDIENNE",
+    "scraped_at": "2025-07-18T15:38:08.801671",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.105,
+    "rate_17/07/2025": 0.1053,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 YUAN CHINOIS",
+    "scraped_at": "2025-07-18T15:38:08.801696",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 1.2602,
+    "rate_17/07/2025": 1.2627,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DOLLAR AUSTRALIEN",
+    "scraped_at": "2025-07-18T15:38:08.801722",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 5.898,
+    "rate_17/07/2025": 5.8614,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 RAND SUD-AFRICAIN",
+    "scraped_at": "2025-07-18T15:38:08.801748",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.5111,
+    "rate_17/07/2025": 0.5065,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 LIVRE TURQUE",
+    "scraped_at": "2025-07-18T15:38:08.801774",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.224,
+    "rate_17/07/2025": 0.2251,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 LIVRE EGYPTIENNE",
+    "scraped_at": "2025-07-18T15:38:08.801798",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 0.183,
+    "rate_17/07/2025": 0.1834,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 DINAR JORDANIEN",
+    "scraped_at": "2025-07-18T15:38:08.801822",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 12.766,
+    "rate_17/07/2025": 12.797,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "100 FRANC CFA",
+    "scraped_at": "2025-07-18T15:38:08.801847",
+    "source": "Bank Al-Maghrib",
+    "rate_18/07/2025": 1.6053,
+    "rate_17/07/2025": 1.6014,
+    "endpoint": "reference_rates"
+  },
+  {
+    "currency": "1 QATARI RIYAL",
+    "scraped_at": "2025-07-18T15:38:12.688501",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 2.5455,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 BAHREINI DINAR",
+    "scraped_at": "2025-07-18T15:38:12.688557",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 24.584,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 OMANI RIAL",
+    "scraped_at": "2025-07-18T15:38:12.688581",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 24.073,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 BRAZIL REAL",
+    "scraped_at": "2025-07-18T15:38:12.688605",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 2.8708,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 RUSSIAN RUBLE",
+    "scraped_at": "2025-07-18T15:38:12.688626",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 0.1634,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 INDIAN RUPEE",
+    "scraped_at": "2025-07-18T15:38:12.688647",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 0.1456,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 CHINESE YUAN",
+    "scraped_at": "2025-07-18T15:38:12.688668",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 1.4339,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 AUSTRALIAN DOLLAR",
+    "scraped_at": "2025-07-18T15:38:12.688687",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 3.6387,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 SOUTH AFRICAN RAND",
+    "scraped_at": "2025-07-18T15:38:12.688707",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 0.7445,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 TURKISH LIRA",
+    "scraped_at": "2025-07-18T15:38:12.688729",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 2.4593,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 EGYPTIAN POUND",
+    "scraped_at": "2025-07-18T15:38:12.688750",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 0.5233,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "1 JORDANIAN DINAR",
+    "scraped_at": "2025-07-18T15:38:12.688770",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 13.054,
+    "endpoint": "indicative_rates"
+  },
+  {
+    "currency": "100 CFA FRANC",
+    "scraped_at": "2025-07-18T15:38:12.688790",
+    "source": "Bank Al-Maghrib",
+    "rate_12/01/2018": 1.6185,
+    "endpoint": "indicative_rates"
+  }
+]

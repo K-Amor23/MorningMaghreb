@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, List, BinaryIO
 import hashlib
 from datetime import datetime
+import glob
 
 class LocalFileStorage:
     """Local file system storage for PDFs and other ETL artifacts"""
@@ -110,6 +111,20 @@ class LocalFileStorage:
         """Get temporary file path"""
         return str(self.temp_path / filename)
     
+    async def save_raw_pdf(self, content: bytes, filename: str) -> str:
+        """Save PDF content to raw_pdfs directory"""
+        # Ensure filename is safe
+        safe_filename = "".join(c for c in filename if c.isalnum() or c in "._- ")
+        if not safe_filename.endswith('.pdf'):
+            safe_filename += '.pdf'
+        
+        file_path = self.raw_pdfs_path / safe_filename
+        
+        async with aiofiles.open(file_path, 'wb') as f:
+            await f.write(content)
+        
+        return str(file_path)
+    
     async def cleanup_temp_files(self, older_than_hours: int = 24):
         """Clean up temporary files older than specified hours"""
         current_time = datetime.now()
@@ -118,4 +133,25 @@ class LocalFileStorage:
                 stat = await aiofiles.os.stat(file_path)
                 file_age = current_time - datetime.fromtimestamp(stat.st_mtime)
                 if file_age.total_seconds() > older_than_hours * 3600:
-                    await aiofiles.os.remove(str(file_path)) 
+                    await aiofiles.os.remove(str(file_path))
+    
+    def list_files(self, directory: str = "raw_pdfs", pattern: str = "*.pdf") -> List[str]:
+        """List all files matching pattern in the specified directory"""
+        if directory == "raw_pdfs":
+            search_path = self.raw_pdfs_path
+        elif directory == "processed":
+            search_path = self.processed_path
+        elif directory == "temp":
+            search_path = self.temp_path
+        elif directory == "reports":
+            # For compatibility with existing code that uses "reports"
+            search_path = self.raw_pdfs_path
+        else:
+            search_path = self.base_path / directory
+        
+        # Use glob to find all matching files recursively
+        search_pattern = str(search_path / "**" / pattern)
+        matching_files = glob.glob(search_pattern, recursive=True)
+        
+        # Return absolute paths
+        return [str(Path(f).resolve()) for f in matching_files] 

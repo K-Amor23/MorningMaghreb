@@ -1,0 +1,3 @@
+indicator,value_text,scraped_at,source,numeric_value,endpoint
+15/11/24,17/11/23,2025-07-18T15:38:18.103750,Bank Al-Maghrib,17.0,reserves
+Official reserve assets (ORA),"362,3",2025-07-18T15:38:18.104280,Bank Al-Maghrib,3623.0,reserves

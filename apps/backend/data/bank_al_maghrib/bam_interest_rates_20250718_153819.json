@@ -1,0 +1,126 @@
+[
+  {
+    "maturity": "3 months",
+    "scraped_at": "2025-07-18T15:38:13.060365",
+    "source": "Bank Al-Maghrib",
+    "bid_rate": 1.59,
+    "ask_rate": 1.69,
+    "endpoint": "interbank_rates"
+  },
+  {
+    "maturity": "1 month",
+    "scraped_at": "2025-07-18T15:38:13.060414",
+    "source": "Bank Al-Maghrib",
+    "bid_rate": 1.56,
+    "ask_rate": 1.66,
+    "endpoint": "interbank_rates"
+  },
+  {
+    "maturity": "2 weeks",
+    "scraped_at": "2025-07-18T15:38:13.060442",
+    "source": "Bank Al-Maghrib",
+    "bid_rate": 1.54,
+    "ask_rate": 1.64,
+    "endpoint": "interbank_rates"
+  },
+  {
+    "maturity": "1 week",
+    "scraped_at": "2025-07-18T15:38:13.060466",
+    "source": "Bank Al-Maghrib",
+    "bid_rate": 1.52,
+    "ask_rate": 1.62,
+    "endpoint": "interbank_rates"
+  },
+  {
+    "maturity": "Day to day",
+    "scraped_at": "2025-07-18T15:38:13.060490",
+    "source": "Bank Al-Maghrib",
+    "bid_rate": 1.5,
+    "ask_rate": 1.6,
+    "endpoint": "interbank_rates"
+  },
+  {
+    "maturity": "September-2016",
+    "scraped_at": "2025-07-18T15:38:14.001213",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.08,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "September-2016",
+    "scraped_at": "2025-07-18T15:38:14.001503",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.33,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "September-2016",
+    "scraped_at": "2025-07-18T15:38:14.001563",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.32,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "August-2016",
+    "scraped_at": "2025-07-18T15:38:14.001598",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.09,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "August-2016",
+    "scraped_at": "2025-07-18T15:38:14.001629",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.32,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "August-2016",
+    "scraped_at": "2025-07-18T15:38:14.001658",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.28,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "July-2016",
+    "scraped_at": "2025-07-18T15:38:14.001685",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.2,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "July-2016",
+    "scraped_at": "2025-07-18T15:38:14.001713",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.33,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "July-2016",
+    "scraped_at": "2025-07-18T15:38:14.001740",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.28,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "June-2016",
+    "scraped_at": "2025-07-18T15:38:14.001767",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.26,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "June-2016",
+    "scraped_at": "2025-07-18T15:38:14.001794",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.24,
+    "endpoint": "lending_rates"
+  },
+  {
+    "maturity": "June-2016",
+    "scraped_at": "2025-07-18T15:38:14.001820",
+    "source": "Bank Al-Maghrib",
+    "rate_Variation of the reference rates": -0.28,
+    "endpoint": "lending_rates"
+  }
+]

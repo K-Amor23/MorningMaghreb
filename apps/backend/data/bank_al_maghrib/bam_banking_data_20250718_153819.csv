@@ -1,0 +1,15 @@
+indicator,value_text,scraped_at,source,numeric_value,endpoint,category
+Banks,19,2025-07-18T15:38:19.515825,Bank Al-Maghrib,19.0,banking_structure,banking
+Finance companies,34,2025-07-18T15:38:19.515981,Bank Al-Maghrib,34.0,banking_structure,banking
+Offshore banks,6,2025-07-18T15:38:19.516716,Bank Al-Maghrib,6.0,banking_structure,banking
+Microcredit associations,13,2025-07-18T15:38:19.516764,Bank Al-Maghrib,13.0,banking_structure,banking
+Funds transfer companies,10,2025-07-18T15:38:19.516802,Bank Al-Maghrib,10.0,banking_structure,banking
+Other institutions,2,2025-07-18T15:38:19.516843,Bank Al-Maghrib,2.0,banking_structure,banking
+Total,84,2025-07-18T15:38:19.516886,Bank Al-Maghrib,84.0,banking_structure,banking
+Banks,19,2025-07-18T15:38:19.517029,Bank Al-Maghrib,19.0,banking_structure,banking
+Finance companies,34,2025-07-18T15:38:19.517147,Bank Al-Maghrib,34.0,banking_structure,banking
+Offshore banks,6,2025-07-18T15:38:19.517362,Bank Al-Maghrib,6.0,banking_structure,banking
+Microcredit associations,13,2025-07-18T15:38:19.517400,Bank Al-Maghrib,13.0,banking_structure,banking
+Funds transfer companies,10,2025-07-18T15:38:19.517439,Bank Al-Maghrib,10.0,banking_structure,banking
+Other institutions,2,2025-07-18T15:38:19.517477,Bank Al-Maghrib,2.0,banking_structure,banking
+Total,84,2025-07-18T15:38:19.517514,Bank Al-Maghrib,84.0,banking_structure,banking

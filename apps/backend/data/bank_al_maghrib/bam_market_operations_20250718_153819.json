@@ -1,0 +1,242 @@
+[
+  {
+    "indicator": "18/07/2025",
+    "value_text": "49,490.00",
+    "scraped_at": "2025-07-18T15:38:19.974131",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 49490.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "17/07/2025",
+    "value_text": "49,490.00",
+    "scraped_at": "2025-07-18T15:38:19.974222",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 49490.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "16/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974255",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "15/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974286",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "14/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974315",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "13/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974346",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "12/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974375",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "11/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974405",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "10/07/2025",
+    "value_text": "48,550.00",
+    "scraped_at": "2025-07-18T15:38:19.974435",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48550.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "09/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974464",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "08/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974494",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "07/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974523",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "06/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974552",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "05/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974582",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "04/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974611",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "03/07/2025",
+    "value_text": "53,400.00",
+    "scraped_at": "2025-07-18T15:38:19.974640",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53400.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "02/07/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974669",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "01/07/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974699",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "30/06/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974729",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "29/06/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974761",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "28/06/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974790",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "27/06/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974819",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "26/06/2025",
+    "value_text": "53,180.00",
+    "scraped_at": "2025-07-18T15:38:19.974848",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 53180.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "25/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.974877",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "24/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.974907",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "23/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.974936",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "22/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.974965",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "21/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.974994",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "20/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.975023",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  },
+  {
+    "indicator": "19/06/2025",
+    "value_text": "48,460.00",
+    "scraped_at": "2025-07-18T15:38:19.975052",
+    "source": "Bank Al-Maghrib",
+    "numeric_value": 48460.0,
+    "category": "market_operations"
+  }
+]
