@@ -270,6 +270,130 @@ def send_webhook_notification(self, webhook_url: str, payload: Dict[str, Any], s
         # Retry webhook delivery
         raise self.retry(countdown=60 * (2 ** self.request.retries), max_retries=3, exc=exc)
 
+@celery_app.task(bind=True, max_retries=2)
+def parse_ir_pdf(self, pdf_path: str, ticker: str, company_name: str, source_url: str):
+    """Parse IR PDF and extract financial data"""
+    try:
+        logger.info(f"Starting PDF parsing for {ticker}: {pdf_path}")
+        
+        # Import here to avoid circular imports
+        import PyPDF2
+        import re
+        import json
+        from pathlib import Path
+        from datetime import datetime
+        
+        # Check if file exists
+        if not Path(pdf_path).exists():
+            raise FileNotFoundError(f"PDF file not found: {pdf_path}")
+        
+        # Read PDF
+        extracted_text = ""
+        with open(pdf_path, 'rb') as file:
+            pdf_reader = PyPDF2.PdfReader(file)
+            
+            # Extract text from all pages
+            for page_num, page in enumerate(pdf_reader.pages):
+                try:
+                    page_text = page.extract_text()
+                    if page_text:
+                        extracted_text += f"\n--- Page {page_num + 1} ---\n{page_text}"
+                except Exception as e:
+                    logger.warning(f"Error extracting text from page {page_num + 1}: {e}")
+                    continue
+        
+        if not extracted_text.strip():
+            raise ValueError("No text could be extracted from PDF")
+        
+        # Parse financial data (simplified example)
+        # In production, you would use more sophisticated NLP/ML techniques
+        financial_data = parse_financial_data_from_text(extracted_text, ticker)
+        
+        # Add metadata
+        result = {
+            'ticker': ticker,
+            'company_name': company_name,
+            'source_url': source_url,
+            'pdf_path': pdf_path,
+            'extraction_timestamp': datetime.now().isoformat(),
+            'financial_data': financial_data,
+            'text_length': len(extracted_text),
+            'pages_processed': len(pdf_reader.pages)
+        }
+        
+        logger.info(f"Successfully parsed PDF for {ticker}: {len(financial_data)} financial items found")
+        return result
+        
+    except Exception as exc:
+        logger.error(f"PDF parsing failed for {ticker}: {exc}")
+        raise self.retry(countdown=300 * (2 ** self.request.retries), max_retries=2, exc=exc)
+
+def parse_financial_data_from_text(text: str, ticker: str) -> Dict[str, Any]:
+    """Extract financial data from PDF text using regex patterns"""
+    
+    # Common financial terms in multiple languages
+    financial_patterns = {
+        'revenue': [
+            r'revenue[:\s]*([\d,]+\.?\d*)',
+            r'chiffre d\'affaires[:\s]*([\d,]+\.?\d*)',
+            r'ventes[:\s]*([\d,]+\.?\d*)',
+            r'ca[:\s]*([\d,]+\.?\d*)',
+        ],
+        'net_income': [
+            r'net income[:\s]*([\d,]+\.?\d*)',
+            r'profit net[:\s]*([\d,]+\.?\d*)',
+            r'bénéfice net[:\s]*([\d,]+\.?\d*)',
+            r'resultat net[:\s]*([\d,]+\.?\d*)',
+        ],
+        'total_assets': [
+            r'total assets[:\s]*([\d,]+\.?\d*)',
+            r'actifs totaux[:\s]*([\d,]+\.?\d*)',
+            r'total de l\'actif[:\s]*([\d,]+\.?\d*)',
+        ],
+        'total_liabilities': [
+            r'total liabilities[:\s]*([\d,]+\.?\d*)',
+            r'passifs totaux[:\s]*([\d,]+\.?\d*)',
+            r'total du passif[:\s]*([\d,]+\.?\d*)',
+        ],
+        'equity': [
+            r'equity[:\s]*([\d,]+\.?\d*)',
+            r'capitaux propres[:\s]*([\d,]+\.?\d*)',
+            r'fonds propres[:\s]*([\d,]+\.?\d*)',
+        ]
+    }
+    
+    extracted_data = {}
+    
+    for metric, patterns in financial_patterns.items():
+        for pattern in patterns:
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            if matches:
+                # Take the first match and convert to number
+                try:
+                    value_str = matches[0].replace(',', '')
+                    value = float(value_str)
+                    extracted_data[metric] = value
+                    break
+                except ValueError:
+                    continue
+    
+    # Add currency detection (simplified)
+    currency_patterns = [
+        r'([A-Z]{3})\s*[\d,]+\.?\d*',  # USD, EUR, MAD, etc.
+        r'[\d,]+\.?\d*\s*([A-Z]{3})',  # 1,000 USD, etc.
+    ]
+    
+    currency = 'MAD'  # Default for Moroccan companies
+    for pattern in currency_patterns:
+        matches = re.findall(pattern, text, re.IGNORECASE)
+        if matches:
+            currency = matches[0].upper()
+            break
+    
+    extracted_data['currency'] = currency
+    
+    return extracted_data
+
 # Task monitoring and health checks
 @celery_app.task
 def health_check():
