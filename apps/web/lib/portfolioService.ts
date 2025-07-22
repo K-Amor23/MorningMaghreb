@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+// Portfolio service for managing user portfolios
 
 export interface PortfolioHolding {
   id?: string
@@ -44,15 +44,12 @@ export interface AddHoldingRequest {
 }
 
 class PortfolioService {
-  private baseUrl = '/api' // Use frontend API routes
+  private baseUrl = '' // Use frontend API routes (no double /api)
 
   private async getAuthHeaders() {
-    if (!supabase) {
-      throw new Error('Supabase client not configured')
-    }
-    const { data: { session } } = await supabase.auth.getSession()
+    // For now, return basic headers since we're using mock data
+    // In production, this would include proper authentication
     return {
-      'Authorization': `Bearer ${session?.access_token}`,
       'Content-Type': 'application/json',
     }
   }
@@ -60,7 +57,7 @@ class PortfolioService {
   async getUserPortfolios() {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/`, {
+      const response = await fetch(`/api/portfolio/`, {
         headers,
       })
       
@@ -78,7 +75,7 @@ class PortfolioService {
   async createPortfolio(request: CreatePortfolioRequest) {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/`, {
+      const response = await fetch(`/api/portfolio/`, {
         method: 'POST',
         headers,
         body: JSON.stringify(request),
@@ -98,7 +95,7 @@ class PortfolioService {
   async getPortfolioHoldings(portfolioId: string): Promise<PortfolioHolding[]> {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/holdings`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/holdings`, {
         headers,
       })
       
@@ -116,7 +113,7 @@ class PortfolioService {
   async getPortfolioSummary(portfolioId: string): Promise<PortfolioSummary> {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/summary`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/summary`, {
         headers,
       })
       
@@ -134,7 +131,7 @@ class PortfolioService {
   async addHolding(portfolioId: string, request: AddHoldingRequest): Promise<PortfolioHolding> {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/holdings`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/holdings`, {
         method: 'POST',
         headers,
         body: JSON.stringify(request),
@@ -158,7 +155,7 @@ class PortfolioService {
   ): Promise<PortfolioHolding> {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/holdings/${holdingId}`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/holdings/${holdingId}`, {
         method: 'PUT',
         headers,
         body: JSON.stringify(request),
@@ -178,7 +175,7 @@ class PortfolioService {
   async deleteHolding(portfolioId: string, holdingId: string) {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/holdings/${holdingId}`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/holdings/${holdingId}`, {
         method: 'DELETE',
         headers,
       })
@@ -197,7 +194,7 @@ class PortfolioService {
   async adjustHoldingQuantity(portfolioId: string, holdingId: string, adjustment: number) {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/holdings/${holdingId}/adjust?adjustment=${adjustment}`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/holdings/${holdingId}/adjust?adjustment=${adjustment}`, {
         method: 'POST',
         headers,
       })
@@ -216,7 +213,7 @@ class PortfolioService {
   async getPortfolioPerformance(portfolioId: string, period: string = '1M') {
     try {
       const headers = await this.getAuthHeaders()
-      const response = await fetch(`${this.baseUrl}/api/portfolio/${portfolioId}/performance?period=${period}`, {
+      const response = await fetch(`/api/portfolio/${portfolioId}/performance?period=${period}`, {
         headers,
       })
       

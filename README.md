@@ -13,6 +13,10 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
   Live quotes, volumes, and sector indices (MASI, MADEX, MASI-ESG).
   Watchlists, price alerts, and interactive charts with advanced search functionality.
 
+* **Volume Data & Analytics**
+  Comprehensive volume data collection from multiple sources with automated ETL pipeline.
+  Volume ratio analysis, high/low volume alerts, and trend identification.
+
 * **Financials & GAAP Conversion**
   Automated PDF scraping (Tabula‑Py) → IFRS tables → JSON/YAML-driven U.S. GAAP mapping → key ratio calculations.
 
@@ -58,12 +62,16 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 ### **Content & Communication**
 * **"Morning Maghreb" Newsletter**
   Daily email digest with top market movers, corporate actions, macro highlights, and AI-generated commentary.
+  Complete newsletter system with dedicated marketing page, subscriber management, and multi-language support.
 
 * **AI Content Moderation with Cultural Guardrails**
   Automated content screening to ensure all generated content respects Moroccan cultural sensitivities and legal requirements. Detects and replaces sensitive topics while maintaining business focus.
 
 * **Sentiment Analysis & Voting**
   Community-driven sentiment analysis with voting system for stocks and market indicators.
+
+* **Compliance & Market Guide**
+  Comprehensive trading rules, price limits, circuit breakers, and regulatory information for the Casablanca Stock Exchange.
 
 ### **User Experience & Management**
 * **Advanced Search & Navigation**
@@ -246,6 +254,23 @@ For detailed API documentation, see [Economic Data README](apps/backend/README_E
 ---
 
 ## 🔧 Recent Updates
+
+### **Volume Data Integration & Airflow Pipeline**
+- ✅ **Volume Scraper Integration**: Comprehensive volume data collection from multiple sources (African Markets, Wafabourse, Investing.com)
+- ✅ **Airflow ETL Pipeline**: Enhanced DAG with volume data tasks, automated daily collection and processing
+- ✅ **Volume Analytics**: Volume ratio calculations, high/low volume alerts, and trend analysis
+- ✅ **Database Integration**: Supabase storage with volume_analysis and market_data tables
+
+### **Newsletter System & Marketing**
+- ✅ **Morning Maghreb Newsletter**: Complete newsletter system with dedicated page, signup forms, and Supabase integration
+- ✅ **Newsletter Page**: Comprehensive marketing page with features, testimonials, sample content, and FAQ
+- ✅ **Email Management**: Subscriber management, campaign tracking, and delivery analytics
+- ✅ **Multi-language Support**: Newsletter available in English, French, and Arabic
+
+### **Compliance & Market Guide**
+- ✅ **Comprehensive Compliance Page**: Detailed trading guardrails, price limits, trading halts, and regulatory information
+- ✅ **Market Guide**: Complete guide to Casablanca Stock Exchange rules and regulations
+- ✅ **Trading Rules**: Price limits, circuit breakers, and investor protection information
 
 ### **Search Bar & UI Improvements**
 - Fixed search bar cutoff issue in header layout

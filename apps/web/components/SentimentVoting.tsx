@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ArrowUpIcon, ArrowRightIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
-import { SentimentVoting as SharedSentimentVoting } from '@casablanca-insight/shared'
+// import { SentimentVoting as SharedSentimentVoting } from '@casablanca-insight/shared'
 import { apiService } from '@/lib/api'
 import toast from 'react-hot-toast'
 
@@ -11,10 +11,31 @@ interface SentimentVotingProps {
 }
 
 const SentimentVoting: React.FC<SentimentVotingProps> = (props) => {
+  // Temporary implementation without shared package
+  const [userVote, setUserVote] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [sentimentData, setSentimentData] = useState<any>(null)
+
+  const handleVote = async (sentiment: string) => {
+    try {
+      setLoading(true)
+      await apiService.voteSentiment({
+        ticker: props.ticker,
+        sentiment: sentiment as 'bullish' | 'neutral' | 'bearish',
+        confidence: 3,
+      })
+      setUserVote(sentiment)
+      toast.success('Vote recorded successfully!')
+    } catch (error) {
+      toast.error('Failed to record vote')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const renderButton = ({
     sentiment,
     label,
-    icon,
     isSelected,
     isLoading,
     onPress
@@ -184,14 +205,37 @@ const SentimentVoting: React.FC<SentimentVotingProps> = (props) => {
 
   return (
     <div className="bg-white dark:bg-dark-card rounded-lg shadow p-6">
-      <SharedSentimentVoting
-        {...props}
-        apiService={apiService}
-        renderButton={renderButton}
-        renderResults={renderResults}
-        renderLoading={renderLoading}
-        renderError={renderError}
-      />
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        Community Sentiment
+      </h3>
+      {props.companyName && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          {props.companyName} ({props.ticker})
+        </p>
+      )}
+      
+      {/* Voting Buttons */}
+      <div className="grid grid-cols-3 gap-3 mb-4">
+        {[
+          { sentiment: 'bullish', label: 'Bullish' },
+          { sentiment: 'neutral', label: 'Neutral' },
+          { sentiment: 'bearish', label: 'Bearish' }
+        ].map(({ sentiment, label }) => 
+          renderButton({
+            sentiment,
+            label,
+            icon: null,
+            isSelected: userVote === sentiment,
+            isLoading: loading,
+            onPress: () => handleVote(sentiment)
+          })
+        )}
+      </div>
+
+      {/* Simple Results */}
+      <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+        Vote to see community sentiment
+      </div>
     </div>
   )
 }

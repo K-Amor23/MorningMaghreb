@@ -94,12 +94,6 @@ export default function Header() {
               : 'opacity-100 scale-100'
           }`}>
             <Link 
-              href="/dashboard" 
-              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link 
               href="/markets" 
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
@@ -116,6 +110,18 @@ export default function Header() {
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
               News
+            </Link>
+            <Link 
+              href="/newsletter" 
+              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
+            >
+              Newsletter
+            </Link>
+            <Link 
+              href="/compliance" 
+              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
+            >
+              Market Guide
             </Link>
             <Link 
               href="/advanced-features" 

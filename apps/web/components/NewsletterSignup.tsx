@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { EnvelopeIcon, CheckIcon } from '@heroicons/react/24/outline'
+import toast from 'react-hot-toast'
 
 interface NewsletterSignupProps {
   title?: string
@@ -20,15 +21,47 @@ export default function NewsletterSignup({
     e.preventDefault()
     setIsSubmitting(true)
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setEmail('')
-    
-    // Reset after 3 seconds
-    setTimeout(() => setIsSubmitted(false), 3000)
+    try {
+      const response = await fetch('/api/newsletter/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email,
+          name: '', // Optional name field
+          preferences: {
+            language: 'en',
+            delivery_time: '08:00',
+            frequency: 'daily',
+          }
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        if (response.status === 409) {
+          toast.error('This email is already subscribed!')
+        } else {
+          toast.error(data.error || 'Failed to subscribe. Please try again.')
+        }
+        return
+      }
+
+      toast.success('Successfully subscribed to Morning Maghreb!')
+      setIsSubmitted(true)
+      setEmail('')
+      
+      // Reset after 5 seconds
+      setTimeout(() => setIsSubmitted(false), 5000)
+      
+    } catch (error) {
+      console.error('Newsletter signup error:', error)
+      toast.error('Failed to subscribe. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (

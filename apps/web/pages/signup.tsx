@@ -2,72 +2,89 @@ import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 import { 
   UserIcon, 
   EnvelopeIcon, 
   LockClosedIcon,
   EyeIcon,
-  EyeSlashIcon,
-  CheckIcon
+  EyeSlashIcon
 } from '@heroicons/react/24/outline'
 
 export default function Signup() {
   const router = useRouter()
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  })
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
-    // Basic validation
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
-    }
+    try {
+      if (!supabase) {
+        throw new Error('Authentication service is not available')
+      }
 
-    if (!agreedToTerms) {
-      setError('You must agree to the terms and conditions')
-      setLoading(false)
-      return
-    }
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          }
+        }
+      })
 
-    // For development, simulate signup
-    setTimeout(() => {
+      if (error) {
+        throw error
+      }
+
+      if (data.user) {
+        toast.success('Account created successfully! Please check your email to verify your account.')
+        router.push('/login')
+      }
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      setError(error.message || 'Failed to create account. Please try again.')
+      toast.error(error.message || 'Failed to create account')
+    } finally {
       setLoading(false)
-      // Redirect to dashboard or home
-      router.push('/dashboard')
-    }, 1000)
+    }
   }
 
   return (
     <>
       <Head>
-        <title>Create Account - Casablanca Insight</title>
+        <title>Sign Up - Casablanca Insight</title>
         <meta name="description" content="Create your Casablanca Insight account" />
       </Head>
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) {
+                router.back()
+              } else {
+                router.push('/')
+              }
+            }}
+            className="mb-4 text-casablanca-blue hover:underline flex items-center"
+          >
+            <svg className="h-5 w-5 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
+          </button>
+          
           <div className="flex justify-center">
             <div className="flex items-center space-x-2">
               <div className="h-10 w-10 bg-casablanca-blue rounded-lg flex items-center justify-center">
@@ -100,43 +117,25 @@ export default function Signup() {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    First name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="firstName"
-                      name="firstName"
-                      type="text"
-                      autoComplete="given-name"
-                      required
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
-                      placeholder="First name"
-                    />
+              <div>
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Full Name
+                </label>
+                <div className="mt-1 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <UserIcon className="h-5 w-5 text-gray-400" />
                   </div>
-                </div>
-
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Last name
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      id="lastName"
-                      name="lastName"
-                      type="text"
-                      autoComplete="family-name"
-                      required
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
-                      placeholder="Last name"
-                    />
-                  </div>
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
+                    placeholder="Enter your full name"
+                  />
                 </div>
               </div>
 
@@ -154,8 +153,8 @@ export default function Signup() {
                     type="email"
                     autoComplete="email"
                     required
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
                     placeholder="Enter your email"
                   />
@@ -176,10 +175,11 @@ export default function Signup() {
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
-                    placeholder="Create a password"
+                    placeholder="Create a password (min. 6 characters)"
+                    minLength={6}
                   />
                   <button
                     type="button"
@@ -193,60 +193,6 @@ export default function Signup() {
                     )}
                   </button>
                 </div>
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Confirm password
-                </label>
-                <div className="mt-1 relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <LockClosedIcon className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue dark:bg-gray-700 dark:text-white"
-                    placeholder="Confirm your password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center">
-                <input
-                  id="agree-terms"
-                  name="agree-terms"
-                  type="checkbox"
-                  checked={agreedToTerms}
-                  onChange={(e) => setAgreedToTerms(e.target.checked)}
-                  className="h-4 w-4 text-casablanca-blue focus:ring-casablanca-blue border-gray-300 rounded"
-                />
-                <label htmlFor="agree-terms" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                  I agree to the{' '}
-                  <Link href="/terms" className="text-casablanca-blue hover:text-casablanca-blue/80">
-                    Terms of Service
-                  </Link>{' '}
-                  and{' '}
-                  <Link href="/privacy" className="text-casablanca-blue hover:text-casablanca-blue/80">
-                    Privacy Policy
-                  </Link>
-                </label>
               </div>
 
               <div>

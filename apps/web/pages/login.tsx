@@ -2,6 +2,8 @@ import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { supabase } from '@/lib/supabase'
+import toast from 'react-hot-toast'
 import { 
   UserIcon, 
   EnvelopeIcon, 
@@ -23,12 +25,68 @@ export default function Login() {
     setLoading(true)
     setError('')
 
-    // For development, simulate login
-    setTimeout(() => {
+    try {
+      if (!supabase) {
+        throw new Error('Authentication service is not available')
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
+
+      if (error) {
+        throw error
+      }
+
+      if (data.user) {
+        toast.success('Successfully signed in!')
+        router.push('/dashboard')
+      }
+    } catch (error: any) {
+      console.error('Login error:', error)
+      let errorMessage = 'Failed to sign in. Please try again.'
+      
+      // Handle specific Supabase auth errors
+      if (error.message) {
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Invalid email or password. Please check your credentials.'
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Please check your email and click the confirmation link before signing in.'
+        } else if (error.message.includes('Too many requests')) {
+          errorMessage = 'Too many login attempts. Please try again later.'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
+      setError(errorMessage)
+      toast.error(errorMessage)
+    } finally {
       setLoading(false)
-      // Redirect to dashboard or home
-      router.push('/dashboard')
-    }, 1000)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    try {
+      if (!supabase) {
+        throw new Error('Authentication service is not available')
+      }
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (error) {
+        throw error
+      }
+    } catch (error: any) {
+      console.error('Google sign-in error:', error)
+      toast.error(error.message || 'Failed to sign in with Google')
+    }
   }
 
   return (
@@ -188,6 +246,7 @@ export default function Login() {
               <div className="mt-6">
                 <button
                   type="button"
+                  onClick={handleGoogleSignIn}
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">

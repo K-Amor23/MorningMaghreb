@@ -18,23 +18,19 @@ export default function Portfolio() {
   const [portfolioLoading, setPortfolioLoading] = useState(true)
   const [portfolioId] = useState('portfolio_1') // Default portfolio ID
 
-  // Check access control - require login
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-casablanca-blue"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    // Redirect to login if not authenticated
-    router.push('/login?redirect=/portfolio')
-    return null
-  }
-
   // Load portfolio data
   useEffect(() => {
+    // Check access control - require login
+    if (loading) {
+      return
+    }
+
+    if (!user) {
+      // Redirect to login if not authenticated
+      router.push('/login?redirect=/portfolio')
+      return
+    }
+
     const loadPortfolioData = async () => {
       try {
         setPortfolioLoading(true)
@@ -53,7 +49,7 @@ export default function Portfolio() {
     }
 
     loadPortfolioData()
-  }, [portfolioId])
+  }, [portfolioId, user, loading, router])
 
   const handleHoldingsUpdate = () => {
     // Reload portfolio data when holdings are updated
@@ -82,6 +78,27 @@ export default function Portfolio() {
 
   const formatPercent = (value: number) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
+  }
+
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-casablanca-blue"></div>
+      </div>
+    )
+  }
+
+  // Show loading while redirecting
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-casablanca-blue mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Redirecting to login...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

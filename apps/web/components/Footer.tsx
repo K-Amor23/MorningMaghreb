@@ -26,11 +26,6 @@ export default function Footer() {
                 </h3>
                 <ul className="mt-4 space-y-3">
                   <li>
-                    <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-                      Dashboard
-                    </Link>
-                  </li>
-                  <li>
                     <Link href="/markets" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       Markets
                     </Link>
@@ -38,6 +33,11 @@ export default function Footer() {
                   <li>
                     <Link href="/portfolio" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       Portfolio
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/compliance" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                      Market Guide
                     </Link>
                   </li>
                 </ul>
@@ -60,6 +60,28 @@ export default function Footer() {
                   <li>
                     <Link href="/privacy" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
                       Privacy
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-8 md:mt-0">
+                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
+                  Newsletter
+                </h3>
+                <ul className="mt-4 space-y-3">
+                  <li>
+                    <Link href="/newsletter" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                      Morning Maghreb
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/newsletter#features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                      Features
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/newsletter#sample" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+                      Sample Content
                     </Link>
                   </li>
                 </ul>

@@ -23,11 +23,12 @@ export default function FeatureFlagsDebug() {
           <h3 className="font-bold mb-2">Feature Flags Debug</h3>
           <div className="text-xs space-y-1">
             <div><strong>NEXT_PUBLIC_ENV:</strong> {process.env.NEXT_PUBLIC_ENV || 'undefined'}</div>
-            <div><strong>NEXT_PUBLIC_PREMIUM_ENFORCEMENT:</strong> {process.env.NEXT_PUBLIC_PREMIUM_ENFORCEMENT || 'undefined'}</div>
-            <div><strong>PREMIUM_ENFORCEMENT:</strong> {featureFlags.PREMIUM_ENFORCEMENT.toString()}</div>
-            <div><strong>DEV_BYPASS_PREMIUM:</strong> {featureFlags.DEV_BYPASS_PREMIUM.toString()}</div>
-            <div><strong>Free user access:</strong> {checkPremiumAccess('free').toString()}</div>
-            <div><strong>Pro user access:</strong> {checkPremiumAccess('pro').toString()}</div>
+            <div><strong>PREMIUM_FEATURES:</strong> {featureFlags.PREMIUM_FEATURES.toString()}</div>
+            <div><strong>PAPER_TRADING:</strong> {featureFlags.PAPER_TRADING.toString()}</div>
+            <div><strong>SENTIMENT_VOTING:</strong> {featureFlags.SENTIMENT_VOTING.toString()}</div>
+            <div><strong>ADVANCED_CHARTS:</strong> {featureFlags.ADVANCED_CHARTS.toString()}</div>
+            <div><strong>REAL_TIME_DATA:</strong> {featureFlags.REAL_TIME_DATA.toString()}</div>
+            <div><strong>Premium access check:</strong> {checkPremiumAccess('PREMIUM_FEATURES').toString()}</div>
           </div>
         </div>
       )}
