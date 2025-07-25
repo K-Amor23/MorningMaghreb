@@ -1,76 +1,207 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs';
+import path from 'path';
 
-// Mock company data - in real app, this would come from database
-const mockCompanies = [
-  { ticker: 'ATW', name: 'Attijariwafa Bank', sector: 'Banks' },
-  { ticker: 'IAM', name: 'Maroc Telecom', sector: 'Telecommunications' },
-  { ticker: 'BCP', name: 'Banque Centrale Populaire', sector: 'Banks' },
-  { ticker: 'BMCE', name: 'BMCE Bank', sector: 'Banks' },
-  { ticker: 'ONA', name: 'Omnium Nord Africain', sector: 'Conglomerates' },
-  { ticker: 'MASI', name: 'MASI Index', sector: 'Index' },
-  { ticker: 'MADEX', name: 'MADEX Index', sector: 'Index' },
-  { ticker: 'MASI-ESG', name: 'MASI ESG Index', sector: 'Index' },
-  { ticker: 'CIH', name: 'CIH Bank', sector: 'Banks' },
-  { ticker: 'WAA', name: 'Wafa Assurance', sector: 'Insurance' },
-  { ticker: 'CMA', name: 'Ciments du Maroc', sector: 'Construction Materials' },
-  { ticker: 'LES', name: 'Lesieur Cristal', sector: 'Consumer Goods' },
-  { ticker: 'SOT', name: 'SOTHEMA', sector: 'Pharmaceuticals' },
-  { ticker: 'TMA', name: 'Taqa Morocco', sector: 'Utilities' },
-  { ticker: 'COL', name: 'Colorado', sector: 'Real Estate' },
-  { ticker: 'DRI', name: 'Dari Couspate', sector: 'Consumer Goods' },
-  { ticker: 'FBR', name: 'Fenêtre Bab Rbat', sector: 'Construction' },
-  { ticker: 'JET', name: 'Jet Contractors', sector: 'Construction' },
-  { ticker: 'LBV', name: 'Label\'Vie', sector: 'Retail' },
-  { ticker: 'MNG', name: 'Managem', sector: 'Mining' },
-  { ticker: 'MUT', name: 'Mutandis', sector: 'Consumer Goods' },
-  { ticker: 'SID', name: 'SOMACA', sector: 'Automotive' },
-  { ticker: 'SNP', name: 'SNEP', sector: 'Oil & Gas' },
-  { ticker: 'SOT', name: 'SOTHEMA', sector: 'Pharmaceuticals' },
-  { ticker: 'TMA', name: 'Taqa Morocco', sector: 'Utilities' },
-  { ticker: 'TMA', name: 'Taqa Morocco', sector: 'Utilities' },
-  { ticker: 'WAA', name: 'Wafa Assurance', sector: 'Insurance' },
-]
+// Helper function to load JSON data
+function loadJsonData(filePath: string) {
+  try {
+    const possiblePaths = [
+      path.join(process.cwd(), filePath),
+      path.join(process.cwd(), '..', filePath),
+      path.join(process.cwd(), '..', '..', filePath),
+      path.join(process.cwd(), '..', '..', '..', filePath)
+    ];
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+    for (const fullPath of possiblePaths) {
+      if (fs.existsSync(fullPath)) {
+        const data = fs.readFileSync(fullPath, 'utf8');
+        return JSON.parse(data);
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error(`Error loading ${filePath}:`, error);
+    return null;
+  }
+}
+
+// Helper function to search companies
+function searchCompanies(companies: any[], query: string, filters: any) {
+  const searchTerm = query.toLowerCase();
+
+  return companies.filter((company: any) => {
+    // Text search
+    const matchesSearch =
+      company.ticker?.toLowerCase().includes(searchTerm) ||
+      company.name?.toLowerCase().includes(searchTerm) ||
+      company.company_name?.toLowerCase().includes(searchTerm) ||
+      company.sector?.toLowerCase().includes(searchTerm) ||
+      company.sector_group?.toLowerCase().includes(searchTerm);
+
+    if (!matchesSearch) return false;
+
+    // Apply filters
+    if (filters.sector && company.sector !== filters.sector) return false;
+    if (filters.size_category && company.size_category !== filters.size_category) return false;
+    if (filters.has_price && !company.price) return false;
+    if (filters.has_market_cap && !company.market_cap_billion) return false;
+
+    return true;
+  });
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' })
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { q: query } = req.query
+    const {
+      q = '',
+      page = '1',
+      limit = '20',
+      sector,
+      size_category,
+      has_price,
+      has_market_cap,
+      sort_by = 'name'
+    } = req.query;
 
-    if (!query || typeof query !== 'string') {
-      return res.status(200).json({
-        success: true,
-        data: [],
-        total: 0
-      })
-    }
+    // Load data sources
+    const africanMarketsData = loadJsonData('apps/backend/data/cse_companies_african_markets.json') || [];
+    const bourseData = loadJsonData('apps/backend/etl/casablanca_bourse_data_20250725_123947.json') || {};
 
-    // Filter companies based on query
-    const filteredCompanies = mockCompanies.filter(company =>
-      company.ticker.toLowerCase().includes(query.toLowerCase()) ||
-      company.name.toLowerCase().includes(query.toLowerCase()) ||
-      (company.sector && company.sector.toLowerCase().includes(query.toLowerCase()))
-    )
+    // Transform and enrich company data
+    let companies = africanMarketsData.map((company: any) => {
+      const ticker = company.ticker?.toUpperCase();
+      if (!ticker) return null;
 
-    // Limit results to 10 for performance
-    const limitedResults = filteredCompanies.slice(0, 10)
+      // Find matching bourse data
+      let bourseInfo = null;
+      if (bourseData.market_data_pages) {
+        for (const page of bourseData.market_data_pages) {
+          for (const table of page.tables || []) {
+            for (const row of table.data || []) {
+              if (row.Ticker?.toUpperCase() === ticker) {
+                bourseInfo = row;
+                break;
+              }
+            }
+            if (bourseInfo) break;
+          }
+          if (bourseInfo) break;
+        }
+      }
 
-    res.status(200).json({
+      return {
+        ticker,
+        name: company.name || company.company_name || '',
+        sector: company.sector || '',
+        sector_group: company.sector_group || '',
+        size_category: company.size_category || '',
+        price: company.price || null,
+        market_cap_billion: company.market_cap_billion || null,
+        market_cap_formatted: company.market_cap_billion ? `${company.market_cap_billion}B MAD` : '',
+        isin: company.isin || bourseInfo?.ISIN || '',
+        compartment: bourseInfo?.Compartment || '',
+        category: bourseInfo?.Catégorie || '',
+        shares_outstanding: bourseInfo?.['Nombre de titres formant le capital'] || null,
+        last_updated: company.last_updated || new Date().toISOString(),
+        data_sources: ['african_markets', ...(bourseInfo ? ['casablanca_bourse'] : [])],
+        data_quality: company.price ? 'real' : 'generated'
+      };
+    }).filter(Boolean);
+
+    // Apply search and filters
+    const filters = {
+      sector: sector as string,
+      size_category: size_category as string,
+      has_price: has_price === 'true',
+      has_market_cap: has_market_cap === 'true'
+    };
+
+    const searchResults = searchCompanies(companies, q as string, filters);
+
+    // Apply sorting
+    const sortBy = sort_by as string;
+    searchResults.sort((a: any, b: any) => {
+      switch (sortBy) {
+        case 'ticker':
+          return a.ticker.localeCompare(b.ticker);
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'sector':
+          return a.sector.localeCompare(b.sector);
+        case 'price':
+          return (b.price || 0) - (a.price || 0);
+        case 'market_cap':
+          return (b.market_cap_billion || 0) - (a.market_cap_billion || 0);
+        case 'data_quality':
+          return a.data_quality.localeCompare(b.data_quality);
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+
+    // Apply pagination
+    const pageNum = parseInt(page as string);
+    const limitNum = parseInt(limit as string);
+    const startIndex = (pageNum - 1) * limitNum;
+    const endIndex = startIndex + limitNum;
+    const paginatedResults = searchResults.slice(startIndex, endIndex);
+
+    // Calculate pagination metadata
+    const totalResults = searchResults.length;
+    const totalPages = Math.ceil(totalResults / limitNum);
+    const hasNextPage = pageNum < totalPages;
+    const hasPrevPage = pageNum > 1;
+
+    // Calculate search statistics
+    const sectorDistribution = searchResults.reduce((acc: any, company: any) => {
+      const sector = company.sector || 'Unknown';
+      acc[sector] = (acc[sector] || 0) + 1;
+      return acc;
+    }, {});
+
+    const sizeDistribution = searchResults.reduce((acc: any, company: any) => {
+      const size = company.size_category || 'Unknown';
+      acc[size] = (acc[size] || 0) + 1;
+      return acc;
+    }, {});
+
+    const response = {
       success: true,
-      data: limitedResults,
-      total: filteredCompanies.length,
-      query: query
-    })
+      data: {
+        companies: paginatedResults,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: totalResults,
+          total_pages: totalPages,
+          has_next: hasNextPage,
+          has_prev: hasPrevPage
+        },
+        search_metadata: {
+          query: q,
+          filters_applied: filters,
+          total_results: totalResults,
+          sector_distribution: sectorDistribution,
+          size_distribution: sizeDistribution,
+          companies_with_price: searchResults.filter((c: any) => c.price).length,
+          companies_with_market_cap: searchResults.filter((c: any) => c.market_cap_billion).length
+        }
+      },
+      timestamp: new Date().toISOString()
+    };
+
+    return res.status(200).json(response);
   } catch (error) {
-    console.error('Error searching companies:', error)
-    res.status(500).json({ 
+    console.error('Search API error:', error);
+    return res.status(500).json({
+      success: false,
       error: 'Internal server error',
-      message: 'Failed to search companies'
-    })
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
 } 

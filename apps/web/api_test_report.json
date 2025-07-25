@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-07-25T15:55:10.234129",
+  "config": {
+    "base_url": "http://localhost:3000",
+    "api_base": "http://localhost:3000/api",
+    "test_companies": [
+      "ATW",
+      "IAM",
+      "BCP",
+      "BMCE",
+      "CIH",
+      "CMT",
+      "CTM",
+      "DRI",
+      "FEN",
+      "JET",
+      "LES",
+      "MNG",
+      "MOR",
+      "SID",
+      "SNP",
+      "TMA",
+      "WAA",
+      "WAL",
+      "ZAL"
+    ],
+    "total_companies": 19
+  },
+  "results": {
+    "total_tests": 15,
+    "passed": 9,
+    "failed": 6,
+    "errors": [
+      "\u274c test_company_summary_endpoint: Failed for ticker BMCE",
+      "\u274c test_data_quality_consistency: ",
+      "\u274c test_market_data_unified: ",
+      "\u274c test_search_companies_endpoint: ",
+      "\u274c test_supabase_endpoint: ",
+      "\u274c test_concurrent_requests: "
+    ]
+  }
+}

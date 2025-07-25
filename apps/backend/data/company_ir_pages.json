@@ -1,0 +1,392 @@
+{
+    "ADH": {
+        "name": "ADH",
+        "ir_url": "https://www.adh.ma/fr/investisseurs",
+        "base_url": "https://www.adh.ma"
+    },
+    "ADI": {
+        "name": "Alliances",
+        "ir_url": "https://www.alliances.ma/fr/investisseurs",
+        "base_url": "https://www.alliances.ma"
+    },
+    "AFI": {
+        "name": "Afric Industries",
+        "ir_url": "https://www.africindustries.ma/fr/investisseurs",
+        "base_url": "https://www.africindustries.ma"
+    },
+    "AFM": {
+        "name": "AFMA",
+        "ir_url": "https://www.afma.ma/fr/investisseurs",
+        "base_url": "https://www.afma.ma"
+    },
+    "AGM": {
+        "name": "AGMA",
+        "ir_url": "https://www.agma.ma/fr/investisseurs",
+        "base_url": "https://www.agma.ma"
+    },
+    "AKT": {
+        "name": "AKT",
+        "ir_url": "https://www.akt.ma/fr/investisseurs",
+        "base_url": "https://www.akt.ma"
+    },
+    "ALM": {
+        "name": "Aluminium Du Maroc",
+        "ir_url": "https://www.aluminiumdumaroc.ma/fr/investisseurs",
+        "base_url": "https://www.aluminiumdumaroc.ma"
+    },
+    "ARD": {
+        "name": "ARD",
+        "ir_url": "https://www.ard.ma/fr/investisseurs",
+        "base_url": "https://www.ard.ma"
+    },
+    "ATH": {
+        "name": "Atlantasanad",
+        "ir_url": "https://www.atlantasanad.ma/fr/investisseurs",
+        "base_url": "https://www.atlantasanad.ma"
+    },
+    "ATL": {
+        "name": "Atlantasanad",
+        "ir_url": "https://www.atlantasanad.ma/fr/investisseurs",
+        "base_url": "https://www.atlantasanad.ma"
+    },
+    "ATW": {
+        "name": "Attijariwafa Bank",
+        "ir_url": "https://www.attijariwafabank.com/fr/investisseurs",
+        "base_url": "https://www.attijariwafabank.com"
+    },
+    "BAL": {
+        "name": "BAL",
+        "ir_url": "https://www.bal.ma/fr/investisseurs",
+        "base_url": "https://www.bal.ma"
+    },
+    "BCI": {
+        "name": "BCI",
+        "ir_url": "https://www.bci.ma/fr/investisseurs",
+        "base_url": "https://www.bci.ma"
+    },
+    "BCP": {
+        "name": "Banque Centrale Populaire",
+        "ir_url": "https://www.banquecentrale.ma/fr/investisseurs",
+        "base_url": "https://www.banquecentrale.ma"
+    },
+    "BOA": {
+        "name": "BOA",
+        "ir_url": "https://www.boa.ma/fr/investisseurs",
+        "base_url": "https://www.boa.ma"
+    },
+    "CDM": {
+        "name": "CDM",
+        "ir_url": "https://www.cdm.ma/fr/investisseurs",
+        "base_url": "https://www.cdm.ma"
+    },
+    "CFG": {
+        "name": "CFG",
+        "ir_url": "https://www.cfg.ma/fr/investisseurs",
+        "base_url": "https://www.cfg.ma"
+    },
+    "CIH": {
+        "name": "CIH Bank",
+        "ir_url": "https://www.cihbank.ma/fr/investisseurs",
+        "base_url": "https://www.cihbank.ma"
+    },
+    "CMA": {
+        "name": "CMA",
+        "ir_url": "https://www.cma.ma/fr/investisseurs",
+        "base_url": "https://www.cma.ma"
+    },
+    "CMG": {
+        "name": "CMG",
+        "ir_url": "https://www.cmg.ma/fr/investisseurs",
+        "base_url": "https://www.cmg.ma"
+    },
+    "CMT": {
+        "name": "Compagnie Minière de Touissit",
+        "ir_url": "https://www.cmt.ma/fr/investisseurs",
+        "base_url": "https://www.cmt.ma"
+    },
+    "COL": {
+        "name": "COL",
+        "ir_url": "https://www.col.ma/fr/investisseurs",
+        "base_url": "https://www.col.ma"
+    },
+    "CRS": {
+        "name": "CRS",
+        "ir_url": "https://www.crs.ma/fr/investisseurs",
+        "base_url": "https://www.crs.ma"
+    },
+    "CSR": {
+        "name": "CSR",
+        "ir_url": "https://www.csr.ma/fr/investisseurs",
+        "base_url": "https://www.csr.ma"
+    },
+    "CTM": {
+        "name": "CTM",
+        "ir_url": "https://www.ctm.ma/fr/investisseurs",
+        "base_url": "https://www.ctm.ma"
+    },
+    "DARI": {
+        "name": "Dari Couspate",
+        "ir_url": "https://www.daricouspate.ma/fr/investisseurs",
+        "base_url": "https://www.daricouspate.ma"
+    },
+    "DHO": {
+        "name": "DHO",
+        "ir_url": "https://www.dho.ma/fr/investisseurs",
+        "base_url": "https://www.dho.ma"
+    },
+    "DIS": {
+        "name": "DIS",
+        "ir_url": "https://www.dis.ma/fr/investisseurs",
+        "base_url": "https://www.dis.ma"
+    },
+    "DLM": {
+        "name": "DLM",
+        "ir_url": "https://www.dlm.ma/fr/investisseurs",
+        "base_url": "https://www.dlm.ma"
+    },
+    "DWAY": {
+        "name": "DWAY",
+        "ir_url": "https://www.dway.ma/fr/investisseurs",
+        "base_url": "https://www.dway.ma"
+    },
+    "DYT": {
+        "name": "DYT",
+        "ir_url": "https://www.dyt.ma/fr/investisseurs",
+        "base_url": "https://www.dyt.ma"
+    },
+    "EQD": {
+        "name": "EQD",
+        "ir_url": "https://www.eqd.ma/fr/investisseurs",
+        "base_url": "https://www.eqd.ma"
+    },
+    "FBR": {
+        "name": "FBR",
+        "ir_url": "https://www.fbr.ma/fr/investisseurs",
+        "base_url": "https://www.fbr.ma"
+    },
+    "GAZ": {
+        "name": "Afriquia Gaz",
+        "ir_url": "https://www.afriquia-gaz.ma/fr/investisseurs",
+        "base_url": "https://www.afriquia-gaz.ma"
+    },
+    "HOL": {
+        "name": "HOL",
+        "ir_url": "https://www.hol.ma/fr/investisseurs",
+        "base_url": "https://www.hol.ma"
+    },
+    "HPS": {
+        "name": "HPS",
+        "ir_url": "https://www.hps.ma/fr/investisseurs",
+        "base_url": "https://www.hps.ma"
+    },
+    "IAM": {
+        "name": "Maroc Telecom",
+        "ir_url": "https://www.iam.ma/fr/investisseurs",
+        "base_url": "https://www.iam.ma"
+    },
+    "IBMC": {
+        "name": "IBMC",
+        "ir_url": "https://www.ibmc.ma/fr/investisseurs",
+        "base_url": "https://www.ibmc.ma"
+    },
+    "IMO": {
+        "name": "IMO",
+        "ir_url": "https://www.imo.ma/fr/investisseurs",
+        "base_url": "https://www.imo.ma"
+    },
+    "INV": {
+        "name": "INV",
+        "ir_url": "https://www.inv.ma/fr/investisseurs",
+        "base_url": "https://www.inv.ma"
+    },
+    "JET": {
+        "name": "Jet Contractors",
+        "ir_url": "https://www.jetcontractors.ma/fr/investisseurs",
+        "base_url": "https://www.jetcontractors.ma"
+    },
+    "LBV": {
+        "name": "LBV",
+        "ir_url": "https://www.lbv.ma/fr/investisseurs",
+        "base_url": "https://www.lbv.ma"
+    },
+    "LES": {
+        "name": "Lesieur Cristal",
+        "ir_url": "https://www.lesieurcristal.ma/fr/investisseurs",
+        "base_url": "https://www.lesieurcristal.ma"
+    },
+    "LHM": {
+        "name": "LHM",
+        "ir_url": "https://www.lhm.ma/fr/investisseurs",
+        "base_url": "https://www.lhm.ma"
+    },
+    "M2M": {
+        "name": "M2M",
+        "ir_url": "https://www.m2m.ma/fr/investisseurs",
+        "base_url": "https://www.m2m.ma"
+    },
+    "MAB": {
+        "name": "MAB",
+        "ir_url": "https://www.mab.ma/fr/investisseurs",
+        "base_url": "https://www.mab.ma"
+    },
+    "MDP": {
+        "name": "MDP",
+        "ir_url": "https://www.mdp.ma/fr/investisseurs",
+        "base_url": "https://www.mdp.ma"
+    },
+    "MIC": {
+        "name": "MIC",
+        "ir_url": "https://www.mic.ma/fr/investisseurs",
+        "base_url": "https://www.mic.ma"
+    },
+    "MLE": {
+        "name": "MLE",
+        "ir_url": "https://www.mle.ma/fr/investisseurs",
+        "base_url": "https://www.mle.ma"
+    },
+    "MNG": {
+        "name": "Managem",
+        "ir_url": "https://www.managemgroup.com/fr/investisseurs",
+        "base_url": "https://www.managemgroup.com"
+    },
+    "MOX": {
+        "name": "MOX",
+        "ir_url": "https://www.mox.ma/fr/investisseurs",
+        "base_url": "https://www.mox.ma"
+    },
+    "MSA": {
+        "name": "MSA",
+        "ir_url": "https://www.msa.ma/fr/investisseurs",
+        "base_url": "https://www.msa.ma"
+    },
+    "MUT": {
+        "name": "MUT",
+        "ir_url": "https://www.mut.ma/fr/investisseurs",
+        "base_url": "https://www.mut.ma"
+    },
+    "NAKL": {
+        "name": "NAKL",
+        "ir_url": "https://www.nakl.ma/fr/investisseurs",
+        "base_url": "https://www.nakl.ma"
+    },
+    "NEJ": {
+        "name": "Nejma",
+        "ir_url": "https://www.nejma.ma/fr/investisseurs",
+        "base_url": "https://www.nejma.ma"
+    },
+    "OUL": {
+        "name": "OUL",
+        "ir_url": "https://www.oul.ma/fr/investisseurs",
+        "base_url": "https://www.oul.ma"
+    },
+    "PRO": {
+        "name": "PRO",
+        "ir_url": "https://www.pro.ma/fr/investisseurs",
+        "base_url": "https://www.pro.ma"
+    },
+    "RDS": {
+        "name": "RDS",
+        "ir_url": "https://www.rds.ma/fr/investisseurs",
+        "base_url": "https://www.rds.ma"
+    },
+    "REB": {
+        "name": "REB",
+        "ir_url": "https://www.reb.ma/fr/investisseurs",
+        "base_url": "https://www.reb.ma"
+    },
+    "RIS": {
+        "name": "RIS",
+        "ir_url": "https://www.ris.ma/fr/investisseurs",
+        "base_url": "https://www.ris.ma"
+    },
+    "S2M": {
+        "name": "S2M",
+        "ir_url": "https://www.s2m.ma/fr/investisseurs",
+        "base_url": "https://www.s2m.ma"
+    },
+    "SAHM": {
+        "name": "SAHM",
+        "ir_url": "https://www.sahm.ma/fr/investisseurs",
+        "base_url": "https://www.sahm.ma"
+    },
+    "SAM.TN": {
+        "name": "SAM.TN",
+        "ir_url": "https://www.sam.tn/fr/investisseurs",
+        "base_url": "https://www.sam.tn"
+    },
+    "SBM": {
+        "name": "SBM",
+        "ir_url": "https://www.sbm.ma/fr/investisseurs",
+        "base_url": "https://www.sbm.ma"
+    },
+    "SID": {
+        "name": "Sonasid",
+        "ir_url": "https://www.sonasid.ma/fr/investisseurs",
+        "base_url": "https://www.sonasid.ma"
+    },
+    "SLF": {
+        "name": "SLF",
+        "ir_url": "https://www.slf.ma/fr/investisseurs",
+        "base_url": "https://www.slf.ma"
+    },
+    "SMI": {
+        "name": "SMI",
+        "ir_url": "https://www.smi.ma/fr/investisseurs",
+        "base_url": "https://www.smi.ma"
+    },
+    "SNA": {
+        "name": "SNA",
+        "ir_url": "https://www.sna.ma/fr/investisseurs",
+        "base_url": "https://www.sna.ma"
+    },
+    "SNP": {
+        "name": "Snep",
+        "ir_url": "https://www.snep.ma/fr/investisseurs",
+        "base_url": "https://www.snep.ma"
+    },
+    "SOT": {
+        "name": "SOT",
+        "ir_url": "https://www.sot.ma/fr/investisseurs",
+        "base_url": "https://www.sot.ma"
+    },
+    "SRM": {
+        "name": "SRM",
+        "ir_url": "https://www.srm.ma/fr/investisseurs",
+        "base_url": "https://www.srm.ma"
+    },
+    "STR": {
+        "name": "STR",
+        "ir_url": "https://www.str.ma/fr/investisseurs",
+        "base_url": "https://www.str.ma"
+    },
+    "TGC": {
+        "name": "TGC",
+        "ir_url": "https://www.tgc.ma/fr/investisseurs",
+        "base_url": "https://www.tgc.ma"
+    },
+    "TMA": {
+        "name": "Taqa Morocco",
+        "ir_url": "https://www.taqamorocco.ma/fr/investisseurs",
+        "base_url": "https://www.taqamorocco.ma"
+    },
+    "TQM": {
+        "name": "TQM",
+        "ir_url": "https://www.tqm.ma/fr/investisseurs",
+        "base_url": "https://www.tqm.ma"
+    },
+    "UMR": {
+        "name": "UMR",
+        "ir_url": "https://www.umr.ma/fr/investisseurs",
+        "base_url": "https://www.umr.ma"
+    },
+    "WAA": {
+        "name": "Wafa Assurance",
+        "ir_url": "https://www.wafaassurance.ma/fr/investisseurs",
+        "base_url": "https://www.wafaassurance.ma"
+    },
+    "ZDJ": {
+        "name": "ZDJ",
+        "ir_url": "https://www.zdj.ma/fr/investisseurs",
+        "base_url": "https://www.zdj.ma"
+    }
+}

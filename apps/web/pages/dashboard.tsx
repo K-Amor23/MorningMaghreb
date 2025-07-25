@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
+import useSWR from 'swr'
+
+// Fetcher function for SWR
+const fetcher = (url: string) => fetch(url).then(res => res.json())
+
 import {
   ChartBarIcon,
   CurrencyDollarIcon,
@@ -47,14 +52,22 @@ function ClientTime() {
   return <span>{time}</span>
 }
 
-// Mock data - in real app, this would come from API
-const mockMarketData = [
-  { ticker: 'MASI', name: 'MASI Index', price: 13456.78, change: 2.34, changePercent: 0.017 },
-  { ticker: 'MADEX', name: 'MADEX Index', price: 11234.56, change: -1.23, changePercent: -0.011 },
-  { ticker: 'MASI-ESG', name: 'MASI ESG Index', price: 987.65, change: 0.98, changePercent: 0.001 },
-  { ticker: 'ATW', name: 'Attijariwafa Bank', price: 534.50, change: 4.50, changePercent: 0.008 },
-  { ticker: 'IAM', name: 'Maroc Telecom', price: 156.30, change: -2.10, changePercent: -0.013 },
-]
+// Real market data from API
+const useMarketData = () => {
+  const { data, error, isLoading } = useSWR('/api/markets/quotes?limit=5&sort_by=market_cap', fetcher)
+
+  if (isLoading || error || !data?.data?.quotes) {
+    return []
+  }
+
+  return data.data.quotes.map((quote: any) => ({
+    ticker: quote.ticker,
+    name: quote.name,
+    price: quote.price,
+    change: quote.change,
+    changePercent: quote.change_percent
+  }))
+}
 
 const mockPortfolio = {
   totalValue: 125000,
@@ -97,7 +110,7 @@ export default function Dashboard() {
   const { t } = useTranslation()
   const router = useRouter()
   const { user, profile, dashboard, loading: authLoading, signOut } = useUser()
-  const [marketData, setMarketData] = useState(mockMarketData)
+  const marketData = useMarketData()
   const [portfolio, setPortfolio] = useState(mockPortfolio)
   const [paperTrading, setPaperTrading] = useState(mockPaperTrading)
   const [currencyRates, setCurrencyRates] = useState(mockCurrencyRates)
@@ -128,18 +141,7 @@ export default function Dashboard() {
     setWatchlistRefresh(prev => prev + 1)
   }
 
-  useEffect(() => {
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      setMarketData(prev => prev.map(item => ({
-        ...item,
-        price: item.price + (Math.random() - 0.5) * 2,
-        change: item.change + (Math.random() - 0.5) * 0.5,
-      })))
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
+  // Market data is now fetched via SWR with auto-refresh
 
   const tabs = [
     { id: 'overview', name: 'Overview', icon: ChartBarIcon },
@@ -309,7 +311,7 @@ export default function Dashboard() {
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Market Overview</h3>
                       <div className="space-y-3">
-                        {marketData.slice(0, 5).map((item) => (
+                        {marketData.slice(0, 5).map((item: any) => (
                           <div key={item.ticker} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                             <div>
                               <p className="font-medium text-gray-900 dark:text-white">{item.ticker}</p>

@@ -8,15 +8,16 @@ import MacroStats from '@/components/MacroStats'
 import NewsletterSignup from '@/components/NewsletterSignup'
 import NewsFeed from '@/components/NewsFeed'
 import MiniChart from '@/components/MiniChart'
+import DataQualityIndicator from '@/components/DataQualityIndicator'
 
 export default function Home() {
   return (
     <>
       <Head>
         <title>Casablanca Insight - Morocco Market Research & Analytics</title>
-        <meta 
-          name="description" 
-          content="Real-time Morocco market data, CSE quotes, MASI/MADEX indices, top movers, macro indicators, and AI-powered insights with Morning Maghreb newsletter." 
+        <meta
+          name="description"
+          content="Real-time Morocco market data, CSE quotes, MASI/MADEX indices, top movers, macro indicators, and AI-powered insights with Morning Maghreb newsletter."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -35,6 +36,7 @@ export default function Home() {
 
           <aside className="space-y-6">
             <MacroStats />
+            <DataQualityIndicator />
             <MiniChart />
             <NewsletterSignup />
           </aside>

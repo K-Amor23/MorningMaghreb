@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 # Import routers (simplified for basic startup)
 try:
-    from routers import markets, financials, macro, portfolio, newsletter, chat, auth, economic_data, advanced_features, admin
+    from routers import markets, financials, macro, portfolio, newsletter, chat, auth, economic_data, advanced_features, admin, companies
     # Skip problematic routers for now
     # from routers import premium_api, exports, reports, translations, webhooks, currency, moderation, paper_trading, compliance
     # Skip ETL router temporarily due to missing dependencies
@@ -73,6 +73,14 @@ try:
     logger.info("Advanced features router loaded successfully")
 except ImportError as e:
     logger.warning(f"Advanced features router could not be loaded: {e}")
+
+# Try to include companies router
+try:
+    from routers import companies
+    app.include_router(companies.router, prefix="/api/companies", tags=["companies"])
+    logger.info("Companies router loaded successfully")
+except ImportError as e:
+    logger.warning(f"Companies router could not be loaded: {e}")
 
 if all_routers_available:
     app.include_router(financials.router, prefix="/api/financials", tags=["financials"])
