@@ -4,13 +4,24 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from contextlib import asynccontextmanager
 import logging
 
-# Import routers
-from routers import markets, financials, macro, portfolio, newsletter, chat, auth, etl, economic_data, advanced_features
-from routers import premium_api, exports, reports, translations, webhooks, currency, moderation, paper_trading, compliance
-
-# Configure logging
+# Configure logging first
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Import routers (simplified for basic startup)
+try:
+    from routers import markets, financials, macro, portfolio, newsletter, chat, auth, economic_data, advanced_features, admin
+    # Skip problematic routers for now
+    # from routers import premium_api, exports, reports, translations, webhooks, currency, moderation, paper_trading, compliance
+    # Skip ETL router temporarily due to missing dependencies
+    # from routers import etl
+    logger.info("Core routers imported successfully")
+    all_routers_available = True
+except ImportError as e:
+    logger.warning(f"Some routers could not be imported: {e}")
+    # Basic routers only
+    from routers import markets, auth
+    all_routers_available = False
 
 # Database initialization (mock)
 async def init_db():
@@ -51,30 +62,43 @@ app.add_middleware(
 # Security
 security = HTTPBearer()
 
-# Include routers
+# Include routers (conditional based on what imported successfully)
 app.include_router(markets.router, prefix="/api/markets", tags=["markets"])
-app.include_router(financials.router, prefix="/api/financials", tags=["financials"])
-app.include_router(macro.router, prefix="/api/macro", tags=["macro"])
-app.include_router(portfolio.router, prefix="/api/portfolio", tags=["portfolio"])
-app.include_router(newsletter.router, prefix="/api/newsletter", tags=["newsletter"])
-app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-app.include_router(etl.router, prefix="/api/etl", tags=["etl"])
-app.include_router(economic_data.router, prefix="/api/economic-data", tags=["economic-data"])
-app.include_router(advanced_features.router, prefix="/api/advanced", tags=["advanced-features"])
 
-# Premium feature routers
-app.include_router(premium_api.router, prefix="/api/premium", tags=["premium-api"])
-app.include_router(exports.router, prefix="/api/exports", tags=["data-exports"])
-app.include_router(reports.router, prefix="/api/reports", tags=["custom-reports"])
-app.include_router(translations.router, prefix="/api/translations", tags=["multilingual"])
-app.include_router(webhooks.router, prefix="/api/webhooks", tags=["webhook-integrations"])
+# Try to include advanced_features router (it has minimal dependencies)
+try:
+    from routers import advanced_features
+    app.include_router(advanced_features.router, tags=["advanced-features"])
+    logger.info("Advanced features router loaded successfully")
+except ImportError as e:
+    logger.warning(f"Advanced features router could not be loaded: {e}")
 
-# New feature routers
-app.include_router(currency.router, prefix="/api/currency", tags=["currency"])
-app.include_router(moderation.router, prefix="/api/moderation", tags=["moderation"])
-app.include_router(paper_trading.router, prefix="/api", tags=["paper-trading"])
-app.include_router(compliance.router, prefix="/api", tags=["compliance"])
+if all_routers_available:
+    app.include_router(financials.router, prefix="/api/financials", tags=["financials"])
+    app.include_router(macro.router, prefix="/api/macro", tags=["macro"])
+    app.include_router(portfolio.router, prefix="/api/portfolio", tags=["portfolio"])
+    app.include_router(newsletter.router, prefix="/api/newsletter", tags=["newsletter"])
+    app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+    app.include_router(admin.router, tags=["admin"])
+    # app.include_router(etl.router, prefix="/api/etl", tags=["etl"])  # Skip ETL for now
+    app.include_router(economic_data.router, prefix="/api/economic-data", tags=["economic-data"])
+
+    # Premium feature routers (skipped for now)
+    # app.include_router(premium_api.router, prefix="/api/premium", tags=["premium-api"])
+    # app.include_router(exports.router, prefix="/api/exports", tags=["data-exports"])
+    # app.include_router(reports.router, prefix="/api/reports", tags=["custom-reports"])
+    # app.include_router(translations.router, prefix="/api/translations", tags=["multilingual"])
+    # app.include_router(webhooks.router, prefix="/api/webhooks", tags=["webhook-integrations"])
+
+    # New feature routers (skipped for now)
+    # app.include_router(currency.router, prefix="/api/currency", tags=["currency"])
+    # app.include_router(moderation.router, prefix="/api/moderation", tags=["moderation"])
+    # app.include_router(paper_trading.router, prefix="/api", tags=["paper-trading"])
+    # app.include_router(compliance.router, prefix="/api", tags=["compliance"])
+    logger.info("Core routers registered successfully")
+else:
+    logger.info("Running in basic mode with limited routers")
 
 @app.get("/")
 async def root():

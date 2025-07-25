@@ -2,6 +2,8 @@
 
 **A Morocco-focused market research & analytics webapp**
 
+> 📖 **Quick Start**: See [cursor_startup.md](cursor_startup.md) for confirmed working startup commands and troubleshooting guide.
+
 Casablanca Insight unifies fragmented French, Arabic, and Darija data into a multilingual portal for serious investors. Track real-time Casablanca Stock Exchange (CSE) quotes, ingest IFRS financials and convert to U.S. GAAP, monitor macro & central-bank indicators, and run long-term portfolio analyses—all powered by AI summaries and delivered in a daily email digest, *Morning Maghreb*.
 
 ---
@@ -149,10 +151,32 @@ psql -d your_database -f database/schema.sql
 cd apps/web && npm run dev
 
 # Start the backend (in another terminal)
-cd apps/backend && python main.py
+cd apps/backend && uvicorn casablanca_insights.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+**Health Checks:**
+- Backend: [http://localhost:8000/health](http://localhost:8000/health) → `{"status":"healthy","version":"2.0.0"}`
+- Frontend: [http://localhost:3000](http://localhost:3000) → `200 OK`
+- API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+**Quick Start with Makefile:**
+```bash
+# Kill any existing processes on ports 8000 and 3000
+make kill-ports
+
+# Start backend
+make start-backend
+
+# Start frontend (in another terminal)
+make start-frontend
+
+# Check health of both servers
+make health-check
+```
+
+**Note:** The backend runs in "basic mode" if `OPENAI_API_KEY` is not provided, with AI features disabled but core functionality intact.
 
 ---
 

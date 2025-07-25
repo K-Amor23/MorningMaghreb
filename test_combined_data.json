@@ -1,0 +1,50 @@
+{
+  "metadata": {
+    "combined_at": "2025-07-25T12:00:00",
+    "sources": [
+      "African Markets",
+      "Casablanca Bourse"
+    ],
+    "total_companies": 123,
+    "african_markets": {
+      "companies_count": 78,
+      "data_file": "/tmp/african_markets_data.json",
+      "timestamp": "20250725_120000",
+      "source": "African Markets"
+    },
+    "casablanca_bourse": {
+      "success": true,
+      "pages_scraped": 14,
+      "tables_extracted": 6,
+      "companies_found": 45,
+      "data_file": "casablanca_bourse_data_20250725_123947.json",
+      "companies_data": [
+        {
+          "ticker": "MAB",
+          "isin": "MA0000011215",
+          "name": "MAGHREBAIL",
+          "category": "Actions 1\u00e8re Ligne",
+          "compartment": "Principal B",
+          "shares": "1 384 182"
+        }
+      ]
+    }
+  },
+  "companies": {
+    "MAB": {
+      "bourse_data": {
+        "ticker": "MAB",
+        "isin": "MA0000011215",
+        "name": "MAGHREBAIL",
+        "category": "Actions 1\u00e8re Ligne",
+        "compartment": "Principal B",
+        "shares": "1 384 182"
+      },
+      "data_sources": [
+        "casablanca_bourse"
+      ]
+    }
+  },
+  "indices": {},
+  "trading_data": {}
+}

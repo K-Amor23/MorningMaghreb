@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { 
-  ShieldCheckIcon, 
-  ExclamationTriangleIcon, 
-  ClockIcon, 
+import {
+  ShieldCheckIcon,
+  ExclamationTriangleIcon,
+  ClockIcon,
   ChartBarIcon,
   InformationCircleIcon,
   CurrencyDollarIcon,
@@ -47,11 +47,10 @@ export default function MoroccanMarketInfo() {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
-                    activeSection === section.id
-                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
-                  }`}
+                  className={`flex items-center space-x-2 py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${activeSection === section.id
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{section.label}</span>
@@ -149,7 +148,7 @@ function GuardrailsSection() {
           <ShieldCheckIcon className="w-6 h-6 mr-2 text-blue-500" />
           Trading Guardrails & Protections
         </h2>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white mb-3">Order Size Limits</h3>
@@ -229,7 +228,7 @@ function PriceLimitsSection() {
           <ChartBarIcon className="w-6 h-6 mr-2 text-blue-500" />
           Daily Price Limits & Maximum Amounts
         </h2>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white mb-3">Standard Price Limits</h3>
@@ -251,7 +250,7 @@ function PriceLimitsSection() {
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">Small Cap</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">±15%</td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Companies with market cap < 1B MAD</td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">Companies with market cap &lt; 1B MAD</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">Bonds</td>
@@ -323,7 +322,7 @@ function TradingHaltsSection() {
           <PauseIcon className="w-6 h-6 mr-2 text-blue-500" />
           Trading Halts & Suspensions
         </h2>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white mb-3">Types of Trading Halts</h3>
@@ -338,7 +337,7 @@ function TradingHaltsSection() {
                     <li>• Automatic resumption</li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
                   <h4 className="font-medium text-yellow-900 dark:text-yellow-100 mb-2">News Pending Halts</h4>
                   <ul className="text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
@@ -349,7 +348,7 @@ function TradingHaltsSection() {
                   </ul>
                 </div>
               </div>
-              
+
               <div className="space-y-4">
                 <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
                   <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Regulatory Halts</h4>
@@ -360,7 +359,7 @@ function TradingHaltsSection() {
                     <li>• Administrative actions</li>
                   </ul>
                 </div>
-                
+
                 <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                   <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">Technical Halts</h4>
                   <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
@@ -437,7 +436,7 @@ function CircuitBreakersSection() {
           <ExclamationTriangleIcon className="w-6 h-6 mr-2 text-red-500" />
           Circuit Breakers & Market Protection
         </h2>
-        
+
         <div className="space-y-6">
           <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-6">
             <h3 className="font-medium text-red-900 dark:text-red-100 mb-4">Circuit Breaker Levels</h3>
@@ -502,7 +501,7 @@ function CircuitBreakersSection() {
                   <li>• 14% drop: Final warning</li>
                 </ul>
               </div>
-              
+
               <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
                 <h4 className="font-medium text-red-900 dark:text-red-100 mb-2">During Halt</h4>
                 <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">
@@ -512,7 +511,7 @@ function CircuitBreakersSection() {
                   <li>• Exchange provides updates</li>
                 </ul>
               </div>
-              
+
               <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
                 <h4 className="font-medium text-green-900 dark:text-green-100 mb-2">Resumption Process</h4>
                 <ul className="text-sm text-green-700 dark:text-green-300 space-y-1">
@@ -538,7 +537,7 @@ function RegulationsSection() {
           <ScaleIcon className="w-6 h-6 mr-2 text-blue-500" />
           Regulatory Framework & Compliance
         </h2>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white mb-3">Regulatory Bodies</h3>
@@ -573,14 +572,14 @@ function RegulationsSection() {
                   Comprehensive framework for capital markets, including trading rules, disclosure requirements, and investor protection measures.
                 </p>
               </div>
-              
+
               <div className="border-l-4 border-green-500 pl-4">
                 <h4 className="font-medium text-gray-900 dark:text-white mb-1">Circular 1/G/2013</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   Trading rules and procedures for the Casablanca Stock Exchange, including price limits and circuit breakers.
                 </p>
               </div>
-              
+
               <div className="border-l-4 border-yellow-500 pl-4">
                 <h4 className="font-medium text-gray-900 dark:text-white mb-1">ACAPS Circulars</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -627,7 +626,7 @@ function PenaltiesSection() {
           <DocumentTextIcon className="w-6 h-6 mr-2 text-red-500" />
           Violations & Penalties
         </h2>
-        
+
         <div className="space-y-6">
           <div>
             <h3 className="font-medium text-gray-900 dark:text-white mb-3">Trading Violations</h3>
@@ -678,7 +677,7 @@ function PenaltiesSection() {
                   <li>• Recorded for future reference</li>
                 </ul>
               </div>
-              
+
               <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
                 <h4 className="font-medium text-orange-900 dark:text-orange-100 mb-2">Fines</h4>
                 <ul className="text-sm text-orange-700 dark:text-orange-300 space-y-1">
@@ -688,7 +687,7 @@ function PenaltiesSection() {
                   <li>• Administrative penalties</li>
                 </ul>
               </div>
-              
+
               <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
                 <h4 className="font-medium text-red-900 dark:text-red-100 mb-2">Suspensions</h4>
                 <ul className="text-sm text-red-700 dark:text-red-300 space-y-1">

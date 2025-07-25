@@ -1,0 +1,102 @@
+{
+  "moroccan_sites": {
+    "results": {
+      "Casablanca Bourse": {
+        "success": true,
+        "accessible": true,
+        "content_length": 122288,
+        "potential_price_data": true,
+        "description": "Official CSE website"
+      },
+      "Attijariwafa Bank": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='www.attijariwafa.com', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x115b415b0>, 'Connection to www.attijariwafa.com timed out. (connect timeout=10)'))"
+      },
+      "Maroc Telecom": {
+        "success": true,
+        "accessible": true,
+        "content_length": 914980,
+        "potential_price_data": true,
+        "description": "Major Moroccan telecom"
+      },
+      "Maghreb Securities": {
+        "success": false,
+        "error": "HTTPSConnectionPool(host='www.maghrebsecurities.com', port=443): Max retries exceeded with url: / (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x115ea3370>, 'Connection to www.maghrebsecurities.com timed out. (connect timeout=10)'))"
+      }
+    },
+    "accessible_rate": 0.5
+  },
+  "manual_sources": {
+    "sources": [
+      {
+        "name": "BVC Official Website",
+        "url": "https://www.casablanca-bourse.com/",
+        "description": "Official exchange website with daily prices",
+        "access_method": "Web scraping",
+        "data_frequency": "Daily"
+      },
+      {
+        "name": "Moroccan Financial Newspapers",
+        "url": "https://www.lematin.ma/",
+        "description": "Financial section with market data",
+        "access_method": "Web scraping",
+        "data_frequency": "Daily"
+      },
+      {
+        "name": "Broker Websites",
+        "url": "Various",
+        "description": "Local broker websites with market data",
+        "access_method": "Web scraping",
+        "data_frequency": "Real-time"
+      },
+      {
+        "name": "Manual Entry System",
+        "url": "Internal",
+        "description": "Manual data entry interface",
+        "access_method": "Manual",
+        "data_frequency": "As needed"
+      }
+    ],
+    "recommendation": "Implement web scraping + manual entry fallback"
+  },
+  "recommendations": {
+    "immediate_actions": [],
+    "short_term": [
+      {
+        "action": "Research additional Moroccan financial websites",
+        "reason": "Low accessibility: 50.0%",
+        "priority": "Medium"
+      }
+    ],
+    "long_term": [
+      {
+        "action": "Contact BVC for official data feeds",
+        "reason": "Direct access to official market data",
+        "priority": "Medium"
+      },
+      {
+        "action": "Partner with local data providers",
+        "reason": "Access to professional-grade data",
+        "priority": "Low"
+      }
+    ],
+    "fallback_strategy": [
+      {
+        "action": "Implement manual data entry system",
+        "reason": "Reliable fallback for critical data",
+        "priority": "High"
+      }
+    ]
+  },
+  "metadata": {
+    "research_date": "2025-07-25T12:36:43.498713",
+    "test_tickers": [
+      "ATW",
+      "IAM",
+      "BCP",
+      "BMCE",
+      "CIH"
+    ],
+    "total_sources_tested": 2
+  }
+}

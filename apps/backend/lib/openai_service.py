@@ -16,8 +16,19 @@ from openai import OpenAI
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize OpenAI client (optional)
+openai_api_key = os.getenv("OpenAi_API_KEY") or os.getenv("OPENAI_API_KEY")
+client = None
+
+if openai_api_key and openai_api_key != "":
+    try:
+        client = OpenAI(api_key=openai_api_key)
+        logger.info("OpenAI client initialized successfully")
+    except Exception as e:
+        logger.warning(f"Failed to initialize OpenAI client: {e}")
+        client = None
+else:
+    logger.warning("OpenAI API key not provided - AI features will be disabled")
 
 @dataclass
 class MarketData:

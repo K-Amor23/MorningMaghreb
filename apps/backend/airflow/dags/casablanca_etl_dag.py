@@ -64,24 +64,17 @@ def refresh_african_markets_data(**context):
         execution_date = context['execution_date']
         logger.info(f"Refreshing data for execution date: {execution_date}")
         
-        # Define the African Markets URL
-        african_markets_url = "https://www.african-markets.com/en/stock-markets/bvc/listed-companies"
-        
-        # Simulate fetching data from African Markets
-        # In production, this would use the actual scraper
-        logger.info(f"Fetching data from: {african_markets_url}")
-        
-        # Mock data structure (in production, this would be real scraping)
-        companies_data = {
-            "metadata": {
-                "source": "African Markets",
-                "url": african_markets_url,
-                "total_companies": 78,
-                "scraped_at": execution_date.isoformat(),
-                "exchange": "Casablanca Stock Exchange (BVC)",
-                "country": "Morocco"
-            },
-            "companies": [
+        # Load existing data from our data file
+        data_file = Path("apps/backend/data/cse_companies_african_markets.json")
+        if data_file.exists():
+            with open(data_file, 'r') as f:
+                companies_data = json.load(f)
+            
+            logger.info(f"Loaded {len(companies_data)} companies from existing data file")
+        else:
+            # Fallback to mock data if file doesn't exist
+            logger.warning("Data file not found, using mock data")
+            companies_data = [
                 {
                     "ticker": "ATW",
                     "name": "Attijariwafa Bank",
@@ -104,9 +97,7 @@ def refresh_african_markets_data(**context):
                     "size_category": "Large Cap",
                     "sector_group": "Telecommunications"
                 }
-                # In production, this would include all 78 companies
             ]
-        }
         
         # Save data to file (in production, this would be to database)
         data_dir = Path("/tmp/african_markets_data")
@@ -119,17 +110,17 @@ def refresh_african_markets_data(**context):
         with open(filepath, 'w') as f:
             json.dump(companies_data, f, indent=2)
         
-        logger.info(f"Successfully refreshed {len(companies_data['companies'])} companies")
+        logger.info(f"Successfully refreshed {len(companies_data)} companies")
         logger.info(f"Data saved to: {filepath}")
         
         # Store metadata in XCom for next tasks
         context['task_instance'].xcom_push(
             key='african_markets_refresh',
             value={
-                'companies_count': len(companies_data['companies']),
+                'companies_count': len(companies_data),
                 'data_file': str(filepath),
                 'timestamp': timestamp,
-                'source_url': african_markets_url
+                'source': 'African Markets'
             }
         )
         
@@ -137,6 +128,153 @@ def refresh_african_markets_data(**context):
         
     except Exception as e:
         logger.error(f"Error in refresh_african_markets_data: {e}")
+        raise
+
+def scrape_casablanca_bourse_data(**context):
+    """Task to scrape trading data from Casablanca Bourse website"""
+    try:
+        logger.info("Starting Casablanca Bourse data scraping...")
+        
+        # Import our scraper
+        import sys
+        sys.path.append('/app/etl')  # Adjust path as needed
+        
+        from casablanca_bourse_scraper import CasablancaBourseScraper
+        
+        # Run the scraper
+        async def run_scraping():
+            async with CasablancaBourseScraper() as scraper:
+                # Scrape all market data
+                all_data = await scraper.scrape_all_market_data()
+                
+                if 'error' not in all_data:
+                    # Save the scraped data
+                    timestamp = context['execution_date'].strftime("%Y%m%d_%H%M%S")
+                    output_file = f"casablanca_bourse_data_{timestamp}.json"
+                    scraper.save_data(all_data, output_file)
+                    
+                    # Extract company data from tables
+                    companies_found = []
+                    for page in all_data.get('market_data_pages', []):
+                        for table in page.get('tables', []):
+                            for row in table.get('data', []):
+                                if 'Ticker' in row:
+                                    companies_found.append({
+                                        'ticker': row['Ticker'],
+                                        'isin': row.get('Code ISIN'),
+                                        'name': row.get('Émetteur'),
+                                        'category': row.get('Catégorie'),
+                                        'compartment': row.get('Compartiment'),
+                                        'shares': row.get('Nombre de titres formant le capital')
+                                    })
+                    
+                    return {
+                        'success': True,
+                        'pages_scraped': len(all_data.get('market_data_pages', [])),
+                        'tables_extracted': sum(len(page.get('tables', [])) for page in all_data.get('market_data_pages', [])),
+                        'companies_found': len(companies_found),
+                        'data_file': output_file,
+                        'companies_data': companies_found
+                    }
+                else:
+                    return {
+                        'success': False,
+                        'error': all_data['error']
+                    }
+        
+        # Run the async scraping
+        import asyncio
+        result = asyncio.run(run_scraping())
+        
+        # Store results in XCom
+        context['task_instance'].xcom_push(
+            key='casablanca_bourse_scraping',
+            value=result
+        )
+        
+        if result['success']:
+            logger.info(f"Successfully scraped {result['pages_scraped']} pages, found {result['companies_found']} companies")
+            return result['companies_found']
+        else:
+            logger.error(f"Casablanca Bourse scraping failed: {result['error']}")
+            return 0
+        
+    except Exception as e:
+        logger.error(f"Error in scrape_casablanca_bourse_data: {e}")
+        raise
+
+def combine_data_sources(**context):
+    """Task to combine data from multiple sources"""
+    try:
+        logger.info("Combining data from multiple sources...")
+        
+        # Get data from African Markets
+        african_markets_info = context['task_instance'].xcom_pull(
+            task_ids='refresh_african_markets',
+            key='african_markets_refresh'
+        )
+        
+        # Get data from Casablanca Bourse
+        bourse_info = context['task_instance'].xcom_pull(
+            task_ids='scrape_casablanca_bourse',
+            key='casablanca_bourse_scraping'
+        )
+        
+        # Combine the data
+        combined_data = {
+            'metadata': {
+                'combined_at': context['execution_date'].isoformat(),
+                'sources': ['African Markets', 'Casablanca Bourse'],
+                'total_companies': 0
+            },
+            'companies': {},
+            'indices': {},
+            'trading_data': {}
+        }
+        
+        # Process African Markets data
+        if african_markets_info:
+            combined_data['metadata']['african_markets'] = african_markets_info
+            combined_data['metadata']['total_companies'] += african_markets_info.get('companies_count', 0)
+        
+        # Process Casablanca Bourse data
+        if bourse_info and bourse_info.get('success'):
+            combined_data['metadata']['casablanca_bourse'] = bourse_info
+            combined_data['metadata']['total_companies'] += bourse_info.get('companies_found', 0)
+            
+            # Add company data from Bourse
+            for company in bourse_info.get('companies_data', []):
+                ticker = company['ticker']
+                combined_data['companies'][ticker] = {
+                    'bourse_data': company,
+                    'data_sources': ['casablanca_bourse']
+                }
+        
+        # Save combined data
+        timestamp = context['execution_date'].strftime("%Y%m%d_%H%M%S")
+        output_file = f"combined_data_{timestamp}.json"
+        
+        with open(output_file, 'w') as f:
+            json.dump(combined_data, f, indent=2)
+        
+        # Store in XCom
+        context['task_instance'].xcom_push(
+            key='combined_data',
+            value={
+                'file': output_file,
+                'total_companies': combined_data['metadata']['total_companies'],
+                'sources_combined': len(combined_data['metadata']['sources'])
+            }
+        )
+        
+        logger.info(f"Successfully combined data from {len(combined_data['metadata']['sources'])} sources")
+        logger.info(f"Total companies: {combined_data['metadata']['total_companies']}")
+        logger.info(f"Combined data saved to: {output_file}")
+        
+        return combined_data['metadata']['total_companies']
+        
+    except Exception as e:
+        logger.error(f"Error in combine_data_sources: {e}")
         raise
 
 def fetch_ir_reports_task(**context):
@@ -422,15 +560,29 @@ def send_success_alert(**context):
             key='company_website_scraping'
         )
         
+        # Get Casablanca Bourse scraping info
+        bourse_info = context['task_instance'].xcom_pull(
+            task_ids='scrape_casablanca_bourse',
+            key='casablanca_bourse_scraping'
+        )
+        
+        # Get combined data info
+        combined_info = context['task_instance'].xcom_pull(
+            task_ids='combine_data_sources',
+            key='combined_data'
+        )
+        
         # Create success message
         message = f"""
 🎉 Casablanca Insights ETL Pipeline Completed Successfully!
 
 📊 Pipeline Results:
 • African Markets: {african_markets_info.get('companies_count', 0)} companies refreshed
-• Company Websites: {website_scraping_info.get('companies_discovered', 0)} companies scraped
-• Financial Reports: {website_scraping_info.get('reports_discovered', 0)} reports discovered
-• Files Downloaded: {website_scraping_info.get('files_downloaded', 0)} files
+• Casablanca Bourse: {bourse_info.get('companies_found', 0) if bourse_info and bourse_info.get('success') else 0} companies scraped
+• Combined Sources: {combined_info.get('total_companies', 0) if combined_info else 0} total companies
+• Company Websites: {website_scraping_info.get('companies_discovered', 0) if website_scraping_info else 0} companies scraped
+• Financial Reports: {website_scraping_info.get('reports_discovered', 0) if website_scraping_info else 0} reports discovered
+• Files Downloaded: {website_scraping_info.get('files_downloaded', 0) if website_scraping_info else 0} files
 • Reports Processed: {stored_count}
 • Data Validation: {'✅ Passed' if validation_passed else '❌ Failed'}
 • Execution Date: {context['execution_date']}
@@ -438,6 +590,7 @@ def send_success_alert(**context):
 🔗 Access Points:
 • Airflow UI: http://localhost:8080
 • Casablanca API: http://localhost:8000
+• Combined Data: {combined_info.get('file', 'N/A') if combined_info else 'N/A'}
         """
         
         logger.info(message)
@@ -563,6 +716,18 @@ refresh_african_markets = PythonOperator(
     dag=dag,
 )
 
+scrape_casablanca_bourse = PythonOperator(
+    task_id='scrape_casablanca_bourse',
+    python_callable=scrape_casablanca_bourse_data,
+    dag=dag,
+)
+
+combine_data = PythonOperator(
+    task_id='combine_data_sources',
+    python_callable=combine_data_sources,
+    dag=dag,
+)
+
 scrape_company_websites = PythonOperator(
     task_id='scrape_company_websites',
     python_callable=scrape_company_websites,
@@ -614,4 +779,8 @@ failure_alert = PythonOperator(
 )
 
 # Define task dependencies
-refresh_african_markets >> scrape_company_websites >> fetch_reports >> extract_pdf >> translate_gaap >> store_data >> validate_data >> [success_alert, failure_alert] 
+# Data collection phase (parallel)
+[refresh_african_markets, scrape_casablanca_bourse] >> combine_data
+
+# Data processing phase
+combine_data >> scrape_company_websites >> fetch_reports >> extract_pdf >> translate_gaap >> store_data >> validate_data >> [success_alert, failure_alert] 

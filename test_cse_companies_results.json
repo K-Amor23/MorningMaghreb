@@ -1,0 +1,44 @@
+{
+  "test_date": "2025-07-25T12:34:00.802465",
+  "results": [
+    {
+      "ticker": "AFM",
+      "name": "AFMA",
+      "yf_ticker": "AFM.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "AFI",
+      "name": "Afric Industries",
+      "yf_ticker": "AFI.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "GAZ",
+      "name": "Afriquia Gaz",
+      "yf_ticker": "GAZ.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "AGM",
+      "name": "AGMA",
+      "yf_ticker": "AGM.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "ADI",
+      "name": "Alliances",
+      "yf_ticker": "ADI.MA",
+      "success": false,
+      "error": "No data found"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "successful": 0
+  }
+}

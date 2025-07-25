@@ -1,0 +1,35 @@
+{
+  "test_date": "2025-07-25T12:33:54.691573",
+  "results": [
+    {
+      "ticker": "ATW.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "IAM.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "BCP.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "BMCE.MA",
+      "success": false,
+      "error": "No data found"
+    },
+    {
+      "ticker": "CIH.MA",
+      "success": false,
+      "error": "No data found"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "successful": 0,
+    "success_rate": 0.0
+  }
+}

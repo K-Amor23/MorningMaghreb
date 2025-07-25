@@ -10,7 +10,7 @@ from database.database import get_db
 from models.newsletter import NewsletterCampaign, NewsletterSubscriber
 from lib.openai_service import generate_weekly_recap
 
-router = APIRouter(prefix="/newsletter", tags=["newsletter"])
+router = APIRouter(tags=["newsletter"])
 
 class WeeklyRecapRequest(BaseModel):
     include_macro: bool = True
@@ -45,34 +45,27 @@ async def generate_weekly_market_recap(
             language=request.language
         )
         
-        # Create newsletter campaign
-        campaign = NewsletterCampaign(
+        # Create newsletter campaign (mock for now since we don't have a real database)
+        campaign_id = f"campaign_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+        
+        # For now, return the content directly without database storage
+        return NewsletterResponse(
+            id=campaign_id,
             subject=recap_content["subject"],
             content=recap_content["content"],
-            created_at=datetime.utcnow()
+            sent_at=None,
+            recipient_count=None
         )
         
-        db.add(campaign)
-        db.commit()
-        db.refresh(campaign)
-        
-        # Schedule sending in background
-        background_tasks.add_task(send_weekly_recap, campaign.id, db)
-        
-        return NewsletterResponse(
-            id=str(campaign.id),
-            subject=campaign.subject,
-            content=campaign.content,
-            sent_at=campaign.sent_at,
-            recipient_count=campaign.recipient_count
-        )
+        # Note: Background sending is disabled for now since we don't have a real database
+        # background_tasks.add_task(send_weekly_recap, campaign_id, db)
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate weekly recap: {str(e)}")
 
-@router.get("/weekly-recap/preview")
+@router.post("/weekly-recap/preview")
 async def preview_weekly_recap(
-    language: str = "en",
+    request: WeeklyRecapRequest,
     db: Session = Depends(get_db)
 ):
     """
@@ -80,10 +73,10 @@ async def preview_weekly_recap(
     """
     try:
         recap_content = await generate_weekly_recap(
-            include_macro=True,
-            include_sectors=True,
-            include_top_movers=True,
-            language=language
+            include_macro=request.include_macro,
+            include_sectors=request.include_sectors,
+            include_top_movers=request.include_top_movers,
+            language=request.language
         )
         
         return {
@@ -141,16 +134,69 @@ async def send_test_newsletter(
         
         # Send test email
         from lib.email_service import send_email
-        await send_email(
+        result = await send_email(
             to_email=email,
             subject=f"[TEST] {recap_content['subject']}",
             content=recap_content["content"]
         )
         
-        return {"message": f"Test newsletter sent to {email}"}
+        if result["success"]:
+            return {"message": f"Test newsletter sent to {email}", "provider": result["provider"]}
+        else:
+            raise HTTPException(status_code=500, detail=f"Failed to send email: {result['message']}")
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to send test: {str(e)}")
+
+@router.get("/stats")
+async def get_newsletter_stats(db: Session = Depends(get_db)):
+    """
+    Get newsletter statistics
+    """
+    try:
+        # Mock stats for now
+        stats = {
+            "total_subscribers": 0,
+            "active_subscribers": 0,
+            "total_campaigns": 0,
+            "campaigns_sent": 0,
+            "total_emails_sent": 0,
+            "open_rate": 0.0,
+            "click_rate": 0.0
+        }
+        
+        return stats
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
+
+@router.get("/campaigns")
+async def get_newsletter_campaigns(db: Session = Depends(get_db)):
+    """
+    Get newsletter campaigns
+    """
+    try:
+        # Mock campaigns for now
+        campaigns = []
+        
+        return campaigns
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get campaigns: {str(e)}")
+
+@router.get("/content")
+async def get_newsletter_content(db: Session = Depends(get_db)):
+    """
+    Get generated newsletter content
+    """
+    try:
+        # Mock content for now
+        content = []
+        
+        return content
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get content: {str(e)}")
 
 async def send_weekly_recap(campaign_id: str, db: Session):
     """

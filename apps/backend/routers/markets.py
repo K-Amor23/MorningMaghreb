@@ -189,6 +189,35 @@ async def get_watchlist(user=Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error fetching watchlist: {str(e)}")
 
+@router.get("/watchlist/public")
+async def get_public_watchlist():
+    """Get public watchlist (no authentication required)"""
+    try:
+        # Return mock watchlist data for public access
+        watchlist_tickers = ["ATW", "IAM", "BCP", "BMCE"]
+        
+        # Create mock quotes for watchlist
+        mock_quotes = []
+        for ticker in watchlist_tickers:
+            mock_quotes.append({
+                "ticker": ticker,
+                "name": f"{ticker} Company",
+                "price": 100 + (hash(ticker) % 50),  # Generate consistent mock price
+                "change": (hash(ticker) % 10) - 5,   # Generate mock change
+                "change_percent": ((hash(ticker) % 10) - 5) * 0.5,  # Generate mock change percent
+                "volume": 1000000 + (hash(ticker) % 500000),
+                "high": 105 + (hash(ticker) % 10),
+                "low": 95 + (hash(ticker) % 10),
+                "open": 100 + (hash(ticker) % 5),
+                "close": 100 + (hash(ticker) % 50),
+                "timestamp": "2024-01-01T00:00:00Z"
+            })
+        
+        return mock_quotes
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching watchlist: {str(e)}")
+
 @router.post("/watchlist/{ticker}")
 async def add_to_watchlist(ticker: str, user=Depends(get_current_user)):
     """Add ticker to user's watchlist"""
@@ -199,12 +228,32 @@ async def add_to_watchlist(ticker: str, user=Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error adding to watchlist: {str(e)}")
 
+@router.post("/watchlist/public/{ticker}")
+async def add_to_public_watchlist(ticker: str):
+    """Add ticker to public watchlist (no authentication required)"""
+    try:
+        # Mock implementation - in real app this would store in session/localStorage
+        return {"message": f"Added {ticker} to watchlist", "ticker": ticker}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error adding to watchlist: {str(e)}")
+
 @router.delete("/watchlist/{ticker}")
 async def remove_from_watchlist(ticker: str, user=Depends(get_current_user)):
     """Remove ticker from user's watchlist"""
     try:
         # TODO: Remove from database
         return {"message": f"Removed {ticker} from watchlist"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error removing from watchlist: {str(e)}")
+
+@router.delete("/watchlist/public/{ticker}")
+async def remove_from_public_watchlist(ticker: str):
+    """Remove ticker from public watchlist (no authentication required)"""
+    try:
+        # Mock implementation
+        return {"message": f"Removed {ticker} from watchlist", "ticker": ticker}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error removing from watchlist: {str(e)}")
