@@ -1,0 +1,646 @@
+{
+  "scraped_at": "2025-07-28T16:56:34.213955",
+  "main_page_size": 122379,
+  "market_links_found": 16,
+  "market_data_pages": [
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels/vicenne-sonne-la-cloche?csrt=8280698803574470684",
+      "scraped_at": "2025-07-28T16:56:34.594551",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/bourse-de-casablanca-sa",
+      "scraped_at": "2025-07-28T16:56:37.022567",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels/suivez-la-bourse-de-casablanca-sur-sa-nouvelle-chaine-whatsapp",
+      "scraped_at": "2025-07-28T16:56:39.407945",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/composition-et-historique-des-indices",
+      "scraped_at": "2025-07-28T16:56:43.879748",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/live-market/overview",
+      "scraped_at": "2025-07-28T16:56:49.458736",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/pourquoi-et-comment-sintroduire",
+      "scraped_at": "2025-07-28T16:56:51.933221",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/marche-du-cache/indices",
+      "scraped_at": "2025-07-28T16:56:54.470227",
+      "tables": [
+        {
+          "table_index": 0,
+          "data": [
+            {
+              "MASI": "MASI 20"
+            },
+            {
+              "MASI": "MASI ESG"
+            },
+            {
+              "MASI": "MASI Mid and Small Cap"
+            }
+          ]
+        },
+        {
+          "table_index": 1,
+          "data": [
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI ASSURANCES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI BANQUES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI BATIMENT ET MATERIAUX DE CONSTRUCTION"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI BOISSONS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI CHIMIE"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI DISTRIBUTEURS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI ELECTRICITE"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI INDUSTRIE AGRICOLE"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI INDUSTRIE PHARMACEUTIQUE"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI INGENIERIES ET BIENS D\u2019EQUIPEMENT INDUSTRIELS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI LOISIRS ET HOTELS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI MATERIELS,LOGICIELS ET SERVICES INFORMATIQUES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI MINES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI PARTICIPATION ET PROMOTION IMMOBILIERES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI PETROLE ET GAZ"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SANTE"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SERVICES DE TRANSPORT"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SOCIETE DE FINANCEMENT ET AUTRES ACTIVITES FINANCIERES"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SOCIETES DE PLACEMENT IMMOBILIER"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SOCIETES DE PORTEFEUILLES - HOLDINGS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI SYLVICULTURE ET PAPIER"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI TELECOMMUNICATIONS"
+            },
+            {
+              "MASI AGROALIMENTAIRE / PRODUCTION": "MASI TRANSPORT"
+            }
+          ]
+        },
+        {
+          "table_index": 2,
+          "data": [
+            {
+              "MASI RENTABILITE BRUT": "MASI RENTABILITE NET"
+            }
+          ]
+        },
+        {
+          "table_index": 3,
+          "data": [
+            {
+              "MASI (EUR)": "MASI (USD)"
+            }
+          ]
+        },
+        {
+          "table_index": 4,
+          "data": [
+            {
+              "FTSE CSE Morocco 15 Index": "FTSE CSE Morocco All-Liquid"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/marche-cash/instruments-actions",
+      "scraped_at": "2025-07-28T16:56:56.956250",
+      "tables": [
+        {
+          "table_index": 0,
+          "data": [
+            {
+              "Ticker": "ADH",
+              "Code ISIN": "MA0000011512",
+              "\u00c9metteur": "DOUJA PROMOTION GROUPE ADDOHA SA",
+              "Instrument": "DOUJA PROM ADDOHA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "402 551 254"
+            },
+            {
+              "Ticker": "ADI",
+              "Code ISIN": "MA0000011819",
+              "\u00c9metteur": "ALLIANCES DEVELOPPEMENT IMMOBILIER SA",
+              "Instrument": "ALLIANCES",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "22 078 588"
+            },
+            {
+              "Ticker": "AFI",
+              "Code ISIN": "MA0000012114",
+              "\u00c9metteur": "AFRIC INDUSTRIES SA",
+              "Instrument": "AFRIC INDUSTRIES SA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "291 500"
+            },
+            {
+              "Ticker": "AFM",
+              "Code ISIN": "MA0000012296",
+              "\u00c9metteur": "AFMA SA",
+              "Instrument": "AFMA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 000 000"
+            },
+            {
+              "Ticker": "AGM",
+              "Code ISIN": "MA0000010944",
+              "\u00c9metteur": "AGMA",
+              "Instrument": "AGMA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Alternatif A",
+              "Nombre de titres formant le capital": "200 000"
+            },
+            {
+              "Ticker": "AKT",
+              "Code ISIN": "MA0000012585",
+              "\u00c9metteur": "AKDITAL",
+              "Instrument": "AKDITAL",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "14 159 207"
+            },
+            {
+              "Ticker": "ALM",
+              "Code ISIN": "MA0000010936",
+              "\u00c9metteur": "ALUMINIUM DU  MAROC",
+              "Instrument": "ALUMINIUM DU MAROC",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "465 954"
+            },
+            {
+              "Ticker": "ARD",
+              "Code ISIN": "MA0000012460",
+              "\u00c9metteur": "ARADEI CAPITAL",
+              "Instrument": "ARADEI CAPITAL",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal F",
+              "Nombre de titres formant le capital": "12 568 130"
+            },
+            {
+              "Ticker": "ATH",
+              "Code ISIN": "MA0000010969",
+              "\u00c9metteur": "AUTO HALL",
+              "Instrument": "AUTO HALL",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "50 294 528"
+            },
+            {
+              "Ticker": "ATL",
+              "Code ISIN": "MA0000011710",
+              "\u00c9metteur": "ATLANTASANAD",
+              "Instrument": "ATLANTASANAD",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "60 283 595"
+            },
+            {
+              "Ticker": "ATW",
+              "Code ISIN": "MA0000012445",
+              "\u00c9metteur": "ATTIJARIWAFA BANK",
+              "Instrument": "ATTIJARIWAFA BANK",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "215 140 839"
+            },
+            {
+              "Ticker": "BAL",
+              "Code ISIN": "MA0000011991",
+              "\u00c9metteur": "BALIMA",
+              "Instrument": "BALIMA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 744 000"
+            },
+            {
+              "Ticker": "BCI",
+              "Code ISIN": "MA0000010811",
+              "\u00c9metteur": "BANQUE MAROCAINE POUR LE COMMERCE ET L'INDUSTRIE",
+              "Instrument": "BMCI",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "13 279 286"
+            },
+            {
+              "Ticker": "BCP",
+              "Code ISIN": "MA0000011884",
+              "\u00c9metteur": "BANQUE CENTRALE POPULAIRE",
+              "Instrument": "BCP",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "203 312 473"
+            },
+            {
+              "Ticker": "BOA",
+              "Code ISIN": "MA0000012437",
+              "\u00c9metteur": "BANK OF AFRICA",
+              "Instrument": "BANK OF AFRICA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "215 786 333"
+            },
+            {
+              "Ticker": "CDM",
+              "Code ISIN": "MA0000010381",
+              "\u00c9metteur": "CREDIT DU MAROC",
+              "Instrument": "CDM",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "10 881 214"
+            },
+            {
+              "Ticker": "CFG",
+              "Code ISIN": "MA0000012627",
+              "\u00c9metteur": "CFG BANK",
+              "Instrument": "CFG BANK",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal F",
+              "Nombre de titres formant le capital": "35 007 960"
+            },
+            {
+              "Ticker": "CIH",
+              "Code ISIN": "MA0000011454",
+              "\u00c9metteur": "CREDIT IMMOBILIER ET HOTELIER",
+              "Instrument": "CIH",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "31 497 283"
+            },
+            {
+              "Ticker": "CMA",
+              "Code ISIN": "MA0000010506",
+              "\u00c9metteur": "CIMENTS DU MAROC",
+              "Instrument": "CIMENTS DU MAROC",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "14 436 004"
+            },
+            {
+              "Ticker": "CMG",
+              "Code ISIN": "MA0000012718",
+              "\u00c9metteur": "CMGP GROUP",
+              "Instrument": "CMGP GROUP",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "17 000 900"
+            },
+            {
+              "Ticker": "CMT",
+              "Code ISIN": "MA0000011793",
+              "\u00c9metteur": "COMPAGNIE MINIERE DE TOUISSIT",
+              "Instrument": "MINIERE TOUISSIT",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 681 233"
+            },
+            {
+              "Ticker": "COL",
+              "Code ISIN": "MA0000011934",
+              "\u00c9metteur": "COLORADO",
+              "Instrument": "COLORADO",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Alternatif A",
+              "Nombre de titres formant le capital": "16 117 611"
+            },
+            {
+              "Ticker": "CRS",
+              "Code ISIN": "MA0000011868",
+              "\u00c9metteur": "CARTIER SAADA",
+              "Instrument": "CARTIER SAADA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "5 265 000"
+            },
+            {
+              "Ticker": "CSR",
+              "Code ISIN": "MA0000012247",
+              "\u00c9metteur": "COSUMAR",
+              "Instrument": "COSUMAR",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "94 487 143"
+            },
+            {
+              "Ticker": "CTM",
+              "Code ISIN": "MA0000010340",
+              "\u00c9metteur": "COMPAGNIE DE TRANSPORT AU MAROC",
+              "Instrument": "CTM",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 225 978"
+            },
+            {
+              "Ticker": "DHO",
+              "Code ISIN": "MA0000011850",
+              "\u00c9metteur": "DELTA HOLDING",
+              "Instrument": "DELTA HOLDING",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "87 600 000"
+            },
+            {
+              "Ticker": "DIS",
+              "Code ISIN": "MA0000010639",
+              "\u00c9metteur": "DIAC SALAF",
+              "Instrument": "DIAC SALAF",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 053 404"
+            },
+            {
+              "Ticker": "DLM",
+              "Code ISIN": "MA0000012551",
+              "\u00c9metteur": "DELATTRE LEVIVIER MAROC",
+              "Instrument": "DELATTRE LEVIVIER MAROC",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 750 000"
+            },
+            {
+              "Ticker": "DRI",
+              "Code ISIN": "MA0000011421",
+              "\u00c9metteur": "DARI COUSPATE",
+              "Instrument": "DARI COUSPATE",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "298 375"
+            },
+            {
+              "Ticker": "DWY",
+              "Code ISIN": "MA0000011637",
+              "\u00c9metteur": "DISWAY",
+              "Instrument": "DISWAY",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 885 762"
+            },
+            {
+              "Ticker": "DYT",
+              "Code ISIN": "MA0000012536",
+              "\u00c9metteur": "DISTY TECHNOLOGIES",
+              "Instrument": "DISTY TECHNOLOGIES",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Alternatif A",
+              "Nombre de titres formant le capital": "998 110"
+            },
+            {
+              "Ticker": "EQD",
+              "Code ISIN": "MA0000010357",
+              "\u00c9metteur": "EQDOM",
+              "Instrument": "EQDOM",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 670 250"
+            },
+            {
+              "Ticker": "FBR",
+              "Code ISIN": "MA0000011587",
+              "\u00c9metteur": "FENIE BROSSETTE",
+              "Instrument": "FENIE BROSSETTE",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 438 984"
+            },
+            {
+              "Ticker": "GAZ",
+              "Code ISIN": "MA0000010951",
+              "\u00c9metteur": "AFRIQUIA GAZ",
+              "Instrument": "AFRIQUIA GAZ",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "3 437 500"
+            },
+            {
+              "Ticker": "HPS",
+              "Code ISIN": "MA0000012619",
+              "\u00c9metteur": "HIGHTECH PAYMENT SYSTEMS",
+              "Instrument": "HPS",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "7 406 190"
+            },
+            {
+              "Ticker": "IAM",
+              "Code ISIN": "MA0000011488",
+              "\u00c9metteur": "ITISSALAT AL-MAGHRIB",
+              "Instrument": "ITISSALAT AL-MAGHRIB",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "879 095 340"
+            },
+            {
+              "Ticker": "IBC",
+              "Code ISIN": "MA0000011132",
+              "\u00c9metteur": "IB MAROC.COM SA",
+              "Instrument": "IB MAROC.COM",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "417 486"
+            },
+            {
+              "Ticker": "IMO",
+              "Code ISIN": "MA0000012387",
+              "\u00c9metteur": "IMMORENTE INVEST",
+              "Instrument": "IMMORENTE INVEST",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "9 007 000"
+            },
+            {
+              "Ticker": "INV",
+              "Code ISIN": "MA0000011579",
+              "\u00c9metteur": "INVOLYS",
+              "Instrument": "INVOLYS",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Alternatif A",
+              "Nombre de titres formant le capital": "382 716"
+            },
+            {
+              "Ticker": "JET",
+              "Code ISIN": "MA0000012080",
+              "\u00c9metteur": "JET CONTRACTORS",
+              "Instrument": "JET CONTRACTORS",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "3 029 522"
+            },
+            {
+              "Ticker": "LBV",
+              "Code ISIN": "MA0000011801",
+              "\u00c9metteur": "LABEL VIE",
+              "Instrument": "LABEL VIE",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "2 893 957"
+            },
+            {
+              "Ticker": "LES",
+              "Code ISIN": "MA0000012031",
+              "\u00c9metteur": "LESIEUR CRISTAL",
+              "Instrument": "LESIEUR CRISTAL",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "27 631 510"
+            },
+            {
+              "Ticker": "LHM",
+              "Code ISIN": "MA0000012320",
+              "\u00c9metteur": "LAFARGEHOLCIM MAROC",
+              "Instrument": "LAFARGEHOLCIM MAROC",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "23 431 240"
+            },
+            {
+              "Ticker": "M2M",
+              "Code ISIN": "MA0000011678",
+              "\u00c9metteur": "M2M GROUP",
+              "Instrument": "M2M Group",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "647 777"
+            },
+            {
+              "Ticker": "MAB",
+              "Code ISIN": "MA0000011215",
+              "\u00c9metteur": "MAGHREBAIL",
+              "Instrument": "MAGHREBAIL",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "1 384 182"
+            },
+            {
+              "Ticker": "MDP",
+              "Code ISIN": "MA0000012593",
+              "\u00c9metteur": "MED PAPER",
+              "Instrument": "MED PAPER",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "4 783 823"
+            },
+            {
+              "Ticker": "MIC",
+              "Code ISIN": "MA0000012163",
+              "\u00c9metteur": "MICRODATA",
+              "Instrument": "MICRODATA",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Alternatif A",
+              "Nombre de titres formant le capital": "1 680 000"
+            },
+            {
+              "Ticker": "MLE",
+              "Code ISIN": "MA0000010035",
+              "\u00c9metteur": "MAROC LEASING",
+              "Instrument": "MAROC LEASING",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "2 776 768"
+            },
+            {
+              "Ticker": "MNG",
+              "Code ISIN": "MA0000011058",
+              "\u00c9metteur": "MANAGEM",
+              "Instrument": "MANAGEM",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal A",
+              "Nombre de titres formant le capital": "11 864 676"
+            },
+            {
+              "Ticker": "MOX",
+              "Code ISIN": "MA0000010985",
+              "\u00c9metteur": "MAGHREB OXYGENE",
+              "Instrument": "MAGHREB OXYGENE",
+              "Cat\u00e9gorie": "Actions 1\u00e8re Ligne",
+              "Compartiment": "Principal B",
+              "Nombre de titres formant le capital": "812 500"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels/signature-dun-protocole-strategique-avec-la-banque-centrale-de-mauritanie",
+      "scraped_at": "2025-07-28T16:56:59.366818",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels/morocco-capital-market-days-une-grande-reussite-pour-ledition-2024-londres",
+      "scraped_at": "2025-07-28T16:57:01.745738",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/se-former-pour-comprendre-la-bourse",
+      "scraped_at": "2025-07-28T16:57:04.151175",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels",
+      "scraped_at": "2025-07-28T16:57:08.535079",
+      "tables": []
+    },
+    {
+      "url": "https://www.instagram.com/bourse_de_casablanca/",
+      "scraped_at": "2025-07-28T16:57:10.865672",
+      "tables": []
+    },
+    {
+      "url": "https://www.casablanca-bourse.com/fr/insights-institutionnels/marche-terme-symposium-organise-par-la-bourse-de-casablanca-et-la-wfe",
+      "scraped_at": "2025-07-28T16:57:13.263382",
+      "tables": []
+    }
+  ]
+}
