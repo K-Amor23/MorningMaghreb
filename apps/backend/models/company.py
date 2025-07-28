@@ -73,7 +73,7 @@ class CompanyBase(BaseModel):
         return v
 
 class PriceData(BaseModel):
-    date: date = Field(..., description="Trading date")
+    trading_date: date = Field(..., description="Trading date")
     open: Optional[Decimal] = Field(None, description="Opening price")
     high: Optional[Decimal] = Field(None, description="High price")
     low: Optional[Decimal] = Field(None, description="Low price")

@@ -317,7 +317,7 @@ export default function CompanyPage() {
                 incomeStatement={incomeStatement}
                 balanceSheet={balanceSheet}
               />
-              <AiSummary summary={aiSummary} />
+              <AiSummary ticker={company.ticker} />
             </div>
 
             {/* Sidebar */}

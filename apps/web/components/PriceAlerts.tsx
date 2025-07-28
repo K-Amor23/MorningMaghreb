@@ -14,14 +14,14 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newAlert, setNewAlert] = useState<CreatePriceAlertData>({
-    ticker: '',
-    alert_type: 'above',
-    price_threshold: 0
+    symbol: '',
+    condition: 'above',
+    target_price: 0
   })
 
   const fetchAlerts = async () => {
     try {
-      const userAlerts = await getUserPriceAlerts(userId)
+      const userAlerts = await getUserPriceAlerts()
       setAlerts(userAlerts)
     } catch (error) {
       console.error('Error fetching alerts:', error)
@@ -36,16 +36,16 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
 
   const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!newAlert.ticker || newAlert.price_threshold <= 0) {
+
+    if (!newAlert.symbol || newAlert.target_price <= 0) {
       toast.error('Please fill in all fields correctly')
       return
     }
 
-    const createdAlert = await createPriceAlert(userId, newAlert)
+    const createdAlert = await createPriceAlert(newAlert)
     if (createdAlert) {
       setAlerts(prev => [createdAlert, ...prev])
-      setNewAlert({ ticker: '', alert_type: 'above', price_threshold: 0 })
+      setNewAlert({ symbol: '', condition: 'above', target_price: 0 })
       setShowCreateForm(false)
     }
   }
@@ -60,15 +60,15 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
   const handleToggleAlert = async (alert: PriceAlert) => {
     const success = await updatePriceAlert(alert.id, { is_active: !alert.is_active })
     if (success) {
-      setAlerts(prev => prev.map(a => 
+      setAlerts(prev => prev.map(a =>
         a.id === alert.id ? { ...a, is_active: !a.is_active } : a
       ))
     }
   }
 
-  const getCurrentPrice = (ticker: string): number | null => {
-    const marketItem = marketData.find(item => item.ticker === ticker)
-    return marketItem ? marketItem.close : null
+  const getCurrentPrice = (symbol: string): number | null => {
+    const marketItem = marketData.find(item => item.symbol === symbol)
+    return marketItem ? marketItem.price : null
   }
 
   const getAlertStatus = (alert: PriceAlert): 'active' | 'triggered' | 'inactive' => {
@@ -130,28 +130,28 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                 </label>
                 <input
                   type="text"
-                  value={newAlert.ticker}
-                  onChange={(e) => setNewAlert(prev => ({ ...prev, ticker: e.target.value.toUpperCase() }))}
+                  value={newAlert.symbol}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, symbol: e.target.value.toUpperCase() }))}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue sm:text-sm"
                   placeholder="e.g., IAM"
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Alert Type
                 </label>
                 <select
-                  value={newAlert.alert_type}
-                  onChange={(e) => setNewAlert(prev => ({ ...prev, alert_type: e.target.value as 'above' | 'below' }))}
+                  value={newAlert.condition}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, condition: e.target.value as 'above' | 'below' }))}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue sm:text-sm"
                 >
                   <option value="above">Above</option>
                   <option value="below">Below</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Price Threshold
@@ -159,15 +159,15 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                 <input
                   type="number"
                   step="0.01"
-                  value={newAlert.price_threshold}
-                  onChange={(e) => setNewAlert(prev => ({ ...prev, price_threshold: parseFloat(e.target.value) || 0 }))}
+                  value={newAlert.target_price}
+                  onChange={(e) => setNewAlert(prev => ({ ...prev, target_price: parseFloat(e.target.value) || 0 }))}
                   className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-casablanca-blue focus:border-casablanca-blue sm:text-sm"
                   placeholder="0.00"
                   required
                 />
               </div>
             </div>
-            
+
             <div className="flex justify-end space-x-3">
               <button
                 type="button"
@@ -198,9 +198,9 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
       ) : (
         <div className="divide-y divide-gray-200">
           {alerts.map((alert) => {
-            const currentPrice = getCurrentPrice(alert.ticker)
+            const currentPrice = getCurrentPrice(alert.symbol)
             const status = getAlertStatus(alert)
-            
+
             return (
               <div key={alert.id} className="px-6 py-4 hover:bg-gray-50">
                 <div className="flex items-center justify-between">
@@ -208,7 +208,7 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="text-sm font-medium text-gray-900">
-                          {alert.ticker}
+                          {alert.symbol}
                         </h4>
                         <div className="mt-1 flex items-center space-x-4 text-sm">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
@@ -217,7 +217,7 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                             {status === 'inactive' && 'Paused'}
                           </span>
                           <span className="text-gray-600">
-                            {alert.alert_type === 'above' ? 'Above' : 'Below'} {alert.price_threshold.toFixed(2)}
+                            {alert.condition === 'above' ? 'Above' : 'Below'} {alert.target_price.toFixed(2)}
                           </span>
                           {currentPrice && (
                             <span className="text-gray-900 font-medium">
@@ -231,7 +231,7 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                           </p>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => handleToggleAlert(alert)}
@@ -244,7 +244,7 @@ export default function PriceAlerts({ userId, marketData }: PriceAlertsProps) {
                             <PlayIcon className="h-4 w-4" />
                           )}
                         </button>
-                        
+
                         <button
                           onClick={() => handleDeleteAlert(alert.id)}
                           className="p-1 text-gray-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 rounded"

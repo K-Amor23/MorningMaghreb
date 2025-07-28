@@ -77,7 +77,7 @@ export default function AccountSettings() {
   return (
     <div className="min-h-screen bg-casablanca-light">
       <Header />
-      
+
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Page Header */}
@@ -112,7 +112,7 @@ export default function AccountSettings() {
                     </label>
                     <input
                       type="email"
-                      value={profile?.email || user?.email || ''}
+                      value={user?.email || ''}
                       disabled
                       className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500"
                     />
@@ -236,18 +236,17 @@ export default function AccountSettings() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   {t('Account Status')}
                 </h3>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">{t('Subscription Tier')}:</span>
-                    <span className={`text-sm font-medium ${
-                      profile?.tier === 'pro' ? 'text-green-600' : 
-                      profile?.tier === 'admin' ? 'text-purple-600' : 'text-gray-600'
-                    }`}>
+                    <span className={`text-sm font-medium ${profile?.tier === 'pro' ? 'text-green-600' :
+                        profile?.tier === 'admin' ? 'text-purple-600' : 'text-gray-600'
+                      }`}>
                       {profile?.tier?.toUpperCase() || 'FREE'}
                     </span>
                   </div>
-                  
+
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">{t('Member Since')}:</span>
                     <span className="text-sm text-gray-900">
@@ -261,7 +260,7 @@ export default function AccountSettings() {
                         <span className="text-sm text-gray-600">{t('Watchlist Items')}:</span>
                         <span className="text-sm text-gray-900">{dashboard.watchlist_count}</span>
                       </div>
-                      
+
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">{t('Active Alerts')}:</span>
                         <span className="text-sm text-gray-900">{dashboard.active_alerts_count}</span>
@@ -290,7 +289,7 @@ export default function AccountSettings() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   {t('Account Actions')}
                 </h3>
-                
+
                 <div className="space-y-3">
                   <button
                     onClick={() => router.push('/dashboard')}
@@ -298,23 +297,23 @@ export default function AccountSettings() {
                   >
                     {t('Go to Dashboard')}
                   </button>
-                  
+
                   <button
                     onClick={() => router.push('/portfolio')}
                     className="w-full text-left text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded-md hover:bg-gray-50"
                   >
                     {t('View Portfolio')}
                   </button>
-                  
+
                   <button
                     onClick={() => router.push('/premium-features')}
                     className="w-full text-left text-sm text-gray-600 hover:text-gray-900 py-2 px-3 rounded-md hover:bg-gray-50"
                   >
                     {t('Premium Features')}
                   </button>
-                  
+
                   <hr className="my-3" />
-                  
+
                   <button
                     onClick={handleSignOut}
                     className="w-full text-left text-sm text-red-600 hover:text-red-800 py-2 px-3 rounded-md hover:bg-red-50"

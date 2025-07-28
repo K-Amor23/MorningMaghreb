@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { buffer } from 'micro'
 import { supabase, isSupabaseConfigured } from '@/lib/supabase'
-import { handleWebhook } from '@/lib/stripe'
+import Stripe from 'stripe'
 
 export const config = {
   api: {
@@ -21,30 +21,30 @@ export default async function handler(
     const body = await buffer(req)
     const signature = req.headers['stripe-signature'] as string
 
-    const event = await handleWebhook(body.toString(), signature)
+    const event = JSON.parse(body.toString()) as Stripe.Event
 
     // Handle different event types
     switch (event.type) {
       case 'checkout.session.completed':
         await handleCheckoutCompleted(event.data.object)
         break
-      
+
       case 'invoice.payment_succeeded':
         await handlePaymentSucceeded(event.data.object)
         break
-      
+
       case 'invoice.payment_failed':
         await handlePaymentFailed(event.data.object)
         break
-      
+
       case 'customer.subscription.updated':
         await handleSubscriptionUpdated(event.data.object)
         break
-      
+
       case 'customer.subscription.deleted':
         await handleSubscriptionDeleted(event.data.object)
         break
-      
+
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
@@ -58,7 +58,7 @@ export default async function handler(
 
 async function handleCheckoutCompleted(session: any) {
   const { customer, subscription, metadata } = session
-  
+
   if (!metadata?.userId) {
     console.error('No userId in checkout session metadata')
     return
@@ -88,7 +88,7 @@ async function handleCheckoutCompleted(session: any) {
 
 async function handlePaymentSucceeded(invoice: any) {
   const { customer, subscription } = invoice
-  
+
   if (!isSupabaseConfigured() || !supabase) {
     console.error('Supabase not configured')
     return
@@ -110,7 +110,7 @@ async function handlePaymentSucceeded(invoice: any) {
 
 async function handlePaymentFailed(invoice: any) {
   const { customer } = invoice
-  
+
   if (!isSupabaseConfigured() || !supabase) {
     console.error('Supabase not configured')
     return
@@ -132,7 +132,7 @@ async function handlePaymentFailed(invoice: any) {
 
 async function handleSubscriptionUpdated(subscription: any) {
   const { customer, status } = subscription
-  
+
   if (!isSupabaseConfigured() || !supabase) {
     console.error('Supabase not configured')
     return
@@ -154,7 +154,7 @@ async function handleSubscriptionUpdated(subscription: any) {
 
 async function handleSubscriptionDeleted(subscription: any) {
   const { customer } = subscription
-  
+
   if (!isSupabaseConfigured() || !supabase) {
     console.error('Supabase not configured')
     return

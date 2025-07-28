@@ -17,7 +17,7 @@ class UserRegistration(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=128)
     full_name: str = Field(..., min_length=2, max_length=100)
-    language_preference: str = Field(default="en", regex="^(en|fr|ar)$")
+    language_preference: str = Field(default="en", pattern="^(en|fr|ar)$")
     
     @validator('password')
     def validate_password(cls, v):
@@ -51,8 +51,8 @@ class UserProfile(BaseModel):
 
 class UserProfileUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=2, max_length=100)
-    language_preference: Optional[str] = Field(None, regex="^(en|fr|ar)$")
-    newsletter_frequency: Optional[str] = Field(None, regex="^(daily|weekly|monthly)$")
+    language_preference: Optional[str] = Field(None, pattern="^(en|fr|ar)$")
+    newsletter_frequency: Optional[str] = Field(None, pattern="^(daily|weekly|monthly)$")
     preferences: Optional[Dict[str, Any]] = None
 
 class PasswordResetRequest(BaseModel):

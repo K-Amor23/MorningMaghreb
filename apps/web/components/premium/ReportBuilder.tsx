@@ -51,7 +51,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess(userSubscriptionTier)) {
+    if (checkPremiumAccess('PREMIUM_FEATURES')) {
       fetchReports()
       fetchTemplates()
     }
@@ -65,7 +65,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setReports(data)
@@ -87,7 +87,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setTemplates(data)
@@ -108,7 +108,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
         },
         body: JSON.stringify(newReport)
       })
-      
+
       if (response.ok) {
         const reportData = await response.json()
         setReports([reportData, ...reports])
@@ -139,7 +139,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -168,7 +168,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -235,7 +235,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
     }
   }
 
-  if (!checkPremiumAccess(userSubscriptionTier)) {
+  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -250,7 +250,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                {isPremiumEnforced() 
+                {isPremiumEnforced()
                   ? 'Custom reports are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
                   : 'Custom reports are currently disabled. Contact support for access.'
                 }
@@ -312,7 +312,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
       {showCreateForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Create Custom Report</h3>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -320,7 +320,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
               </label>
               <select
                 value={newReport.company_ticker}
-                onChange={(e) => setNewReport({...newReport, company_ticker: e.target.value})}
+                onChange={(e) => setNewReport({ ...newReport, company_ticker: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 <option value="">Select a company</option>
@@ -338,7 +338,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
               </label>
               <select
                 value={newReport.report_type}
-                onChange={(e) => setNewReport({...newReport, report_type: e.target.value})}
+                onChange={(e) => setNewReport({ ...newReport, report_type: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {templates.map((template) => (
@@ -354,7 +354,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
                 <input
                   type="checkbox"
                   checked={newReport.include_charts}
-                  onChange={(e) => setNewReport({...newReport, include_charts: e.target.checked})}
+                  onChange={(e) => setNewReport({ ...newReport, include_charts: e.target.checked })}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">Include charts and visualizations</span>
@@ -363,7 +363,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
                 <input
                   type="checkbox"
                   checked={newReport.include_ai_summary}
-                  onChange={(e) => setNewReport({...newReport, include_ai_summary: e.target.checked})}
+                  onChange={(e) => setNewReport({ ...newReport, include_ai_summary: e.target.checked })}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <span className="ml-2 text-sm text-gray-700">Include AI-generated summary</span>
@@ -397,7 +397,7 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
             Your generated reports and their status
           </p>
         </div>
-        
+
         {loading ? (
           <div className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -435,13 +435,12 @@ export default function ReportBuilder({ userSubscriptionTier }: ReportBuilderPro
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      report.status === 'completed' 
-                        ? 'bg-green-100 text-green-800'
-                        : report.status === 'failed'
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${report.status === 'completed'
+                      ? 'bg-green-100 text-green-800'
+                      : report.status === 'failed'
                         ? 'bg-red-100 text-red-800'
                         : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                      }`}>
                       {report.status.charAt(0).toUpperCase() + report.status.slice(1)}
                     </span>
                     {report.status === 'completed' && (

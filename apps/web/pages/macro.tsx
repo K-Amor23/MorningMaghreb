@@ -103,8 +103,10 @@ export default function MacroPage() {
     const [sortAsc, setSortAsc] = useState(true)
 
     const sortedIndicators = [...allIndicators].sort((a, b) => {
-        if (a[sortKey] < b[sortKey]) return sortAsc ? -1 : 1
-        if (a[sortKey] > b[sortKey]) return sortAsc ? 1 : -1
+        const aValue = a[sortKey as keyof typeof a]
+        const bValue = b[sortKey as keyof typeof b]
+        if (aValue < bValue) return sortAsc ? -1 : 1
+        if (aValue > bValue) return sortAsc ? 1 : -1
         return 0
     })
 

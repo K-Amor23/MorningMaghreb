@@ -72,7 +72,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess(userSubscriptionTier)) {
+    if (checkPremiumAccess('PREMIUM_FEATURES')) {
       fetchTranslations()
     }
   }, [userSubscriptionTier])
@@ -85,7 +85,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setTranslations(data)
@@ -111,7 +111,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
         },
         body: JSON.stringify(translationRequest)
       })
-      
+
       if (response.ok) {
         const translation = await response.json()
         setTranslations([translation, ...translations])
@@ -150,7 +150,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
           content_type: 'custom'
         })
       })
-      
+
       if (response.ok) {
         const translation = await response.json()
         setTranslations([translation, ...translations])
@@ -176,7 +176,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
         },
         body: JSON.stringify({ text })
       })
-      
+
       if (response.ok) {
         const result = await response.json()
         setTranslationRequest({
@@ -221,7 +221,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
     }
   }
 
-  if (!checkPremiumAccess(userSubscriptionTier)) {
+  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -236,7 +236,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                {isPremiumEnforced() 
+                {isPremiumEnforced()
                   ? 'Multilingual features are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
                   : 'Multilingual features are currently disabled. Contact support for access.'
                 }
@@ -303,7 +303,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
       {showTranslateForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Translate Text</h3>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -311,7 +311,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
               </label>
               <select
                 value={translationRequest.source_language}
-                onChange={(e) => setTranslationRequest({...translationRequest, source_language: e.target.value})}
+                onChange={(e) => setTranslationRequest({ ...translationRequest, source_language: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {languages.map((language) => (
@@ -328,7 +328,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
               </label>
               <select
                 value={translationRequest.target_language}
-                onChange={(e) => setTranslationRequest({...translationRequest, target_language: e.target.value})}
+                onChange={(e) => setTranslationRequest({ ...translationRequest, target_language: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {languages.map((language) => (
@@ -345,7 +345,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
               </label>
               <select
                 value={translationRequest.content_type}
-                onChange={(e) => setTranslationRequest({...translationRequest, content_type: e.target.value})}
+                onChange={(e) => setTranslationRequest({ ...translationRequest, content_type: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {contentTypes.map((type) => (
@@ -363,7 +363,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
               <div className="mt-1 relative">
                 <textarea
                   value={translationRequest.text}
-                  onChange={(e) => setTranslationRequest({...translationRequest, text: e.target.value})}
+                  onChange={(e) => setTranslationRequest({ ...translationRequest, text: e.target.value })}
                   rows={6}
                   className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Enter text to translate..."
@@ -464,7 +464,7 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
           ))}
         </div>
         <p className="mt-4 text-sm text-blue-700">
-          AI-powered translation optimized for financial and business content. 
+          AI-powered translation optimized for financial and business content.
           Supports bidirectional translation between all supported languages.
         </p>
       </div>

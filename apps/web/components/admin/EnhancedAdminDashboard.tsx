@@ -3,12 +3,11 @@ import {
     UsersIcon,
     ChartBarIcon,
     CogIcon,
-    DatabaseIcon,
-    TrendingUpIcon,
+    ServerIcon,
+    ArrowTrendingUpIcon,
     ExclamationTriangleIcon,
     CheckCircleIcon,
     ClockIcon,
-    ServerIcon,
     GlobeAltIcon
 } from '@heroicons/react/24/outline'
 
@@ -194,15 +193,15 @@ export default function EnhancedAdminDashboard() {
                     {[
                         { id: 'overview', name: 'Overview', icon: ChartBarIcon },
                         { id: 'analytics', name: 'User Analytics', icon: UsersIcon },
-                        { id: 'ingestion', name: 'Data Ingestion', icon: DatabaseIcon },
+                        { id: 'ingestion', name: 'Data Ingestion', icon: ServerIcon },
                         { id: 'performance', name: 'System Performance', icon: ServerIcon }
                     ].map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`${activeTab === tab.id
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                ? 'border-blue-500 text-blue-600'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 } whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm flex items-center`}
                         >
                             <tab.icon className="w-4 h-4 mr-2" />
@@ -244,7 +243,7 @@ export default function EnhancedAdminDashboard() {
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                                            <TrendingUpIcon className="w-5 h-5 text-white" />
+                                            <ArrowTrendingUpIcon className="w-5 h-5 text-white" />
                                         </div>
                                     </div>
                                     <div className="ml-5 w-0 flex-1">
@@ -266,7 +265,7 @@ export default function EnhancedAdminDashboard() {
                                 <div className="flex items-center">
                                     <div className="flex-shrink-0">
                                         <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                                            <DatabaseIcon className="w-5 h-5 text-white" />
+                                            <ServerIcon className="w-5 h-5 text-white" />
                                         </div>
                                     </div>
                                     <div className="ml-5 w-0 flex-1">
@@ -505,8 +504,8 @@ export default function EnhancedAdminDashboard() {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{metric.component}</td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${metric.severity === 'error' ? 'bg-red-100 text-red-800' :
-                                                        metric.severity === 'warning' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-green-100 text-green-800'
+                                                    metric.severity === 'warning' ? 'bg-yellow-100 text-yellow-800' :
+                                                        'bg-green-100 text-green-800'
                                                     }`}>
                                                     {metric.severity}
                                                 </span>

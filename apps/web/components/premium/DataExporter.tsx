@@ -50,7 +50,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
   const mockTickers = ['ATW', 'IAM', 'BCP', 'BMCE', 'WAA', 'CIH', 'CMT', 'CTM']
 
   useEffect(() => {
-    if (checkPremiumAccess(userSubscriptionTier)) {
+    if (checkPremiumAccess('PREMIUM_FEATURES')) {
       fetchExports()
     }
   }, [userSubscriptionTier])
@@ -63,7 +63,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setExports(data)
@@ -89,7 +89,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
         },
         body: JSON.stringify(newExport)
       })
-      
+
       if (response.ok) {
         const exportData = await response.json()
         setExports([exportData, ...exports])
@@ -124,7 +124,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -149,19 +149,19 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
     try {
       setLoading(true)
       let url = ''
-      
+
       if (type === 'financials') {
         url = `/api/exports/financials/quick?tickers=ATW,IAM,BCP&period=2024-Q3&format=${format}`
       } else if (type === 'macro') {
         url = `/api/exports/macro/quick?series_codes=cpi,gdp,policy_rate&start_date=2024-01-01&end_date=2024-12-31&format=${format}`
       }
-      
+
       const response = await fetch(url, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -215,7 +215,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
     }
   }
 
-  if (!checkPremiumAccess(userSubscriptionTier)) {
+  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -230,7 +230,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                {isPremiumEnforced() 
+                {isPremiumEnforced()
                   ? 'Data exports are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
                   : 'Data exports are currently disabled. Contact support for access.'
                 }
@@ -303,7 +303,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
       {showCreateForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Create Custom Export</h3>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -311,7 +311,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
               </label>
               <select
                 value={newExport.export_type}
-                onChange={(e) => setNewExport({...newExport, export_type: e.target.value})}
+                onChange={(e) => setNewExport({ ...newExport, export_type: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {exportTypes.map((type) => (
@@ -328,7 +328,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
               </label>
               <select
                 value={newExport.file_format}
-                onChange={(e) => setNewExport({...newExport, file_format: e.target.value})}
+                onChange={(e) => setNewExport({ ...newExport, file_format: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               >
                 {fileFormats.map((format) => (
@@ -386,7 +386,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
                     value={newExport.filters.period}
                     onChange={(e) => setNewExport({
                       ...newExport,
-                      filters: {...newExport.filters, period: e.target.value}
+                      filters: { ...newExport.filters, period: e.target.value }
                     })}
                     className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
@@ -405,7 +405,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
                       checked={newExport.filters.include_ratios}
                       onChange={(e) => setNewExport({
                         ...newExport,
-                        filters: {...newExport.filters, include_ratios: e.target.checked}
+                        filters: { ...newExport.filters, include_ratios: e.target.checked }
                       })}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
@@ -417,7 +417,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
                       checked={newExport.filters.include_gaap_adjustments}
                       onChange={(e) => setNewExport({
                         ...newExport,
-                        filters: {...newExport.filters, include_gaap_adjustments: e.target.checked}
+                        filters: { ...newExport.filters, include_gaap_adjustments: e.target.checked }
                       })}
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
@@ -454,7 +454,7 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
             Your recent data exports and their status
           </p>
         </div>
-        
+
         {loading ? (
           <div className="p-6 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -492,13 +492,12 @@ export default function DataExporter({ userSubscriptionTier }: DataExporterProps
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      exportItem.status === 'completed' 
-                        ? 'bg-green-100 text-green-800'
-                        : exportItem.status === 'failed'
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${exportItem.status === 'completed'
+                      ? 'bg-green-100 text-green-800'
+                      : exportItem.status === 'failed'
                         ? 'bg-red-100 text-red-800'
                         : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                      }`}>
                       {exportItem.status.charAt(0).toUpperCase() + exportItem.status.slice(1)}
                     </span>
                     {exportItem.status === 'completed' && (

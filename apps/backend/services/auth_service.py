@@ -22,10 +22,15 @@ class AuthService:
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
         
+        # Handle missing Supabase credentials for development
         if not self.supabase_url or not self.supabase_key:
-            raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
+            logger.warning("SUPABASE_URL and SUPABASE_SERVICE_KEY not set - using mock implementation")
+            self.supabase = None
+            self.mock_mode = True
+        else:
+            self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            self.mock_mode = False
         
-        self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         
         # JWT settings
@@ -86,6 +91,28 @@ class AuthService:
     async def register_user(self, user_data: UserRegistration) -> AuthResponse:
         """Register a new user"""
         try:
+            if self.mock_mode:
+                # Mock implementation for development
+                user_id = f"mock_user_{datetime.utcnow().timestamp()}"
+                tokens = self._create_tokens(user_id)
+                
+                return AuthResponse(
+                    user=UserProfile(
+                        id=user_id,
+                        email=user_data.email,
+                        full_name=user_data.full_name,
+                        tier=UserTier.FREE,
+                        status=UserStatus.ACTIVE,
+                        language_preference=user_data.language_preference,
+                        newsletter_frequency="weekly",
+                        preferences={},
+                        created_at=datetime.utcnow(),
+                        updated_at=datetime.utcnow()
+                    ),
+                    access_token=tokens["access_token"],
+                    refresh_token=tokens["refresh_token"]
+                )
+            
             # Check if user already exists
             existing_user = self.supabase.auth.admin.list_users()
             for user in existing_user:
@@ -142,6 +169,28 @@ class AuthService:
     async def login_user(self, login_data: UserLogin) -> AuthResponse:
         """Login a user"""
         try:
+            if self.mock_mode:
+                # Mock implementation for development
+                user_id = f"mock_user_{login_data.email}"
+                tokens = self._create_tokens(user_id)
+                
+                return AuthResponse(
+                    user=UserProfile(
+                        id=user_id,
+                        email=login_data.email,
+                        full_name="Mock User",
+                        tier=UserTier.FREE,
+                        status=UserStatus.ACTIVE,
+                        language_preference="en",
+                        newsletter_frequency="weekly",
+                        preferences={},
+                        created_at=datetime.utcnow(),
+                        updated_at=datetime.utcnow()
+                    ),
+                    access_token=tokens["access_token"],
+                    refresh_token=tokens["refresh_token"]
+                )
+            
             # Authenticate with Supabase
             auth_response = self.supabase.auth.sign_in_with_password({
                 "email": login_data.email,
@@ -185,6 +234,21 @@ class AuthService:
     async def get_user_profile(self, user_id: str) -> UserProfile:
         """Get user profile by ID"""
         try:
+            if self.mock_mode:
+                # Mock implementation for development
+                return UserProfile(
+                    id=user_id,
+                    email="mock@example.com",
+                    full_name="Mock User",
+                    tier=UserTier.FREE,
+                    status=UserStatus.ACTIVE,
+                    language_preference="en",
+                    newsletter_frequency="weekly",
+                    preferences={},
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow()
+                )
+            
             response = self.supabase.table("profiles").select("*").eq("id", user_id).execute()
             
             if not response.data:

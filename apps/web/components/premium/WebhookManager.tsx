@@ -53,7 +53,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess(userSubscriptionTier)) {
+    if (checkPremiumAccess('PREMIUM_FEATURES')) {
       fetchWebhooks()
     }
   }, [userSubscriptionTier])
@@ -66,7 +66,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setWebhooks(data)
@@ -92,7 +92,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
         },
         body: JSON.stringify(newWebhook)
       })
-      
+
       if (response.ok) {
         const webhook = await response.json()
         setWebhooks([webhook, ...webhooks])
@@ -127,7 +127,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         setWebhooks(webhooks.filter(webhook => webhook.id !== webhookId))
         toast.success('Webhook deleted successfully')
@@ -150,10 +150,10 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
         },
         body: JSON.stringify({ is_active: !isActive })
       })
-      
+
       if (response.ok) {
-        setWebhooks(webhooks.map(webhook => 
-          webhook.id === webhookId 
+        setWebhooks(webhooks.map(webhook =>
+          webhook.id === webhookId
             ? { ...webhook, is_active: !isActive }
             : webhook
         ))
@@ -175,7 +175,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         toast.success('Test webhook sent successfully')
       } else {
@@ -194,7 +194,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setDeliveries(data)
@@ -228,7 +228,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
     }
   }
 
-  if (!checkPremiumAccess(userSubscriptionTier)) {
+  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -243,7 +243,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                {isPremiumEnforced() 
+                {isPremiumEnforced()
                   ? 'Webhook management is available for institutional tier subscribers. Upgrade your subscription to access this feature.'
                   : 'Webhook management is currently disabled. Contact support for access.'
                 }
@@ -277,7 +277,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
       {showCreateForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Webhook</h3>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -286,7 +286,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
               <input
                 type="text"
                 value={newWebhook.name}
-                onChange={(e) => setNewWebhook({...newWebhook, name: e.target.value})}
+                onChange={(e) => setNewWebhook({ ...newWebhook, name: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="e.g., Price Alerts for ATW"
               />
@@ -299,7 +299,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
               <input
                 type="url"
                 value={newWebhook.url}
-                onChange={(e) => setNewWebhook({...newWebhook, url: e.target.value})}
+                onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="https://your-server.com/webhook"
               />
@@ -312,7 +312,7 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
               <input
                 type="text"
                 value={newWebhook.secret}
-                onChange={(e) => setNewWebhook({...newWebhook, secret: e.target.value})}
+                onChange={(e) => setNewWebhook({ ...newWebhook, secret: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Secret key for webhook verification"
               />
@@ -385,11 +385,10 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
                     <div className="ml-4">
                       <div className="flex items-center">
                         <p className="text-sm font-medium text-gray-900">{webhook.name}</p>
-                        <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          webhook.is_active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
+                        <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${webhook.is_active
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-800'
+                          }`}>
                           {webhook.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
@@ -415,11 +414,10 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
                     </button>
                     <button
                       onClick={() => toggleWebhook(webhook.id, webhook.is_active)}
-                      className={`text-sm font-medium ${
-                        webhook.is_active 
-                          ? 'text-yellow-600 hover:text-yellow-900' 
-                          : 'text-green-600 hover:text-green-900'
-                      }`}
+                      className={`text-sm font-medium ${webhook.is_active
+                        ? 'text-yellow-600 hover:text-yellow-900'
+                        : 'text-green-600 hover:text-green-900'
+                        }`}
                     >
                       {webhook.is_active ? 'Deactivate' : 'Activate'}
                     </button>
@@ -461,10 +459,9 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className={`text-sm font-medium ${
-                          delivery.status === 'success' ? 'text-green-600' :
+                        <p className={`text-sm font-medium ${delivery.status === 'success' ? 'text-green-600' :
                           delivery.status === 'failed' ? 'text-red-600' : 'text-yellow-600'
-                        }`}>
+                          }`}>
                           {delivery.status}
                         </p>
                         {delivery.response_code && (

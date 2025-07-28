@@ -45,7 +45,7 @@ export default async function handler(
 
     const queryLimit = profile?.subscription_tier === 'pro' ? 100 : 20
     if (recentQueries && recentQueries.length >= queryLimit) {
-      return res.status(429).json({ 
+      return res.status(429).json({
         error: 'Rate limit exceeded',
         message: `You have reached your hourly limit of ${queryLimit} queries`
       })
@@ -61,7 +61,8 @@ export default async function handler(
     const marketContext = await getMarketContext(context?.tickers)
 
     // Generate AI response
-    const response = await handleChatQuery(messages, marketContext)
+    const lastMessage = messages[messages.length - 1]?.content || ''
+    const response = await handleChatQuery(lastMessage, JSON.stringify(marketContext))
 
     // Log the query
     await supabase
@@ -83,7 +84,7 @@ export default async function handler(
     })
   } catch (error) {
     console.error('Chat API error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to process chat query'
     })

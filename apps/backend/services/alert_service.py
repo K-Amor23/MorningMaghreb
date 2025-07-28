@@ -21,10 +21,14 @@ class AlertService:
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
         
+        # Handle missing Supabase credentials for development
         if not self.supabase_url or not self.supabase_key:
-            raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
-        
-        self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            logger.warning("SUPABASE_URL and SUPABASE_SERVICE_KEY not set - using mock implementation")
+            self.supabase = None
+            self.mock_mode = True
+        else:
+            self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            self.mock_mode = False
     
     async def create_alert(self, user_id: str, alert_data: AlertCreate) -> Alert:
         """Create a new price alert for a user"""

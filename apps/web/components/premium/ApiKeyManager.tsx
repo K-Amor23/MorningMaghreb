@@ -39,7 +39,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess(userSubscriptionTier)) {
+    if (checkPremiumAccess('PREMIUM_FEATURES')) {
       fetchApiKeys()
     }
   }, [userSubscriptionTier])
@@ -52,7 +52,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         setApiKeys(data)
@@ -78,7 +78,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
         },
         body: JSON.stringify(newKeyData)
       })
-      
+
       if (response.ok) {
         const newKey = await response.json()
         setApiKeys([newKey, ...apiKeys])
@@ -113,7 +113,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
           'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
         }
       })
-      
+
       if (response.ok) {
         setApiKeys(apiKeys.filter(key => key.id !== keyId))
         toast.success('API key deleted successfully')
@@ -141,7 +141,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
     })
   }
 
-  if (!checkPremiumAccess(userSubscriptionTier)) {
+  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
         <div className="flex items-center">
@@ -156,7 +156,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
             </h3>
             <div className="mt-2 text-sm text-yellow-700">
               <p>
-                {isPremiumEnforced() 
+                {isPremiumEnforced()
                   ? 'API key management is available for institutional tier subscribers. Upgrade your subscription to access this feature.'
                   : 'API key management is currently disabled. Contact support for access.'
                 }
@@ -190,7 +190,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
       {showCreateForm && (
         <div className="bg-white border border-gray-200 rounded-lg p-6">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Create New API Key</h3>
-          
+
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">
@@ -199,7 +199,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
               <input
                 type="text"
                 value={newKeyData.key_name}
-                onChange={(e) => setNewKeyData({...newKeyData, key_name: e.target.value})}
+                onChange={(e) => setNewKeyData({ ...newKeyData, key_name: e.target.value })}
                 className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="e.g., Production API Key"
               />
@@ -244,7 +244,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
                 <input
                   type="number"
                   value={newKeyData.rate_limit_per_hour}
-                  onChange={(e) => setNewKeyData({...newKeyData, rate_limit_per_hour: parseInt(e.target.value)})}
+                  onChange={(e) => setNewKeyData({ ...newKeyData, rate_limit_per_hour: parseInt(e.target.value) })}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   min="1"
                   max="10000"
@@ -257,7 +257,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
                 <input
                   type="number"
                   value={newKeyData.expires_in_days}
-                  onChange={(e) => setNewKeyData({...newKeyData, expires_in_days: parseInt(e.target.value)})}
+                  onChange={(e) => setNewKeyData({ ...newKeyData, expires_in_days: parseInt(e.target.value) })}
                   className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   min="1"
                   max="3650"
@@ -322,16 +322,15 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          apiKey.is_active 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${apiKey.is_active
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
                           {apiKey.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </div>
                     </div>
-                    
+
                     {/* Show API key if just created */}
                     {apiKey.api_key && (
                       <div className="mt-3 p-3 bg-gray-50 rounded-md">
@@ -364,7 +363,7 @@ export default function ApiKeyManager({ userSubscriptionTier }: ApiKeyManagerPro
                       </div>
                     )}
                   </div>
-                  
+
                   <div className="ml-4 flex-shrink-0">
                     <button
                       onClick={() => deleteApiKey(apiKey.id)}

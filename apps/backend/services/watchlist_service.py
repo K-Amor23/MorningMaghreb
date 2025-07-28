@@ -20,14 +20,32 @@ class WatchlistService:
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
         
+        # Handle missing Supabase credentials for development
         if not self.supabase_url or not self.supabase_key:
-            raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
-        
-        self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            logger.warning("SUPABASE_URL and SUPABASE_SERVICE_KEY not set - using mock implementation")
+            self.supabase = None
+            self.mock_mode = True
+        else:
+            self.supabase: Client = create_client(self.supabase_url, self.supabase_key)
+            self.mock_mode = False
     
     async def create_watchlist(self, user_id: str, watchlist_data: WatchlistCreate) -> Watchlist:
         """Create a new watchlist for a user"""
         try:
+            if self.mock_mode:
+                # Mock implementation for development
+                watchlist_id = f"mock_watchlist_{datetime.utcnow().timestamp()}"
+                return Watchlist(
+                    id=watchlist_id,
+                    user_id=user_id,
+                    name=watchlist_data.name,
+                    description=watchlist_data.description,
+                    is_default=watchlist_data.is_default,
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow(),
+                    item_count=0
+                )
+            
             # If this is the first watchlist or is_default is True, make it default
             existing_watchlists = self.supabase.table("watchlists").select("*").eq("user_id", user_id).execute()
             

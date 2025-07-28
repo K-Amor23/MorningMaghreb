@@ -12,6 +12,11 @@ export default function PWAInstaller({ onInstall }: PWAInstallerProps) {
     const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null)
 
     useEffect(() => {
+        // Only run in browser environment
+        if (typeof window === 'undefined') {
+            return
+        }
+
         // Check if app is already installed
         if (window.matchMedia('(display-mode: standalone)').matches) {
             setIsInstalled(true)
@@ -162,6 +167,11 @@ export function usePWA() {
     const [isStandalone, setIsStandalone] = useState(false)
 
     useEffect(() => {
+        // Only run in browser environment
+        if (typeof window === 'undefined') {
+            return
+        }
+
         // Check online status
         const handleOnline = () => setIsOnline(true)
         const handleOffline = () => setIsOnline(false)
@@ -181,6 +191,6 @@ export function usePWA() {
     return {
         isOnline,
         isStandalone,
-        isPWA: isStandalone || (window.navigator as any).standalone
+        isPWA: typeof window !== 'undefined' && (isStandalone || (window.navigator as any).standalone)
     }
 } 
