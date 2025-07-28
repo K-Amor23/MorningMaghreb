@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "WebSocket Dashboard",
+    "tags": [
+      "websocket",
+      "real-time"
+    ],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "WebSocket Connections",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "websocket_connections_total",
+            "legendFormat": "Active Connections"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "WebSocket Messages",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "rate(websocket_messages_total[5m])",
+            "legendFormat": "Messages/sec"
+          }
+        ]
+      }
+    ]
+  }
+}

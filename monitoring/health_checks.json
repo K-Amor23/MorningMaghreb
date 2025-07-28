@@ -1,0 +1,52 @@
+{
+  "endpoints": [
+    {
+      "name": "API Health",
+      "url": "http://localhost:8000/health",
+      "timeout": 10,
+      "expected_status": 200
+    },
+    {
+      "name": "Database Health",
+      "url": "http://localhost:8000/api/health/database",
+      "timeout": 15,
+      "expected_status": 200
+    },
+    {
+      "name": "ETL Health",
+      "url": "http://localhost:8000/api/etl/health",
+      "timeout": 30,
+      "expected_status": 200
+    },
+    {
+      "name": "WebSocket Health",
+      "url": "http://localhost:8000/http/health",
+      "timeout": 10,
+      "expected_status": 200
+    }
+  ],
+  "checks": [
+    {
+      "name": "Database Connectivity",
+      "type": "database",
+      "query": "SELECT 1",
+      "timeout": 5
+    },
+    {
+      "name": "Redis Connectivity",
+      "type": "redis",
+      "command": "PING",
+      "timeout": 5
+    },
+    {
+      "name": "Disk Space",
+      "type": "system",
+      "threshold_gb": 5.0
+    },
+    {
+      "name": "Memory Usage",
+      "type": "system",
+      "threshold_percent": 90.0
+    }
+  ]
+}

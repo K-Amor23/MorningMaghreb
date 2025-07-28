@@ -1,0 +1,35 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ETL Pipeline Dashboard",
+    "tags": [
+      "etl",
+      "airflow"
+    ],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "ETL Job Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "airflow_dag_success_rate",
+            "legendFormat": "Success Rate"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "ETL Job Duration",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "airflow_task_duration_seconds",
+            "legendFormat": "{{dag_id}} {{task_id}}"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+global:
+  evaluation_interval: 15s
+  scrape_interval: 15s
+rule_files: []
+scrape_configs:
+- job_name: casablanca-api
+  metrics_path: /metrics
+  scrape_interval: 10s
+  static_configs:
+  - targets:
+    - localhost:8000
+- job_name: airflow
+  metrics_path: /metrics
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - localhost:8080

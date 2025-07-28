@@ -1,0 +1,14 @@
+apiVersion: 1
+datasources:
+- access: proxy
+  isDefault: true
+  name: Prometheus
+  type: prometheus
+  url: http://prometheus:9090
+- database: postgres
+  name: PostgreSQL
+  secureJsonData:
+    password: ${DB_PASSWORD}
+  type: postgres
+  url: localhost:5432
+  user: postgres

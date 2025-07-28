@@ -1,0 +1,31 @@
+{
+  "slack_webhook": null,
+  "email_alerts": [
+    "admin@casablanca-insights.com"
+  ],
+  "alert_rules": {
+    "dag_failure": {
+      "enabled": true,
+      "channels": [
+        "slack",
+        "email"
+      ],
+      "retry_delay": 300
+    },
+    "sla_miss": {
+      "enabled": true,
+      "channels": [
+        "slack",
+        "email"
+      ],
+      "threshold_minutes": 60
+    },
+    "task_timeout": {
+      "enabled": true,
+      "channels": [
+        "slack"
+      ],
+      "threshold_minutes": 30
+    }
+  }
+}
