@@ -33,7 +33,7 @@ print_error() {
 }
 
 # Check if we're in the right directory
-if [ ! -f "package.json" ] && [ ! -d "apps" ]; then
+if [ ! -f "package.json" ] || [ ! -d "apps" ]; then
     print_error "Please run this script from the project root directory"
     exit 1
 fi
@@ -47,9 +47,9 @@ if ! command -v python3 &> /dev/null; then
 fi
 
 # Check if virtual environment exists
-if [ ! -d "venv" ]; then
+if [ ! -d ".venv" ]; then
     print_status "Creating Python virtual environment..."
-    python3 -m venv venv
+    python3 -m venv .venv
     print_success "Virtual environment created"
 else
     print_status "Virtual environment already exists"
@@ -57,11 +57,11 @@ fi
 
 # Activate virtual environment
 print_status "Activating virtual environment..."
-source venv/bin/activate
+source .venv/bin/activate
 
 # Install required packages
 print_status "Installing required packages..."
-pip install supabase
+pip install supabase python-dotenv
 
 # Check if environment variables are set
 print_status "Checking environment variables..."
@@ -103,6 +103,10 @@ python3 -c "
 from supabase import create_client
 import os
 import sys
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
 key = os.getenv('NEXT_PUBLIC_SUPABASE_ANON_KEY')

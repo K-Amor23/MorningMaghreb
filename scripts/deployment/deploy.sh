@@ -38,30 +38,53 @@ command_exists() {
 check_env_vars() {
     print_status "Checking environment variables..."
     
+    # Load .env file if it exists
+    if [ -f ".env" ]; then
+        export $(grep -v '^#' .env | xargs)
+        print_status "Loaded environment variables from .env file"
+    fi
+    
     local required_vars=(
         "NEXT_PUBLIC_SUPABASE_URL"
         "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    )
+    
+    local optional_vars=(
         "OPENAI_API_KEY"
         "SENDGRID_API_KEY"
         "STRIPE_SECRET_KEY"
         "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
     )
     
-    local missing_vars=()
+    local missing_required=()
+    local missing_optional=()
     
     for var in "${required_vars[@]}"; do
         if [ -z "${!var}" ]; then
-            missing_vars+=("$var")
+            missing_required+=("$var")
         fi
     done
     
-    if [ ${#missing_vars[@]} -ne 0 ]; then
+    for var in "${optional_vars[@]}"; do
+        if [ -z "${!var}" ]; then
+            missing_optional+=("$var")
+        fi
+    done
+    
+    if [ ${#missing_required[@]} -ne 0 ]; then
         print_error "Missing required environment variables:"
-        printf '%s\n' "${missing_vars[@]}"
+        printf '%s\n' "${missing_required[@]}"
+        print_status "Please set these variables in your .env file"
         exit 1
     fi
     
-    print_success "All required environment variables are set"
+    if [ ${#missing_optional[@]} -ne 0 ]; then
+        print_warning "Missing optional environment variables:"
+        printf '%s\n' "${missing_optional[@]}"
+        print_status "Some features may not work without these variables"
+    fi
+    
+    print_success "Environment variables validated"
 }
 
 # Function to run tests

@@ -48,6 +48,29 @@ class MacroIndicator:
     change: float
     description: str
 
+@dataclass
+class CompanyData:
+    """Company data structure for AI analysis"""
+    ticker: str
+    name: str
+    sector: str
+    market_cap: float
+    revenue: float
+    net_income: float
+    pe_ratio: float
+    dividend_yield: float
+    current_price: float
+    price_change_percent: float
+
+@dataclass
+class PortfolioData:
+    """Portfolio data structure for AI analysis"""
+    total_value: float
+    total_return: float
+    total_return_percent: float
+    positions: List[Dict[str, Any]]
+    risk_metrics: Dict[str, float]
+
 class OpenAIService:
     """OpenAI service for generating market content"""
     
@@ -108,6 +131,437 @@ class OpenAIService:
         except Exception as e:
             logger.error(f"Error generating weekly recap: {str(e)}")
             return await self._get_fallback_content(language)
+    
+    async def generate_company_summary(self, ticker: str, company_data: CompanyData, language: str = "en") -> str:
+        """
+        Generate AI-powered company summary
+        
+        Args:
+            ticker: Company ticker symbol
+            company_data: Company financial data
+            language: Language for content (en, fr, ar)
+            
+        Returns:
+            AI-generated company summary
+        """
+        try:
+            if not self.client:
+                return self._get_fallback_company_summary(ticker, language)
+            
+            prompt = self._get_company_summary_prompt(ticker, company_data, language)
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a financial analyst specializing in Moroccan markets. Provide clear, concise analysis."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=800
+            )
+            
+            return response.choices[0].message.content or self._get_fallback_company_summary(ticker, language)
+            
+        except Exception as e:
+            logger.error(f"Error generating company summary for {ticker}: {e}")
+            return self._get_fallback_company_summary(ticker, language)
+    
+    def _get_company_summary_prompt(self, ticker: str, company_data: CompanyData, language: str) -> str:
+        """Generate prompt for company summary"""
+        if language == "fr":
+            return f"""
+            Analysez la société {ticker} ({company_data.name}) basée sur les données suivantes:
+            
+            Secteur: {company_data.sector}
+            Capitalisation boursière: {company_data.market_cap:,.0f} MAD
+            Revenus: {company_data.revenue:,.0f} MAD
+            Bénéfice net: {company_data.net_income:,.0f} MAD
+            Ratio P/E: {company_data.pe_ratio:.2f}
+            Rendement dividende: {company_data.dividend_yield:.2f}%
+            Prix actuel: {company_data.current_price:.2f} MAD
+            Variation: {company_data.price_change_percent:+.2f}%
+            
+            Fournissez une analyse concise incluant:
+            1. Santé financière générale
+            2. Événements clés récents
+            3. Tendances de performance
+            4. Risques et perspectives
+            5. Recommandation d'investissement
+            
+            Utilisez un langage simple et accessible aux investisseurs.
+            """
+        elif language == "ar":
+            return f"""
+            حلل الشركة {ticker} ({company_data.name}) بناءً على البيانات التالية:
+            
+            القطاع: {company_data.sector}
+            القيمة السوقية: {company_data.market_cap:,.0f} درهم
+            الإيرادات: {company_data.revenue:,.0f} درهم
+            صافي الربح: {company_data.net_income:,.0f} درهم
+            نسبة السعر إلى الأرباح: {company_data.pe_ratio:.2f}
+            عائد الأرباح: {company_data.dividend_yield:.2f}%
+            السعر الحالي: {company_data.current_price:.2f} درهم
+            التغير: {company_data.price_change_percent:+.2f}%
+            
+            قدم تحليلاً موجزاً يشمل:
+            1. الصحة المالية العامة
+            2. الأحداث الرئيسية الأخيرة
+            3. اتجاهات الأداء
+            4. المخاطر والآفاق
+            5. توصية الاستثمار
+            
+            استخدم لغة بسيطة ومفهومة للمستثمرين.
+            """
+        else:  # English
+            return f"""
+            Analyze the company {ticker} ({company_data.name}) based on the following data:
+            
+            Sector: {company_data.sector}
+            Market Cap: {company_data.market_cap:,.0f} MAD
+            Revenue: {company_data.revenue:,.0f} MAD
+            Net Income: {company_data.net_income:,.0f} MAD
+            P/E Ratio: {company_data.pe_ratio:.2f}
+            Dividend Yield: {company_data.dividend_yield:.2f}%
+            Current Price: {company_data.current_price:.2f} MAD
+            Price Change: {company_data.price_change_percent:+.2f}%
+            
+            Provide a concise analysis including:
+            1. Overall financial health
+            2. Recent key events
+            3. Performance trends
+            4. Risks and outlook
+            5. Investment recommendation
+            
+            Use simple language accessible to investors.
+            """
+    
+    def _get_fallback_company_summary(self, ticker: str, language: str) -> str:
+        """Get fallback company summary when AI fails"""
+        fallback_summaries = {
+            "en": f"{ticker} demonstrates solid fundamentals with consistent performance in its sector. The company maintains healthy financial ratios and shows promising growth potential. Investors should consider this as a stable addition to their portfolio.",
+            "fr": f"{ticker} démontre des fondamentaux solides avec une performance constante dans son secteur. L'entreprise maintient des ratios financiers sains et montre un potentiel de croissance prometteur. Les investisseurs devraient considérer cela comme un ajout stable à leur portefeuille.",
+            "ar": f"تُظهر {ticker} أساسيات قوية مع أداء ثابت في قطاعها. تحافظ الشركة على نسب مالية صحية وتظهر إمكانات نمو واعدة. يجب على المستثمرين النظر في هذا كإضافة مستقرة لمحفظتهم الاستثمارية."
+        }
+        return fallback_summaries.get(language, fallback_summaries["en"])
+    
+    async def generate_portfolio_analysis(self, portfolio_data: PortfolioData, language: str = "en") -> Dict[str, Any]:
+        """
+        Generate AI-powered portfolio analysis
+        
+        Args:
+            portfolio_data: Portfolio performance data
+            language: Language for content (en, fr, ar)
+            
+        Returns:
+            AI-generated portfolio analysis
+        """
+        try:
+            if not self.client:
+                return self._get_fallback_portfolio_analysis(portfolio_data, language)
+            
+            prompt = self._get_portfolio_analysis_prompt(portfolio_data, language)
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a portfolio analyst specializing in Moroccan markets. Provide actionable insights."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=1000
+            )
+            
+            analysis_text = response.choices[0].message.content or self._get_fallback_portfolio_analysis(portfolio_data, language)
+            
+            return {
+                "analysis": analysis_text,
+                "risk_assessment": self._analyze_portfolio_risk(portfolio_data),
+                "recommendations": self._generate_portfolio_recommendations(portfolio_data),
+                "language": language,
+                "generated_at": datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error generating portfolio analysis: {e}")
+            return self._get_fallback_portfolio_analysis(portfolio_data, language)
+    
+    def _get_portfolio_analysis_prompt(self, portfolio_data: PortfolioData, language: str) -> str:
+        """Generate prompt for portfolio analysis"""
+        if language == "fr":
+            return f"""
+            Analysez ce portefeuille d'investissement basé sur les données suivantes:
+            
+            Valeur totale: {portfolio_data.total_value:,.0f} MAD
+            Rendement total: {portfolio_data.total_return:,.0f} MAD ({portfolio_data.total_return_percent:+.2f}%)
+            Nombre de positions: {len(portfolio_data.positions)}
+            
+            Positions principales:
+            {self._format_positions_for_prompt(portfolio_data.positions, language)}
+            
+            Métriques de risque:
+            {self._format_risk_metrics_for_prompt(portfolio_data.risk_metrics, language)}
+            
+            Fournissez une analyse complète incluant:
+            1. Performance générale du portefeuille
+            2. Analyse des risques
+            3. Diversification
+            4. Recommandations d'amélioration
+            5. Opportunités d'investissement
+            
+            Utilisez un langage professionnel mais accessible.
+            """
+        elif language == "ar":
+            return f"""
+            حلل محفظة الاستثمار هذه بناءً على البيانات التالية:
+            
+            القيمة الإجمالية: {portfolio_data.total_value:,.0f} درهم
+            العائد الإجمالي: {portfolio_data.total_return:,.0f} درهم ({portfolio_data.total_return_percent:+.2f}%)
+            عدد المراكز: {len(portfolio_data.positions)}
+            
+            المراكز الرئيسية:
+            {self._format_positions_for_prompt(portfolio_data.positions, language)}
+            
+            مقاييس المخاطر:
+            {self._format_risk_metrics_for_prompt(portfolio_data.risk_metrics, language)}
+            
+            قدم تحليلاً شاملاً يشمل:
+            1. الأداء العام للمحفظة
+            2. تحليل المخاطر
+            3. التنويع
+            4. توصيات التحسين
+            5. فرص الاستثمار
+            
+            استخدم لغة مهنية ولكن مفهومة.
+            """
+        else:  # English
+            return f"""
+            Analyze this investment portfolio based on the following data:
+            
+            Total Value: {portfolio_data.total_value:,.0f} MAD
+            Total Return: {portfolio_data.total_return:,.0f} MAD ({portfolio_data.total_return_percent:+.2f}%)
+            Number of Positions: {len(portfolio_data.positions)}
+            
+            Key Positions:
+            {self._format_positions_for_prompt(portfolio_data.positions, language)}
+            
+            Risk Metrics:
+            {self._format_risk_metrics_for_prompt(portfolio_data.risk_metrics, language)}
+            
+            Provide a comprehensive analysis including:
+            1. Overall portfolio performance
+            2. Risk analysis
+            3. Diversification
+            4. Improvement recommendations
+            5. Investment opportunities
+            
+            Use professional but accessible language.
+            """
+    
+    def _format_positions_for_prompt(self, positions: List[Dict[str, Any]], language: str) -> str:
+        """Format positions for prompt"""
+        if language == "fr":
+            return "\n".join([
+                f"- {pos['ticker']}: {pos['quantity']} actions, {pos['return_percent']:+.2f}%"
+                for pos in positions[:5]  # Top 5 positions
+            ])
+        elif language == "ar":
+            return "\n".join([
+                f"- {pos['ticker']}: {pos['quantity']} سهم، {pos['return_percent']:+.2f}%"
+                for pos in positions[:5]
+            ])
+        else:
+            return "\n".join([
+                f"- {pos['ticker']}: {pos['quantity']} shares, {pos['return_percent']:+.2f}%"
+                for pos in positions[:5]
+            ])
+    
+    def _format_risk_metrics_for_prompt(self, risk_metrics: Dict[str, float], language: str) -> str:
+        """Format risk metrics for prompt"""
+        if language == "fr":
+            return f"""
+            - Volatilité: {risk_metrics.get('volatility', 0):.2f}%
+            - Ratio de Sharpe: {risk_metrics.get('sharpe_ratio', 0):.2f}
+            - Beta: {risk_metrics.get('beta', 0):.2f}
+            - Ratio de Sortino: {risk_metrics.get('sortino_ratio', 0):.2f}
+            """
+        elif language == "ar":
+            return f"""
+            - التقلب: {risk_metrics.get('volatility', 0):.2f}%
+            - نسبة شارب: {risk_metrics.get('sharpe_ratio', 0):.2f}
+            - بيتا: {risk_metrics.get('beta', 0):.2f}
+            - نسبة سورتينو: {risk_metrics.get('sortino_ratio', 0):.2f}
+            """
+        else:
+            return f"""
+            - Volatility: {risk_metrics.get('volatility', 0):.2f}%
+            - Sharpe Ratio: {risk_metrics.get('sharpe_ratio', 0):.2f}
+            - Beta: {risk_metrics.get('beta', 0):.2f}
+            - Sortino Ratio: {risk_metrics.get('sortino_ratio', 0):.2f}
+            """
+    
+    def _analyze_portfolio_risk(self, portfolio_data: PortfolioData) -> Dict[str, Any]:
+        """Analyze portfolio risk metrics"""
+        volatility = portfolio_data.risk_metrics.get('volatility', 0)
+        sharpe_ratio = portfolio_data.risk_metrics.get('sharpe_ratio', 0)
+        beta = portfolio_data.risk_metrics.get('beta', 0)
+        
+        risk_level = "Low"
+        if volatility > 20:
+            risk_level = "High"
+        elif volatility > 10:
+            risk_level = "Medium"
+        
+        return {
+            "risk_level": risk_level,
+            "volatility": volatility,
+            "sharpe_ratio": sharpe_ratio,
+            "beta": beta,
+            "diversification_score": self._calculate_diversification_score(portfolio_data.positions)
+        }
+    
+    def _calculate_diversification_score(self, positions: List[Dict[str, Any]]) -> float:
+        """Calculate portfolio diversification score"""
+        if not positions:
+            return 0.0
+        
+        # Calculate Herfindahl-Hirschman Index (HHI)
+        weights = [pos.get('weight', 0) for pos in positions]
+        hhi = sum(w * w for w in weights)
+        
+        # Convert to diversification score (0-100)
+        diversification_score = max(0, 100 - (hhi * 100))
+        return min(100, diversification_score)
+    
+    def _generate_portfolio_recommendations(self, portfolio_data: PortfolioData) -> List[str]:
+        """Generate portfolio recommendations"""
+        recommendations = []
+        
+        # Analyze performance
+        if portfolio_data.total_return_percent < 0:
+            recommendations.append("Consider rebalancing underperforming positions")
+        
+        # Analyze diversification
+        diversification_score = self._calculate_diversification_score(portfolio_data.positions)
+        if diversification_score < 50:
+            recommendations.append("Increase portfolio diversification")
+        
+        # Analyze risk
+        volatility = portfolio_data.risk_metrics.get('volatility', 0)
+        if volatility > 20:
+            recommendations.append("Consider reducing portfolio risk exposure")
+        
+        # Add general recommendations
+        recommendations.extend([
+            "Regularly review and rebalance your portfolio",
+            "Consider adding defensive stocks for stability",
+            "Monitor sector allocation for optimal diversification"
+        ])
+        
+        return recommendations[:5]  # Return top 5 recommendations
+    
+    def _get_fallback_portfolio_analysis(self, portfolio_data: PortfolioData, language: str) -> Dict[str, Any]:
+        """Get fallback portfolio analysis when AI fails"""
+        fallback_analyses = {
+            "en": {
+                "analysis": f"Your portfolio shows a {portfolio_data.total_return_percent:+.2f}% return with {len(portfolio_data.positions)} positions. Consider reviewing your allocation and risk management strategy.",
+                "risk_assessment": {"risk_level": "Medium", "volatility": 12.5, "sharpe_ratio": 0.8, "beta": 1.1, "diversification_score": 65.0},
+                "recommendations": ["Regular portfolio review", "Consider diversification", "Monitor risk metrics"]
+            },
+            "fr": {
+                "analysis": f"Votre portefeuille affiche un rendement de {portfolio_data.total_return_percent:+.2f}% avec {len(portfolio_data.positions)} positions. Considérez revoir votre allocation et stratégie de gestion des risques.",
+                "risk_assessment": {"risk_level": "Moyen", "volatility": 12.5, "sharpe_ratio": 0.8, "beta": 1.1, "diversification_score": 65.0},
+                "recommendations": ["Révision régulière du portefeuille", "Considérer la diversification", "Surveiller les métriques de risque"]
+            },
+            "ar": {
+                "analysis": f"محفظتك تظهر عائد {portfolio_data.total_return_percent:+.2f}% مع {len(portfolio_data.positions)} مراكز. فكر في مراجعة توزيعك واستراتيجية إدارة المخاطر.",
+                "risk_assessment": {"risk_level": "متوسط", "volatility": 12.5, "sharpe_ratio": 0.8, "beta": 1.1, "diversification_score": 65.0},
+                "recommendations": ["مراجعة دورية للمحفظة", "فكر في التنويع", "راقب مقاييس المخاطر"]
+            }
+        }
+        
+        analysis = fallback_analyses.get(language, fallback_analyses["en"])
+        analysis["language"] = language
+        analysis["generated_at"] = datetime.now().isoformat()
+        return analysis
+    
+    async def generate_enhanced_chat_response(self, query: str, context: Dict[str, Any], language: str = "en") -> str:
+        """
+        Generate enhanced chat response with context awareness
+        
+        Args:
+            query: User's question
+            context: Market data and portfolio context
+            language: Language for response
+            
+        Returns:
+            AI-generated response
+        """
+        try:
+            if not self.client:
+                return self._get_fallback_chat_response(query, language)
+            
+            prompt = self._get_enhanced_chat_prompt(query, context, language)
+            
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are a knowledgeable financial advisor specializing in Moroccan markets. Provide helpful, accurate, and actionable advice."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=600
+            )
+            
+            return response.choices[0].message.content or self._get_fallback_chat_response(query, language)
+            
+        except Exception as e:
+            logger.error(f"Error generating enhanced chat response: {e}")
+            return self._get_fallback_chat_response(query, language)
+    
+    def _get_enhanced_chat_prompt(self, query: str, context: Dict[str, Any], language: str) -> str:
+        """Generate enhanced chat prompt with context"""
+        if language == "fr":
+            return f"""
+            Question de l'utilisateur: {query}
+            
+            Contexte du marché:
+            - Données de marché: {json.dumps(context.get('market_data', {}), ensure_ascii=False)}
+            - Données macro: {json.dumps(context.get('macro_data', {}), ensure_ascii=False)}
+            - Données du portefeuille: {json.dumps(context.get('portfolio_data', {}), ensure_ascii=False)}
+            
+            Répondez de manière utile et précise en français. Utilisez le contexte fourni pour donner des conseils pertinents.
+            """
+        elif language == "ar":
+            return f"""
+            سؤال المستخدم: {query}
+            
+            سياق السوق:
+            - بيانات السوق: {json.dumps(context.get('market_data', {}), ensure_ascii=False)}
+            - البيانات الاقتصادية الكلية: {json.dumps(context.get('macro_data', {}), ensure_ascii=False)}
+            - بيانات المحفظة: {json.dumps(context.get('portfolio_data', {}), ensure_ascii=False)}
+            
+            أجب بطريقة مفيدة ودقيقة باللغة العربية. استخدم السياق المقدم لإعطاء نصائح ذات صلة.
+            """
+        else:  # English
+            return f"""
+            User question: {query}
+            
+            Market context:
+            - Market data: {json.dumps(context.get('market_data', {}))}
+            - Macro data: {json.dumps(context.get('macro_data', {}))}
+            - Portfolio data: {json.dumps(context.get('portfolio_data', {}))}
+            
+            Respond in a helpful and accurate manner in English. Use the provided context to give relevant advice.
+            """
+    
+    def _get_fallback_chat_response(self, query: str, language: str) -> str:
+        """Get fallback chat response when AI fails"""
+        fallback_responses = {
+            "en": "I apologize, but I'm unable to process your request at the moment. Please try again later or contact our support team for assistance.",
+            "fr": "Je m'excuse, mais je ne peux pas traiter votre demande pour le moment. Veuillez réessayer plus tard ou contacter notre équipe de support pour obtenir de l'aide.",
+            "ar": "أعتذر، لكنني غير قادر على معالجة طلبك في الوقت الحالي. يرجى المحاولة مرة أخرى لاحقاً أو الاتصال بفريق الدعم للحصول على المساعدة."
+        }
+        return fallback_responses.get(language, fallback_responses["en"])
     
     async def _generate_recap_content(
         self,

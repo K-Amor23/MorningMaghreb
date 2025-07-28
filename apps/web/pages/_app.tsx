@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { ThemeProvider } from '@/lib/theme'
 import { swrConfig } from '@/lib/swr'
 import KeyboardShortcuts from '@/components/KeyboardShortcuts'
+import PWAInstaller from '@/components/PWAInstaller'
 import '@/lib/i18n'
 import FeatureFlagsDebug from '@/components/FeatureFlagsDebug'
 
@@ -44,6 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
           }}
         />
         <KeyboardShortcuts />
+        <PWAInstaller />
         <FeatureFlagsDebug />
       </ThemeProvider>
     </SWRConfig>

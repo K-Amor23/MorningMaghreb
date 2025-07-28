@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 from datetime import datetime, date
 import logging
+
+# Import the enhanced portfolio service
+from services.portfolio_service import portfolio_service, Trade, TradeType
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -36,6 +39,7 @@ class PortfolioSummary(BaseModel):
 class CreatePortfolioRequest(BaseModel):
     name: str
     description: Optional[str] = None
+    initial_capital: Optional[float] = 100000.0
 
 class UpdateHoldingRequest(BaseModel):
     quantity: Optional[float] = None
@@ -49,6 +53,40 @@ class AddHoldingRequest(BaseModel):
     purchase_price: float
     purchase_date: Optional[date] = None
     notes: Optional[str] = None
+
+class TradeRequest(BaseModel):
+    ticker: str
+    quantity: float
+    price: float
+    trade_type: str  # "buy" or "sell"
+    date: date
+    commission: Optional[float] = 0.0
+    notes: Optional[str] = None
+
+class BacktestRequest(BaseModel):
+    trades: List[TradeRequest]
+    initial_capital: float = 100000.0
+    start_date: date
+    end_date: date
+
+class RiskMetrics(BaseModel):
+    volatility: float
+    sharpe_ratio: float
+    max_drawdown: float
+    var_95: float
+    beta: float
+
+class PortfolioMetrics(BaseModel):
+    total_value: float
+    total_cost: float
+    total_pnl: float
+    total_pnl_percent: float
+    daily_pnl: float
+    daily_pnl_percent: float
+    positions_count: int
+    cash_balance: float
+    allocation_by_sector: Dict[str, float]
+    risk_metrics: RiskMetrics
 
 # Mock token verification (replace with actual implementation)
 async def verify_token(token: str):
@@ -141,8 +179,8 @@ router = APIRouter()
 async def get_user_portfolios(current_user = Depends(get_current_user)):
     """Get all portfolios for the current user"""
     try:
-        user_portfolios = mock_portfolios.get(current_user.id, [])
-        return [{"id": "portfolio_1", "name": "My Portfolio", "description": "Main investment portfolio"}]
+        portfolios = portfolio_service.get_user_portfolios(current_user.id)
+        return portfolios
     except Exception as e:
         logger.error(f"Error fetching portfolios: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch portfolios")
@@ -154,23 +192,16 @@ async def create_portfolio(
 ):
     """Create a new portfolio"""
     try:
-        portfolio_id = f"portfolio_{len(mock_portfolios) + 1}"
-        new_portfolio = {
-            "id": portfolio_id,
-            "name": request.name,
-            "description": request.description,
-            "holdings": []
-        }
-        
-        if current_user.id not in mock_portfolios:
-            mock_portfolios[current_user.id] = {}
-        
-        mock_portfolios[current_user.id] = new_portfolio
+        portfolio = portfolio_service.create_portfolio(
+            user_id=current_user.id,
+            name=request.name,
+            description=request.description
+        )
         
         return {
-            "id": portfolio_id,
-            "name": request.name,
-            "description": request.description,
+            "id": portfolio['id'],
+            "name": portfolio['name'],
+            "description": portfolio['description'],
             "message": "Portfolio created successfully"
         }
     except Exception as e:
@@ -184,11 +215,29 @@ async def get_portfolio_holdings(
 ):
     """Get all holdings for a specific portfolio"""
     try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
+        portfolio = portfolio_service.get_portfolio(portfolio_id)
+        if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
         
-        return user_portfolio.get("holdings", [])
+        # Convert portfolio positions to holdings format
+        holdings = []
+        for ticker, trades in portfolio.get('positions', {}).items():
+            if trades:
+                position = portfolio_service.calculate_position_metrics(trades, portfolio_service.get_current_price(ticker) or 0)
+                if position:
+                    holdings.append({
+                        "id": f"holding_{ticker}",
+                        "ticker": position.ticker,
+                        "name": f"{position.ticker} Company",
+                        "quantity": position.quantity,
+                        "purchase_price": position.avg_price,
+                        "current_price": position.current_price,
+                        "current_value": position.market_value,
+                        "total_gain_loss": position.unrealized_pnl,
+                        "total_gain_loss_percent": position.unrealized_pnl_percent
+                    })
+        
+        return holdings
     except HTTPException:
         raise
     except Exception as e:
@@ -202,23 +251,18 @@ async def get_portfolio_summary(
 ):
     """Get portfolio summary with total values and performance"""
     try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
+        portfolio = portfolio_service.get_portfolio(portfolio_id)
+        if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
         
-        holdings = user_portfolio.get("holdings", [])
-        
-        total_value = sum(holding.get("current_value", 0) for holding in holdings)
-        total_cost = sum(holding.get("quantity", 0) * holding.get("purchase_price", 0) for holding in holdings)
-        total_gain_loss = total_value - total_cost
-        total_gain_loss_percent = (total_gain_loss / total_cost * 100) if total_cost > 0 else 0
+        metrics = portfolio_service.calculate_portfolio_metrics(portfolio)
         
         return PortfolioSummary(
-            total_value=total_value,
-            total_cost=total_cost,
-            total_gain_loss=total_gain_loss,
-            total_gain_loss_percent=total_gain_loss_percent,
-            holdings_count=len(holdings),
+            total_value=metrics.total_value,
+            total_cost=metrics.total_cost,
+            total_gain_loss=metrics.total_pnl,
+            total_gain_loss_percent=metrics.total_pnl_percent,
+            holdings_count=metrics.positions_count,
             last_updated=datetime.now()
         )
     except HTTPException:
@@ -227,171 +271,107 @@ async def get_portfolio_summary(
         logger.error(f"Error fetching portfolio summary: {e}")
         raise HTTPException(status_code=500, detail="Failed to fetch portfolio summary")
 
-@router.post("/{portfolio_id}/holdings", response_model=PortfolioHolding)
-async def add_holding(
+@router.get("/{portfolio_id}/metrics", response_model=PortfolioMetrics)
+async def get_portfolio_metrics(
     portfolio_id: str,
-    request: AddHoldingRequest,
     current_user = Depends(get_current_user)
 ):
-    """Add a new holding to the portfolio"""
+    """Get comprehensive portfolio metrics including risk metrics"""
     try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
+        portfolio = portfolio_service.get_portfolio(portfolio_id)
+        if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
         
-        # Mock current price (in real app, fetch from market data)
-        current_price = request.purchase_price * 1.05  # Mock 5% gain
+        metrics = portfolio_service.calculate_portfolio_metrics(portfolio)
         
-        new_holding = {
-            "id": f"holding_{len(user_portfolio.get('holdings', [])) + 1}",
-            "ticker": request.ticker,
-            "name": f"{request.ticker} Company",  # Mock name
-            "quantity": request.quantity,
-            "purchase_price": request.purchase_price,
-            "purchase_date": request.purchase_date or date.today(),
-            "notes": request.notes,
-            "current_price": current_price,
-            "current_value": request.quantity * current_price,
-            "total_gain_loss": request.quantity * (current_price - request.purchase_price),
-            "total_gain_loss_percent": ((current_price - request.purchase_price) / request.purchase_price) * 100
-        }
-        
-        if "holdings" not in user_portfolio:
-            user_portfolio["holdings"] = []
-        
-        user_portfolio["holdings"].append(new_holding)
-        
-        return new_holding
+        return PortfolioMetrics(
+            total_value=metrics.total_value,
+            total_cost=metrics.total_cost,
+            total_pnl=metrics.total_pnl,
+            total_pnl_percent=metrics.total_pnl_percent,
+            daily_pnl=metrics.daily_pnl,
+            daily_pnl_percent=metrics.daily_pnl_percent,
+            positions_count=metrics.positions_count,
+            cash_balance=metrics.cash_balance,
+            allocation_by_sector=metrics.allocation_by_sector,
+            risk_metrics=RiskMetrics(**metrics.risk_metrics)
+        )
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error adding holding: {e}")
-        raise HTTPException(status_code=500, detail="Failed to add holding")
+        logger.error(f"Error fetching portfolio metrics: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch portfolio metrics")
 
-@router.put("/{portfolio_id}/holdings/{holding_id}", response_model=PortfolioHolding)
-async def update_holding(
+@router.post("/{portfolio_id}/trades", response_model=dict)
+async def add_trade(
     portfolio_id: str,
-    holding_id: str,
-    request: UpdateHoldingRequest,
+    request: TradeRequest,
     current_user = Depends(get_current_user)
 ):
-    """Update an existing holding"""
+    """Add a trade to the portfolio"""
     try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
+        # Convert request to Trade object
+        trade = Trade(
+            date=request.date,
+            ticker=request.ticker,
+            quantity=request.quantity,
+            price=request.price,
+            trade_type=TradeType(request.trade_type),
+            commission=request.commission,
+            notes=request.notes
+        )
         
-        holdings = user_portfolio.get("holdings", [])
-        holding_index = next((i for i, h in enumerate(holdings) if h.get("id") == holding_id), None)
-        
-        if holding_index is None:
-            raise HTTPException(status_code=404, detail="Holding not found")
-        
-        holding = holdings[holding_index]
-        
-        # Update fields if provided
-        if request.quantity is not None:
-            holding["quantity"] = request.quantity
-        if request.purchase_price is not None:
-            holding["purchase_price"] = request.purchase_price
-        if request.purchase_date is not None:
-            holding["purchase_date"] = request.purchase_date
-        if request.notes is not None:
-            holding["notes"] = request.notes
-        
-        # Recalculate values
-        current_price = holding.get("current_price", holding["purchase_price"])
-        holding["current_value"] = holding["quantity"] * current_price
-        holding["total_gain_loss"] = holding["quantity"] * (current_price - holding["purchase_price"])
-        holding["total_gain_loss_percent"] = ((current_price - holding["purchase_price"]) / holding["purchase_price"]) * 100
-        
-        return holding
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error updating holding: {e}")
-        raise HTTPException(status_code=500, detail="Failed to update holding")
-
-@router.delete("/{portfolio_id}/holdings/{holding_id}")
-async def delete_holding(
-    portfolio_id: str,
-    holding_id: str,
-    current_user = Depends(get_current_user)
-):
-    """Delete a holding from the portfolio"""
-    try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        holdings = user_portfolio.get("holdings", [])
-        holding_index = next((i for i, h in enumerate(holdings) if h.get("id") == holding_id), None)
-        
-        if holding_index is None:
-            raise HTTPException(status_code=404, detail="Holding not found")
-        
-        # Remove the holding
-        deleted_holding = holdings.pop(holding_index)
+        # Add trade to portfolio
+        updated_portfolio = portfolio_service.add_trade(portfolio_id, trade)
         
         return {
-            "message": "Holding deleted successfully",
-            "deleted_holding": deleted_holding
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error deleting holding: {e}")
-        raise HTTPException(status_code=500, detail="Failed to delete holding")
-
-@router.post("/{portfolio_id}/holdings/{holding_id}/adjust")
-async def adjust_holding_quantity(
-    portfolio_id: str,
-    holding_id: str,
-    adjustment: float,  # Positive for increase, negative for decrease
-    current_user = Depends(get_current_user)
-):
-    """Adjust the quantity of a holding (add or remove shares)"""
-    try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
-            raise HTTPException(status_code=404, detail="Portfolio not found")
-        
-        holdings = user_portfolio.get("holdings", [])
-        holding_index = next((i for i, h in enumerate(holdings) if h.get("id") == holding_id), None)
-        
-        if holding_index is None:
-            raise HTTPException(status_code=404, detail="Holding not found")
-        
-        holding = holdings[holding_index]
-        new_quantity = holding["quantity"] + adjustment
-        
-        if new_quantity < 0:
-            raise HTTPException(status_code=400, detail="Quantity cannot be negative")
-        
-        if new_quantity == 0:
-            # Remove the holding if quantity becomes zero
-            deleted_holding = holdings.pop(holding_index)
-            return {
-                "message": "Holding removed (quantity adjusted to zero)",
-                "deleted_holding": deleted_holding
+            "message": "Trade added successfully",
+            "portfolio_id": portfolio_id,
+            "trade": {
+                "ticker": trade.ticker,
+                "quantity": trade.quantity,
+                "price": trade.price,
+                "trade_type": trade.trade_type.value,
+                "date": trade.date.isoformat()
             }
-        
-        # Update quantity and recalculate values
-        holding["quantity"] = new_quantity
-        current_price = holding.get("current_price", holding["purchase_price"])
-        holding["current_value"] = holding["quantity"] * current_price
-        holding["total_gain_loss"] = holding["quantity"] * (current_price - holding["purchase_price"])
-        holding["total_gain_loss_percent"] = ((current_price - holding["purchase_price"]) / holding["purchase_price"]) * 100
-        
-        return {
-            "message": "Holding quantity adjusted successfully",
-            "updated_holding": holding
         }
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error adjusting holding quantity: {e}")
-        raise HTTPException(status_code=500, detail="Failed to adjust holding quantity")
+        logger.error(f"Error adding trade: {e}")
+        raise HTTPException(status_code=500, detail="Failed to add trade")
+
+@router.post("/backtest", response_model=dict)
+async def run_backtest(
+    request: BacktestRequest,
+    current_user = Depends(get_current_user)
+):
+    """Run backtest simulation with historical trades"""
+    try:
+        # Convert requests to Trade objects
+        trades = []
+        for trade_req in request.trades:
+            trade = Trade(
+                date=trade_req.date,
+                ticker=trade_req.ticker,
+                quantity=trade_req.quantity,
+                price=trade_req.price,
+                trade_type=TradeType(trade_req.trade_type),
+                commission=trade_req.commission,
+                notes=trade_req.notes
+            )
+            trades.append(trade)
+        
+        # Run backtest
+        results = portfolio_service.run_backtest(trades, request.initial_capital)
+        
+        return {
+            "backtest_results": results,
+            "message": "Backtest completed successfully"
+        }
+    except Exception as e:
+        logger.error(f"Error running backtest: {e}")
+        raise HTTPException(status_code=500, detail="Failed to run backtest")
 
 @router.get("/{portfolio_id}/performance")
 async def get_portfolio_performance(
@@ -401,24 +381,27 @@ async def get_portfolio_performance(
 ):
     """Get portfolio performance over time"""
     try:
-        user_portfolio = mock_portfolios.get(current_user.id)
-        if not user_portfolio or user_portfolio.get("id") != portfolio_id:
+        portfolio = portfolio_service.get_portfolio(portfolio_id)
+        if not portfolio:
             raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        # Calculate performance metrics
+        metrics = portfolio_service.calculate_portfolio_metrics(portfolio)
         
         # Mock performance data (in real app, calculate from historical data)
         performance_data = {
             "period": period,
-            "total_return": 7.25,
-            "total_return_amount": 2711.25,
+            "total_return": metrics.total_pnl_percent,
+            "total_return_amount": metrics.total_pnl,
             "daily_returns": [
                 {"date": "2024-01-01", "value": 100000, "return": 0},
                 {"date": "2024-01-02", "value": 100500, "return": 0.5},
                 {"date": "2024-01-03", "value": 101200, "return": 0.7},
                 # Add more historical data points
             ],
-            "volatility": 12.5,
-            "sharpe_ratio": 1.2,
-            "max_drawdown": -3.2,
+            "volatility": metrics.risk_metrics['volatility'],
+            "sharpe_ratio": metrics.risk_metrics['sharpe_ratio'],
+            "max_drawdown": metrics.risk_metrics['max_drawdown'],
             "best_performing_holding": "ATW",
             "worst_performing_holding": "CIH"
         }
@@ -428,4 +411,63 @@ async def get_portfolio_performance(
         raise
     except Exception as e:
         logger.error(f"Error fetching portfolio performance: {e}")
-        raise HTTPException(status_code=500, detail="Failed to fetch portfolio performance") 
+        raise HTTPException(status_code=500, detail="Failed to fetch portfolio performance")
+
+@router.get("/{portfolio_id}/risk-analysis")
+async def get_portfolio_risk_analysis(
+    portfolio_id: str,
+    current_user = Depends(get_current_user)
+):
+    """Get detailed risk analysis for the portfolio"""
+    try:
+        portfolio = portfolio_service.get_portfolio(portfolio_id)
+        if not portfolio:
+            raise HTTPException(status_code=404, detail="Portfolio not found")
+        
+        metrics = portfolio_service.calculate_portfolio_metrics(portfolio)
+        
+        risk_analysis = {
+            "portfolio_id": portfolio_id,
+            "risk_metrics": metrics.risk_metrics,
+            "sector_allocation": metrics.allocation_by_sector,
+            "concentration_risk": calculate_concentration_risk(portfolio),
+            "liquidity_analysis": calculate_liquidity_analysis(portfolio),
+            "stress_test_results": run_stress_tests(portfolio)
+        }
+        
+        return risk_analysis
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching risk analysis: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch risk analysis")
+
+def calculate_concentration_risk(self, portfolio: dict) -> dict:
+    """Calculate concentration risk metrics"""
+    # Mock implementation
+    return {
+        "largest_position_weight": 0.35,
+        "top_5_positions_weight": 0.75,
+        "sector_concentration": 0.45,
+        "risk_level": "Medium"
+    }
+
+def calculate_liquidity_analysis(self, portfolio: dict) -> dict:
+    """Calculate liquidity analysis"""
+    # Mock implementation
+    return {
+        "average_daily_volume": 1500000,
+        "liquidity_score": 0.8,
+        "days_to_liquidate": 3.5,
+        "liquidity_risk": "Low"
+    }
+
+def run_stress_tests(self, portfolio: dict) -> dict:
+    """Run stress tests on portfolio"""
+    # Mock implementation
+    return {
+        "market_crash_scenario": -12.5,
+        "interest_rate_shock": -3.2,
+        "sector_downturn": -8.7,
+        "currency_devaluation": -5.1
+    } 

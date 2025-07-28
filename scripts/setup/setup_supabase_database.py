@@ -86,8 +86,22 @@ class SupabaseDatabaseSetup:
         schema_file = Path(__file__).parent.parent / "database" / "enhanced_schema_with_rls.sql"
         
         if not schema_file.exists():
-            self.print_status(f"Schema file not found: {schema_file}", "ERROR")
-            return False
+            # Try alternative schema files
+            alternative_files = [
+                Path(__file__).parent.parent / "database" / "advanced_features_schema.sql",
+                Path(__file__).parent.parent / "database" / "supabase_financial_schema.sql",
+                Path(__file__).parent.parent / "database" / "schema.sql"
+            ]
+            
+            schema_file = None
+            for alt_file in alternative_files:
+                if alt_file.exists():
+                    schema_file = alt_file
+                    break
+            
+            if not schema_file:
+                self.print_status(f"Schema file not found. Tried: enhanced_schema_with_rls.sql, advanced_features_schema.sql, supabase_financial_schema.sql, schema.sql", "ERROR")
+                return False
         
         sql_content = self.read_sql_file(str(schema_file))
         if not sql_content:
