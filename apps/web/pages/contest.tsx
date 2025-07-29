@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import Link from 'next/link'
 import { useUser } from '@/lib/useUser'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -292,7 +293,7 @@ export default function ContestPage() {
                                             </div>
                                         </div>
 
-                                        <div className="flex space-x-4">
+                                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
                                             <button
                                                 onClick={handleRefresh}
                                                 disabled={refreshing}
@@ -300,6 +301,12 @@ export default function ContestPage() {
                                             >
                                                 {refreshing ? 'Refreshing...' : 'Refresh Data'}
                                             </button>
+                                            <Link
+                                                href="/paper-trading"
+                                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center"
+                                            >
+                                                Manage Portfolio
+                                            </Link>
                                             <button
                                                 onClick={handleLeaveContest}
                                                 disabled={refreshing}
@@ -311,15 +318,46 @@ export default function ContestPage() {
                                     </div>
                                 ) : (
                                     <div className="text-center">
-                                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                            You haven't joined the contest yet. Join with your paper trading account to compete!
-                                        </p>
-                                        <button
-                                            onClick={() => setShowJoinForm(true)}
-                                            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                                        >
-                                            Join Contest
-                                        </button>
+                                        <div className="mb-6">
+                                            <div className="text-6xl mb-4">🏆</div>
+                                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                                Ready to Compete?
+                                            </h3>
+                                            <p className="text-gray-600 dark:text-gray-400 mb-4">
+                                                Join the monthly trading contest and compete for the $100 prize!
+                                                Use your paper trading portfolio to showcase your skills.
+                                            </p>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                                                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">📈 Paper Trading</h4>
+                                                <p className="text-sm text-blue-700 dark:text-blue-300">
+                                                    Practice with virtual money and build your portfolio
+                                                </p>
+                                            </div>
+                                            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                                                <h4 className="font-semibold text-green-900 dark:text-green-100 mb-2">🏆 Win Prizes</h4>
+                                                <p className="text-sm text-green-700 dark:text-green-300">
+                                                    Compete for monthly prizes and recognition
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                                            <button
+                                                onClick={() => setShowJoinForm(true)}
+                                                className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+                                            >
+                                                Join Contest Now
+                                            </button>
+                                            <Link
+                                                href="/paper-trading"
+                                                className="px-6 py-3 border-2 border-green-600 text-green-600 rounded-lg hover:bg-green-50 font-semibold text-center"
+                                            >
+                                                Start Paper Trading
+                                            </Link>
+                                        </div>
                                     </div>
                                 )}
                             </div>

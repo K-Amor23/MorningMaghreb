@@ -48,7 +48,7 @@ export default function MoversTable() {
   const [sortBy, setSortBy] = useState<'change_percent' | 'volume' | 'market_cap'>('change_percent')
 
   const { data, error, isLoading } = useSWR<QuotesResponse>(
-    `/api/markets/quotes?page=${currentPage}&limit=20&sort_by=${sortBy}`,
+    `/api/markets/quotes?page=${currentPage}&limit=50&sort_by=${sortBy}`,
     fetcher,
     { refreshInterval: 30000 } // Refresh every 30 seconds
   )

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
 
 interface PaperTradingAccount {
@@ -111,9 +112,15 @@ export default function JoinContestForm({ onJoin, onCancel, loading }: JoinConte
                                 <p className="text-gray-600 dark:text-gray-400 mb-4">
                                     No paper trading accounts found
                                 </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-500">
+                                <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
                                     Create a paper trading account first to join the contest
                                 </p>
+                                <Link
+                                    href="/paper-trading"
+                                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                                >
+                                    Create Paper Trading Account
+                                </Link>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -121,8 +128,8 @@ export default function JoinContestForm({ onJoin, onCancel, loading }: JoinConte
                                     <label
                                         key={account.id}
                                         className={`block cursor-pointer p-4 border rounded-lg transition-colors ${selectedAccount === account.id
-                                                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                                             }`}
                                     >
                                         <div className="flex items-center">

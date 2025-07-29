@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
-import { CogIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import React, { useState, useCallback } from 'react'
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
+import { PlusIcon, XMarkIcon, Cog6ToothIcon } from '@heroicons/react/24/outline'
+import { useLocalStorage } from '@/lib/useClientOnly'
 import { LazyPortfolioHoldings, LazyFinancialChart, LazyPriceAlerts } from './lazy'
 import useSWR from 'swr'
 import { fetcher } from '@/lib/api'
@@ -63,7 +64,7 @@ const AVAILABLE_WIDGETS = [
 ]
 
 export default function CustomizableDashboard() {
-  const [dashboardConfig, setDashboardConfig] = useState<DashboardConfig>({
+  const [dashboardConfig, setDashboardConfig] = useLocalStorage<DashboardConfig>('dashboard-config', {
     widgets: DEFAULT_WIDGETS,
     layout: 'grid',
     theme: 'light'
@@ -71,24 +72,10 @@ export default function CustomizableDashboard() {
   const [isEditing, setIsEditing] = useState(false)
   const [showWidgetSelector, setShowWidgetSelector] = useState(false)
 
-  // Load dashboard config from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('dashboard-config')
-    if (saved) {
-      try {
-        const config = JSON.parse(saved)
-        setDashboardConfig(config)
-      } catch (error) {
-        console.error('Failed to parse dashboard config:', error)
-      }
-    }
-  }, [])
-
   // Save dashboard config to localStorage
   const saveDashboardConfig = useCallback((config: DashboardConfig) => {
     setDashboardConfig(config)
-    localStorage.setItem('dashboard-config', JSON.stringify(config))
-  }, [])
+  }, [setDashboardConfig])
 
   // Handle drag and drop
   const handleDragEnd = useCallback((result: DropResult) => {
@@ -220,13 +207,12 @@ export default function CustomizableDashboard() {
               </button>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className={`inline-flex items-center px-3 py-2 border shadow-sm text-sm leading-4 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-casablanca-blue ${
-                  isEditing
-                    ? 'border-casablanca-blue text-casablanca-blue bg-casablanca-blue bg-opacity-10'
-                    : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600'
-                }`}
+                className={`inline-flex items-center px-3 py-2 border shadow-sm text-sm leading-4 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-casablanca-blue ${isEditing
+                  ? 'border-casablanca-blue text-casablanca-blue bg-casablanca-blue bg-opacity-10'
+                  : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:bg-gray-600'
+                  }`}
               >
-                <CogIcon className="h-4 w-4 mr-2" />
+                <Cog6ToothIcon className="h-4 w-4 mr-2" />
                 {isEditing ? 'Done' : 'Edit'}
               </button>
             </div>
@@ -261,26 +247,24 @@ export default function CustomizableDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <DragDropContext onDragEnd={handleDragEnd}>
           <Droppable droppableId="dashboard">
-            {(provided: DroppableProvided) => (
+            {(provided) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className={`grid gap-6 ${
-                  dashboardConfig.layout === 'grid'
-                    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                    : 'grid-cols-1'
-                }`}
+                className={`grid gap-6 ${dashboardConfig.layout === 'grid'
+                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                  : 'grid-cols-1'
+                  }`}
               >
                 {dashboardConfig.widgets.map((widget, index) => (
                   <Draggable key={widget.id} draggableId={widget.id} index={index}>
-                    {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
+                    {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`${getWidgetSizeClasses(widget.size)} ${
-                          snapshot.isDragging ? 'opacity-50' : ''
-                        }`}
+                        className={`${getWidgetSizeClasses(widget.size)} ${snapshot.isDragging ? 'opacity-50' : ''
+                          }`}
                       >
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 h-full">
                           {/* Widget Header */}

@@ -9,6 +9,7 @@ import NewsletterSignup from '@/components/NewsletterSignup'
 import NewsFeed from '@/components/NewsFeed'
 import MiniChart from '@/components/MiniChart'
 import DataQualityIndicator from '@/components/DataQualityIndicator'
+import ContestPromo from '@/components/ContestPromo'
 
 export default function Home() {
   return (
@@ -35,6 +36,7 @@ export default function Home() {
           </section>
 
           <aside className="space-y-6">
+            <ContestPromo />
             <MacroStats />
             <DataQualityIndicator />
             <MiniChart />

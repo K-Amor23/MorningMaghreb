@@ -58,13 +58,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const ticker = company.ticker?.toUpperCase();
       if (!ticker) return null;
 
-      // Calculate change and change percent (simulated for now)
+      // Use actual change data if available, otherwise simulate
       const basePrice = company.price || 0;
-      const change = (Math.random() - 0.5) * 2; // Simulated change
-      const changePercent = basePrice > 0 ? (change / basePrice) * 100 : 0;
+      const changePercent = company.change_1d_percent || (Math.random() - 0.5) * 4; // Use real data or simulate
+      const change = basePrice > 0 ? (changePercent / 100) * basePrice : 0;
 
-      // Simulate volume based on market cap
-      const volume = company.market_cap_billion ? (company.market_cap_billion * 1e9 * 0.01 * Math.random()) : 0;
+      // Calculate volume based on market cap and price movement
+      const volume = company.market_cap_billion ?
+        (company.market_cap_billion * 1e9 * 0.01 * (0.5 + Math.abs(changePercent) / 10)) :
+        (basePrice * 10000 * Math.random());
 
       return {
         ticker,
@@ -103,7 +105,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         case 'price':
           return b.price - a.price;
         case 'change_percent':
-          return b.change_percent - a.change_percent;
+          // For change_percent, we want to show both gainers and losers
+          // So we sort by absolute value to show biggest movers first
+          return Math.abs(b.change_percent) - Math.abs(a.change_percent);
         case 'volume':
           return b.volume - a.volume;
         case 'market_cap':

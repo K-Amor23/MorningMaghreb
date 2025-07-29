@@ -26,6 +26,7 @@ import { formatCurrency, formatPercent, getColorForChange } from '@/lib/utils'
 import { useUser } from '@/lib/useUser'
 import Watchlist from '@/components/Watchlist'
 import AddTickerForm from '@/components/AddTickerForm'
+import PortfolioShare from '@/components/PortfolioShare'
 import toast from 'react-hot-toast'
 
 // Client-side time component to prevent hydration errors
@@ -281,6 +282,11 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Portfolio Sharing */}
+          <div className="mb-8">
+            <PortfolioShare />
           </div>
 
           {/* Tabs */}

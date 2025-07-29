@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import { fetcher } from '@/lib/api'
 import { ARIA_LABELS } from '@/lib/accessibility'
+import { useLocalStorage } from '@/lib/useClientOnly'
 
 interface SearchResult {
   ticker: string
@@ -24,31 +25,28 @@ interface EnhancedSearchProps {
 
 // Fuzzy search implementation
 const fuzzySearch = (query: string, items: SearchResult[]): SearchResult[] => {
-  if (!query.trim()) return items
-
-  const queryLower = query.toLowerCase()
-  
+  const searchTerm = query.toLowerCase()
   return items
-    .map(item => {
-      const tickerMatch = item.ticker.toLowerCase().includes(queryLower)
-      const nameMatch = item.name.toLowerCase().includes(queryLower)
-      
-      let score = 0
-      if (tickerMatch) score += 10
-      if (nameMatch) score += 5
-      
-      // Exact matches get higher scores
-      if (item.ticker.toLowerCase() === queryLower) score += 20
-      if (item.name.toLowerCase() === queryLower) score += 15
-      
-      // Starts with query gets higher scores
-      if (item.ticker.toLowerCase().startsWith(queryLower)) score += 8
-      if (item.name.toLowerCase().startsWith(queryLower)) score += 4
-      
-      return { ...item, score }
+    .filter(item =>
+      item.ticker.toLowerCase().includes(searchTerm) ||
+      item.name.toLowerCase().includes(searchTerm) ||
+      item.sector?.toLowerCase().includes(searchTerm)
+    )
+    .sort((a, b) => {
+      // Prioritize exact ticker matches
+      if (a.ticker.toLowerCase() === searchTerm) return -1
+      if (b.ticker.toLowerCase() === searchTerm) return 1
+
+      // Then prioritize ticker starts with
+      if (a.ticker.toLowerCase().startsWith(searchTerm)) return -1
+      if (b.ticker.toLowerCase().startsWith(searchTerm)) return 1
+
+      // Then by name starts with
+      if (a.name.toLowerCase().startsWith(searchTerm)) return -1
+      if (b.name.toLowerCase().startsWith(searchTerm)) return 1
+
+      return 0
     })
-    .filter(item => item.score > 0)
-    .sort((a, b) => b.score - a.score)
 }
 
 export default function EnhancedSearch({
@@ -58,50 +56,32 @@ export default function EnhancedSearch({
   showSuggestions = true,
   maxSuggestions = 8
 }: EnhancedSearchProps) {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
-  const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [recentSearches, setRecentSearches] = useLocalStorage<string[]>('recent-searches', [])
   const inputRef = useRef<HTMLInputElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
 
   // Fetch search suggestions
   const { data: suggestions, error } = useSWR<SearchResult[]>(
-    query.length >= 2 ? `/api/search/companies?q=${encodeURIComponent(query)}` : null,
-    fetcher,
-    {
-      dedupingInterval: 30000, // Cache for 30 seconds
-      revalidateOnFocus: false
-    }
+    query.length >= 2 ? '/api/search/suggestions?q=' + encodeURIComponent(query) : null,
+    fetcher
   )
 
-  // Filter and sort results
   const filteredResults = useCallback(() => {
     if (!suggestions) return []
-    
+
     const fuzzyResults = fuzzySearch(query, suggestions)
     return fuzzyResults.slice(0, maxSuggestions)
   }, [suggestions, query, maxSuggestions])
-
-  // Load recent searches from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem('recent-searches')
-    if (saved) {
-      try {
-        setRecentSearches(JSON.parse(saved))
-      } catch (error) {
-        console.error('Failed to parse recent searches:', error)
-      }
-    }
-  }, [])
 
   // Save recent searches to localStorage
   const saveRecentSearch = useCallback((searchTerm: string) => {
     const updated = [searchTerm, ...recentSearches.filter(s => s !== searchTerm)].slice(0, 5)
     setRecentSearches(updated)
-    localStorage.setItem('recent-searches', JSON.stringify(updated))
-  }, [recentSearches])
+  }, [recentSearches, setRecentSearches])
 
   // Handle search submission
   const handleSearch = useCallback((searchQuery: string) => {
@@ -227,9 +207,8 @@ export default function EnhancedSearch({
                 <button
                   key={result.ticker}
                   onClick={() => handleSearch(result.ticker)}
-                  className={`w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                    selectedIndex === index ? 'bg-gray-50 dark:bg-gray-700' : ''
-                  }`}
+                  className={`w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${selectedIndex === index ? 'bg-gray-50 dark:bg-gray-700' : ''
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <div>
@@ -246,9 +225,8 @@ export default function EnhancedSearch({
                           {result.price.toFixed(2)}
                         </div>
                         {result.change && (
-                          <div className={`text-sm ${
-                            result.change >= 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
+                          <div className={`text-sm ${result.change >= 0 ? 'text-green-600' : 'text-red-600'
+                            }`}>
                             {result.change >= 0 ? '+' : ''}{result.change.toFixed(2)}%
                           </div>
                         )}
@@ -270,9 +248,8 @@ export default function EnhancedSearch({
                 <button
                   key={search}
                   onClick={() => handleSearch(search)}
-                  className={`w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${
-                    selectedIndex === results.length + index ? 'bg-gray-50 dark:bg-gray-700' : ''
-                  }`}
+                  className={`w-full px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${selectedIndex === results.length + index ? 'bg-gray-50 dark:bg-gray-700' : ''
+                    }`}
                 >
                   <div className="flex items-center">
                     <MagnifyingGlassIcon className="h-4 w-4 text-gray-400 mr-2" />

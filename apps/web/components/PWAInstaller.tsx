@@ -10,10 +10,15 @@ export default function PWAInstaller({ onInstall }: PWAInstallerProps) {
     const [isInstalled, setIsInstalled] = useState(false)
     const [showInstallPrompt, setShowInstallPrompt] = useState(false)
     const [swRegistration, setSwRegistration] = useState<ServiceWorkerRegistration | null>(null)
+    const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        // Only run in browser environment
-        if (typeof window === 'undefined') {
+        setMounted(true)
+    }, [])
+
+    useEffect(() => {
+        // Only run in browser environment and after mounting
+        if (typeof window === 'undefined' || !mounted) {
             return
         }
 
@@ -47,7 +52,7 @@ export default function PWAInstaller({ onInstall }: PWAInstallerProps) {
             window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
             window.removeEventListener('appinstalled', handleAppInstalled)
         }
-    }, [onInstall])
+    }, [onInstall, mounted])
 
     const registerServiceWorker = async () => {
         if ('serviceWorker' in navigator) {
@@ -165,10 +170,15 @@ export default function PWAInstaller({ onInstall }: PWAInstallerProps) {
 export function usePWA() {
     const [isOnline, setIsOnline] = useState(true)
     const [isStandalone, setIsStandalone] = useState(false)
+    const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
-        // Only run in browser environment
-        if (typeof window === 'undefined') {
+        setMounted(true)
+    }, [])
+
+    useEffect(() => {
+        // Only run in browser environment and after mounting
+        if (typeof window === 'undefined' || !mounted) {
             return
         }
 
@@ -186,11 +196,11 @@ export function usePWA() {
             window.removeEventListener('online', handleOnline)
             window.removeEventListener('offline', handleOffline)
         }
-    }, [])
+    }, [mounted])
 
     return {
         isOnline,
         isStandalone,
-        isPWA: typeof window !== 'undefined' && (isStandalone || (window.navigator as any).standalone)
+        isPWA: mounted && typeof window !== 'undefined' && (isStandalone || (window.navigator as any).standalone)
     }
 } 

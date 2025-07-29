@@ -7,7 +7,8 @@ import {
   BellIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  ChevronDownIcon
 } from '@heroicons/react/24/outline'
 import ThemeToggle from './ThemeToggle'
 import SearchBar from './SearchBar'
@@ -19,8 +20,10 @@ export default function Header() {
   const { user } = useAuth()
   const [showMobileSearch, setShowMobileSearch] = useState(false)
   const [showLangDropdown, setShowLangDropdown] = useState(false)
+  const [showMarketsDropdown, setShowMarketsDropdown] = useState(false)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const langDropdownRef = useRef<HTMLDivElement>(null)
+  const marketsDropdownRef = useRef<HTMLDivElement>(null)
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -31,8 +34,14 @@ export default function Header() {
       ) {
         setShowLangDropdown(false)
       }
+      if (
+        marketsDropdownRef.current &&
+        !marketsDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowMarketsDropdown(false)
+      }
     }
-    if (showLangDropdown) {
+    if (showLangDropdown || showMarketsDropdown) {
       document.addEventListener('mousedown', handleClickOutside)
     } else {
       document.removeEventListener('mousedown', handleClickOutside)
@@ -40,7 +49,7 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showLangDropdown])
+  }, [showLangDropdown, showMarketsDropdown])
 
   // Listen for search expansion state changes
   useEffect(() => {
@@ -93,12 +102,88 @@ export default function Header() {
             ? 'opacity-0 scale-95 pointer-events-none'
             : 'opacity-100 scale-100'
             }`}>
-            <Link
-              href="/markets"
-              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
-            >
-              Markets
-            </Link>
+            {/* Markets Dropdown */}
+            <div className="relative" ref={marketsDropdownRef}>
+              <button
+                onClick={() => setShowMarketsDropdown(!showMarketsDropdown)}
+                className="flex items-center space-x-1 text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
+              >
+                <span>Markets</span>
+                <ChevronDownIcon className="h-4 w-4" />
+              </button>
+
+              {showMarketsDropdown && (
+                <div className="absolute left-0 mt-2 w-64 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-[100]">
+                  <div className="py-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Asset Classes
+                    </div>
+                    <Link
+                      href="/markets"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      📈 Stocks
+                    </Link>
+                    <Link
+                      href="/markets/bonds"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      💰 Bonds
+                    </Link>
+                    <Link
+                      href="/markets/etfs"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      📊 ETFs
+                    </Link>
+
+                    <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Macro Data
+                    </div>
+                    <Link
+                      href="/macro/gdp"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      📊 GDP
+                    </Link>
+                    <Link
+                      href="/macro/interest-rates"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      💰 Interest Rates
+                    </Link>
+                    <Link
+                      href="/macro/inflation"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      📈 Inflation
+                    </Link>
+                    <Link
+                      href="/macro/exchange-rates"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      💱 Exchange Rates
+                    </Link>
+                    <Link
+                      href="/macro/trade-balance"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
+                      onClick={() => setShowMarketsDropdown(false)}
+                    >
+                      📊 Trade Balance
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
             <Link
               href="/portfolio"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"

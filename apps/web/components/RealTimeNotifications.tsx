@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { BellIcon, XMarkIcon, CheckIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import React, { useState, useEffect, useCallback } from 'react'
+import { BellIcon, XMarkIcon, ExclamationTriangleIcon, ChartBarIcon } from '@heroicons/react/24/outline'
 import { useLiveAlerts, useLiveWatchlist } from '@/lib/websocket'
 import toast from 'react-hot-toast'
+import { useLocalStorage } from '@/lib/useClientOnly'
 
 interface RealTimeNotificationsProps {
     watchlistId?: string
@@ -69,7 +70,7 @@ export default function RealTimeNotifications({ watchlistId, onAlertClick }: Rea
         if (type === 'alert') {
             return <ExclamationTriangleIcon className="h-5 w-5 text-red-500" />
         }
-        return <CheckIcon className="h-5 w-5 text-green-500" />
+        return <ChartBarIcon className="h-5 w-5 text-green-500" />
     }
 
     const getNotificationTitle = (notification: any) => {
@@ -208,7 +209,7 @@ export default function RealTimeNotifications({ watchlistId, onAlertClick }: Rea
 
 // Hook for managing notification preferences
 export function useNotificationPreferences() {
-    const [preferences, setPreferences] = useState({
+    const [preferences, setPreferences] = useLocalStorage('notification-preferences', {
         emailAlerts: true,
         pushNotifications: true,
         soundEnabled: true,
@@ -219,22 +220,9 @@ export function useNotificationPreferences() {
         }
     })
 
-    useEffect(() => {
-        // Load preferences from localStorage
-        const saved = localStorage.getItem('notification-preferences')
-        if (saved) {
-            try {
-                setPreferences(JSON.parse(saved))
-            } catch (error) {
-                console.error('Error loading notification preferences:', error)
-            }
-        }
-    }, [])
-
     const updatePreferences = (newPreferences: Partial<typeof preferences>) => {
         const updated = { ...preferences, ...newPreferences }
         setPreferences(updated)
-        localStorage.setItem('notification-preferences', JSON.stringify(updated))
     }
 
     return {
