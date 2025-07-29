@@ -25,6 +25,10 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 * **AI-Powered Insights**
   GPT‑4 summaries of IFRS→GAAP adjustments, natural-language Q&A "Investor Chatbot," and narrative snippets in your newsletter.
 
+* **ETF & Bond Data Integration**
+  Comprehensive Moroccan ETF and bond data with real-time pricing, yield curves, and bond calendar.
+  Automated scraping of ETF holdings, bond maturities, and yield curve analysis.
+
 ### **Advanced Trading & Portfolio Features**
 * **Paper Trading Platform**
   Full-featured paper trading with virtual accounts, real-time order execution, portfolio tracking, and performance analytics. Includes order history, position management, and trading performance metrics.
@@ -44,6 +48,10 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 
 * **Macro & Central-Bank Module**
   Automated scraping of Bank Al-Maghrib (BAM) economic data including policy rates, foreign exchange reserves, inflation (CPI), money supply (M1/M2/M3), balance of payments, and credit to economy. Real-time data fetching with intelligent parsing and RESTful API endpoints.
+
+* **Enhanced Macro Analytics**
+  Comprehensive macro data pages for exchange rates, GDP, inflation, interest rates, and trade balance.
+  Interactive charts and analysis tools for economic indicators with historical data visualization.
 
 ### **Premium Features**
 * **API Key Management**
@@ -74,6 +82,10 @@ Casablanca Insight unifies fragmented French, Arabic, and Darija data into a mul
 
 * **Compliance & Market Guide**
   Comprehensive trading rules, price limits, circuit breakers, and regulatory information for the Casablanca Stock Exchange.
+
+* **Portfolio Sharing & Contest Promotion**
+  Social features for sharing portfolio performance and contest participation.
+  Enhanced contest promotion with dedicated components and user engagement tools.
 
 ### **User Experience & Management**
 * **Advanced Search & Navigation**
@@ -271,6 +283,19 @@ GET /api/currency/compare/USD/MAD
 
 # Paper trading accounts
 GET /api/paper-trading/accounts
+
+# ETF and Bond data
+GET /api/markets/etfs
+GET /api/markets/bonds
+GET /api/markets/bond-calendar
+GET /api/markets/yield-curve
+
+# Macro data endpoints
+GET /api/macro/exchange-rates
+GET /api/macro/gdp
+GET /api/macro/inflation
+GET /api/macro/interest-rates
+GET /api/macro/trade-balance
 ```
 
 For detailed API documentation, see [Economic Data README](apps/backend/README_ECONOMIC_DATA.md).
@@ -320,6 +345,24 @@ For detailed API documentation, see [Economic Data README](apps/backend/README_E
 - Trend analysis and forecasting
 - Remittance rate optimization
 - Enhanced economic data visualization
+
+### **ETF & Bond Data Integration**
+- Comprehensive Moroccan ETF and bond data collection
+- Real-time pricing and yield curve analysis
+- Bond calendar with maturity tracking
+- Automated ETL pipeline for fixed income data
+- Interactive charts and analytics for fixed income instruments
+
+### **Enhanced Macro Analytics**
+- Dedicated pages for exchange rates, GDP, inflation, interest rates, and trade balance
+- Interactive economic indicator charts with historical data
+- Real-time macro data scraping and processing
+- Advanced economic data visualization tools
+
+### **Social Features & Contest Enhancement**
+- Portfolio sharing functionality for social engagement
+- Enhanced contest promotion components
+- Improved user engagement and community features
 
 ---
 
