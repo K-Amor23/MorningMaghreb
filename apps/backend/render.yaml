@@ -1,7 +1,7 @@
 services:
   # FastAPI Web Service
   - type: web
-    name: casablanca-insight-api
+    name: morningmaghreb-api
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -26,7 +26,7 @@ services:
 
   # Background Worker for ETL Jobs
   - type: worker
-    name: casablanca-insight-worker
+    name: morningmaghreb-worker
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt
@@ -46,6 +46,6 @@ services:
         sync: false
 
 databases:
-  - name: casablanca-insight-db
-    databaseName: casablanca_insight
-    user: casablanca_user 
+  - name: morningmaghreb-db
+    databaseName: morningmaghreb
+    user: morningmaghreb_user 

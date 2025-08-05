@@ -1,5 +1,5 @@
 {
-  "name": "@casablanca-insight/shared",
+  "name": "@morningmaghreb/shared",
   "version": "1.0.0",
   "description": "Shared utilities, types, and services for Casablanca Insight",
   "main": "dist/index.js",
@@ -31,7 +31,7 @@
     "dist"
   ],
   "keywords": [
-    "casablanca-insight",
+    "morningmaghreb",
     "shared",
     "types",
     "utilities"

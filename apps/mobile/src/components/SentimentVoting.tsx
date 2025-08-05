@@ -7,7 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native'
-import { SentimentVoting as SharedSentimentVoting } from '@casablanca-insight/shared'
+import { SentimentVoting as SharedSentimentVoting } from '@morningmaghreb/shared'
 import { webApiService } from '../services/webApi'
 
 interface SentimentVotingProps {

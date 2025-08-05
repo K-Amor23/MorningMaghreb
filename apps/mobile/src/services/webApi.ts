@@ -1,4 +1,4 @@
-import { BaseApiService } from '@casablanca-insight/shared'
+import { BaseApiService } from '@morningmaghreb/shared'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export class MobileApiService extends BaseApiService {

@@ -86,7 +86,7 @@ def send_failure_alert(context):
     """Airflow callback function"""
     handler = AirflowAlertHandler(
         slack_webhook="YOUR_SLACK_WEBHOOK",
-        email_alerts=["admin@casablanca-insights.com"]
+        email_alerts=["admin@morningmaghreb.com"]
     )
     
     handler.handle_dag_failure(

@@ -327,7 +327,7 @@ setup_airflow_alerts() {
         fi
         
         # Set email alerts
-        docker-compose exec airflow-webserver airflow variables set ALERT_EMAILS '["admin@casablanca-insights.com"]'
+        docker-compose exec airflow-webserver airflow variables set ALERT_EMAILS '["admin@morningmaghreb.com"]'
         success "Airflow email alerts configured"
         
         # Test alert configuration

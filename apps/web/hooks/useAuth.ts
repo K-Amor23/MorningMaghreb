@@ -16,7 +16,7 @@ export function useAuth() {
         // In production, this would check for JWT token and validate with backend
         const mockUser: User = {
             id: '1',
-            email: 'admin@casablanca-insight.com',
+            email: 'admin@morningmaghreb.com',
             role: 'admin',
             name: 'Admin User'
         }
@@ -27,7 +27,7 @@ export function useAuth() {
 
     const login = async (email: string, password: string) => {
         // Mock login - replace with actual authentication
-        if (email === 'admin@casablanca-insight.com' && password === 'admin123') {
+        if (email === 'admin@morningmaghreb.com' && password === 'admin123') {
             const user: User = {
                 id: '1',
                 email,

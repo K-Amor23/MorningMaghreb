@@ -65,7 +65,7 @@ docker-compose run --rm airflow-webserver airflow users create \
     --firstname Admin \
     --lastname User \
     --role Admin \
-    --email admin@casablanca-insights.com \
+    --email admin@morningmaghreb.com \
     --password admin
 
 # Start remaining services

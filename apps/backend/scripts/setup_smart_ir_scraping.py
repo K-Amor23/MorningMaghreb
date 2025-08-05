@@ -251,7 +251,7 @@ class SmartIRScrapingSetup:
             # Airflow variables configuration
             variables = {
                 'SLACK_WEBHOOK_URL': os.getenv('SLACK_WEBHOOK_URL', ''),
-                'ALERT_EMAILS': json.dumps(['admin@casablanca-insights.com']),
+                'ALERT_EMAILS': json.dumps(['admin@morningmaghreb.com']),
                 'PROXY_ENABLED': 'false',
                 'TEST_MODE': 'true' if self.test_mode else 'false',
                 'IR_REPORT_PATHS': json.dumps([

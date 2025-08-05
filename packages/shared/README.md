@@ -1,4 +1,4 @@
-# @casablanca-insight/shared
+# @morningmaghreb/shared
 
 Shared utilities, types, and services for the Casablanca Insight platform.
 
@@ -22,7 +22,7 @@ import type {
   MarketData, 
   SentimentData, 
   PortfolioHolding 
-} from '@casablanca-insight/shared'
+} from '@morningmaghreb/shared'
 ```
 
 ### API Services
@@ -30,7 +30,7 @@ import type {
 #### Web App
 
 ```typescript
-import { WebApiService } from '@casablanca-insight/shared'
+import { WebApiService } from '@morningmaghreb/shared'
 import { supabase } from '@/lib/supabase'
 
 const apiService = new WebApiService(supabase)
@@ -43,9 +43,9 @@ const sentiment = await apiService.getSentimentAggregate('ATW')
 #### Mobile App
 
 ```typescript
-import { MobileApiService } from '@casablanca-insight/shared'
+import { MobileApiService } from '@morningmaghreb/shared'
 
-const apiService = new MobileApiService('https://api.casablanca-insight.com')
+const apiService = new MobileApiService('https://api.morningmaghreb.com')
 
 // Use the service
 const marketData = await apiService.getMarketData()
@@ -58,7 +58,7 @@ import {
   formatCurrency, 
   formatPercentage, 
   calculateGainLoss 
-} from '@casablanca-insight/shared'
+} from '@morningmaghreb/shared'
 
 const formatted = formatCurrency(1234.56) // "MAD 1,234.56"
 const percentage = formatPercentage(5.23) // "+5.23%"
@@ -72,7 +72,7 @@ const { totalGainLoss, totalGainLossPercent } = calculateGainLoss(100, 90, 10)
 The SentimentVoting component is designed to be platform-agnostic with platform-specific rendering:
 
 ```typescript
-import { SentimentVoting } from '@casablanca-insight/shared'
+import { SentimentVoting } from '@morningmaghreb/shared'
 
 // Web implementation
 <SentimentVoting

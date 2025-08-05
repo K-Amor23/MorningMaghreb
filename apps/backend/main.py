@@ -53,7 +53,7 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://casablanca-insight.vercel.app"],
+    allow_origins=["http://localhost:3000", "https://morningmaghreb.com", "https://www.morningmaghreb.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

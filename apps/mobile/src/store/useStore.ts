@@ -306,7 +306,7 @@ export const useStore = create<AppState>()(
       },
     }),
     {
-      name: 'casablanca-insight-storage',
+      name: 'morningmaghreb-storage',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         user: state.user,

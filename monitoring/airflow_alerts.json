@@ -1,7 +1,7 @@
 {
   "slack_webhook": null,
   "email_alerts": [
-    "admin@casablanca-insights.com"
+    "admin@morningmaghreb.com"
   ],
   "alert_rules": {
     "dag_failure": {

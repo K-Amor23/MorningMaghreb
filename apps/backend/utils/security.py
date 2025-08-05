@@ -22,8 +22,8 @@ SECURITY_CONFIG = {
     'webhook_timeout': 30,
     'allowed_origins': [
         'http://localhost:3000',
-        'https://casablanca-insight.vercel.app',
-        'https://casablanca-insights.com'
+        'https://morningmaghreb.com',
+        'https://www.morningmaghreb.com'
     ],
     'blocked_ips': [],
     'suspicious_patterns': [

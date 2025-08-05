@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ArrowUpIcon, ArrowRightIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
-// import { SentimentVoting as SharedSentimentVoting } from '@casablanca-insight/shared'
+// import { SentimentVoting as SharedSentimentVoting } from '@morningmaghreb/shared'
 import { apiService } from '@/lib/api'
 import toast from 'react-hot-toast'
 

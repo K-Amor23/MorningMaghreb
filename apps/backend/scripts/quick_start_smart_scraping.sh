@@ -56,7 +56,7 @@ AIRFLOW_PASSWORD=admin
 
 # Notification Configuration
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
-ALERT_EMAILS=["admin@casablanca-insights.com"]
+ALERT_EMAILS=["admin@morningmaghreb.com"]
 
 # Scraping Configuration
 PROXY_ENABLED=false

@@ -381,7 +381,7 @@ report_task = PythonOperator(
 # Email notification task (configure with your email settings)
 email_task = EmailOperator(
     task_id='send_monitoring_email',
-    to=['admin@casablanca-insights.com'],  # Configure with actual email
+    to=['admin@morningmaghreb.com'],  # Configure with actual email
     subject='Casablanca Insights - Daily Monitoring Report',
     html_content="{{ task_instance.xcom_pull(task_ids='generate_monitoring_report', key='monitoring_report') }}",
     dag=dag

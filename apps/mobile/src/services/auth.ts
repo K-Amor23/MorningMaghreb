@@ -231,7 +231,7 @@ class AuthService {
   async resetPassword(email: string): Promise<void> {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'casablanca-insight://reset-password',
+        redirectTo: 'morningmaghreb://reset-password',
       })
 
       if (error) throw error

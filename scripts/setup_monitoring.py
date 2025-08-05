@@ -149,7 +149,7 @@ class MonitoringSetup:
         # Create Airflow alert configuration
         alert_config = {
             "slack_webhook": self.alert_webhook_url,
-            "email_alerts": ["admin@casablanca-insights.com"],
+            "email_alerts": ["admin@morningmaghreb.com"],
             "alert_rules": {
                 "dag_failure": {
                     "enabled": True,
@@ -603,7 +603,7 @@ def send_failure_alert(context):
     """Airflow callback function"""
     handler = AirflowAlertHandler(
         slack_webhook="YOUR_SLACK_WEBHOOK",
-        email_alerts=["admin@casablanca-insights.com"]
+        email_alerts=["admin@morningmaghreb.com"]
     )
     
     handler.handle_dag_failure(

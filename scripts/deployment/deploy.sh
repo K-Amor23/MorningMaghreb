@@ -253,8 +253,8 @@ run_migrations() {
 test_deployment() {
     print_status "Testing deployment..."
     
-    local frontend_url=${NEXT_PUBLIC_SITE_URL:-"https://casablanca-insight.vercel.app"}
-    local backend_url=${NEXT_PUBLIC_API_URL:-"https://casablanca-insight-api.onrender.com"}
+    local frontend_url=${NEXT_PUBLIC_SITE_URL:-"https://morningmaghreb.com"}
+local backend_url=${NEXT_PUBLIC_API_URL:-"https://morningmaghreb-api.onrender.com"}
     
     # Test frontend
     if command_exists curl; then
@@ -300,13 +300,13 @@ setup_monitoring() {
   "monitors": [
     {
       "name": "Casablanca Insights Frontend",
-      "url": "${NEXT_PUBLIC_SITE_URL:-https://casablanca-insight.vercel.app}",
+              "url": "${NEXT_PUBLIC_SITE_URL:-https://morningmaghreb.com}",
       "type": "http",
       "interval": 300
     },
     {
       "name": "Casablanca Insights Backend",
-      "url": "${NEXT_PUBLIC_API_URL:-https://casablanca-insight-api.onrender.com}/health",
+              "url": "${NEXT_PUBLIC_API_URL:-https://morningmaghreb-api.onrender.com}/health",
       "type": "http",
       "interval": 300
     }
@@ -321,8 +321,8 @@ EOF
 show_summary() {
     print_success "Deployment Summary"
     echo "=================="
-    echo "Frontend URL: ${NEXT_PUBLIC_SITE_URL:-https://casablanca-insight.vercel.app}"
-    echo "Backend URL: ${NEXT_PUBLIC_API_URL:-https://casablanca-insight-api.onrender.com}"
+    echo "Frontend URL: ${NEXT_PUBLIC_SITE_URL:-https://morningmaghreb.com}"
+echo "Backend URL: ${NEXT_PUBLIC_API_URL:-https://morningmaghreb-api.onrender.com}"
     echo "Database: Supabase"
     echo "Email Service: SendGrid"
     echo ""

@@ -181,8 +181,8 @@ npm run analyze
 
 ### 1. Environment Variables
 ```env
-NEXT_PUBLIC_API_URL=https://api.casablanca-insights.com
-NEXT_PUBLIC_WEBSOCKET_URL=wss://api.casablanca-insights.com/ws
+NEXT_PUBLIC_API_URL=https://api.morningmaghreb.com
+NEXT_PUBLIC_WEBSOCKET_URL=wss://api.morningmaghreb.com/ws
 ```
 
 ### 2. CDN Configuration

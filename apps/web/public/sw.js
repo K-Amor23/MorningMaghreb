@@ -1,4 +1,4 @@
-const CACHE_NAME = 'casablanca-insights-v1'
+const CACHE_NAME = 'morningmaghreb-v1'
 const STATIC_CACHE_NAME = 'casablanca-static-v1'
 const DYNAMIC_CACHE_NAME = 'casablanca-dynamic-v1'
 

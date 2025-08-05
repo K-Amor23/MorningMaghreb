@@ -1,5 +1,5 @@
 {
-  "name": "casablanca-insight",
+  "name": "morningmaghreb",
   "version": "1.0.0",
   "description": "A Morocco-focused market research & analytics webapp",
   "private": true,
@@ -12,7 +12,7 @@
     "analyze": "ANALYZE=true npm run build"
   },
   "dependencies": {
-    "@casablanca-insight/shared": "file:../../packages/shared",
+    "@morningmaghreb/shared": "file:../../packages/shared",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.2",

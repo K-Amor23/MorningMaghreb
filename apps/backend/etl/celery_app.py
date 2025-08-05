@@ -251,7 +251,7 @@ def send_webhook_notification(self, webhook_url: str, payload: Dict[str, Any], s
                     headers={
                         'Content-Type': 'application/json',
                         'X-Casablanca-Signature': signature,
-                        'User-Agent': 'Casablanca-Insights/1.0'
+                        'User-Agent': 'Morning-Maghreb/1.0'
                     }
                 )
                 response.raise_for_status()

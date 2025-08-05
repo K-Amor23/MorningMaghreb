@@ -101,7 +101,7 @@ setup_sendgrid() {
     echo ""
     
     prompt_with_default "Enter your SendGrid API Key" "" SENDGRID_API_KEY
-    prompt_with_default "Enter your sender email" "noreply@casablanca-insight.com" FROM_EMAIL
+    prompt_with_default "Enter your sender email" "noreply@morningmaghreb.com" FROM_EMAIL
     
     print_success "SendGrid configuration captured"
 }
@@ -148,7 +148,7 @@ setup_domain() {
     
     echo ""
     echo "📋 Custom Domain Setup Instructions:"
-    echo "1. Purchase a domain (e.g., casablanca-insight.com)"
+    echo "1. Purchase a domain (e.g., morningmaghreb.com)"
     echo "2. Configure DNS settings"
     echo "3. Add domain to Vercel and Render"
     echo ""
@@ -159,8 +159,8 @@ setup_domain() {
         FRONTEND_URL="https://$CUSTOM_DOMAIN"
         BACKEND_URL="https://api.$CUSTOM_DOMAIN"
     else
-        FRONTEND_URL="https://casablanca-insight.vercel.app"
-        BACKEND_URL="https://casablanca-insight-api.onrender.com"
+        FRONTEND_URL="https://morningmaghreb.com"
+BACKEND_URL="https://morningmaghreb-api.onrender.com"
     fi
     
     print_success "Domain configuration captured"

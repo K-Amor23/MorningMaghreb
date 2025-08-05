@@ -458,8 +458,8 @@ async def get_webhook_documentation():
                 "secret_verification": "Required"
             },
             "integration_examples": {
-                "zapier": "https://zapier.com/apps/casablanca-insights",
-                "make": "https://www.make.com/en/help/apps/casablanca-insights",
+                "zapier": "https://zapier.com/apps/morningmaghreb",
+"make": "https://www.make.com/en/help/apps/morningmaghreb",
                 "custom": "Use any HTTP client that supports webhooks"
             }
         }
