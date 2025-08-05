@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { useAuth } from '../../hooks/useAuth'
+import { useClientOnly } from '../../lib/useClientOnly'
 import {
     EnvelopeIcon,
     DocumentTextIcon,
@@ -36,6 +37,7 @@ interface NewsletterSubscriber {
 export default function AdminNewsletter() {
     const { user, loading } = useAuth()
     const router = useRouter()
+    const mounted = useClientOnly()
     const [campaigns, setCampaigns] = useState<NewsletterCampaign[]>([])
     const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([])
     const [stats, setStats] = useState({
@@ -44,20 +46,29 @@ export default function AdminNewsletter() {
         totalCampaigns: 0,
         averageOpenRate: 0
     })
+    const [generating, setGenerating] = useState<string | null>(null)
+    const [dataLoading, setDataLoading] = useState(true)
 
     // Check if user is admin
     useEffect(() => {
-        if (!loading && (!user || user.role !== 'admin')) {
+        if (mounted && !loading && (!user || user.role !== 'admin')) {
+            console.log('User not admin, redirecting:', { user, loading })
             router.push('/')
         }
-    }, [user, loading, router])
+    }, [user, loading, router, mounted])
 
     useEffect(() => {
+        if (!mounted) return
+
         // Fetch data from API
         const fetchData = async () => {
             try {
+                console.log('Fetching newsletter data...')
+                setDataLoading(true)
+
                 // Fetch campaigns
                 const campaignsResponse = await fetch('/api/admin/newsletter/campaigns')
+                console.log('Campaigns response:', campaignsResponse.status)
                 if (campaignsResponse.ok) {
                     const campaignsData = await campaignsResponse.json()
                     const apiCampaigns: NewsletterCampaign[] = campaignsData.campaigns.map((c: any) => ({
@@ -76,6 +87,7 @@ export default function AdminNewsletter() {
 
                 // Fetch subscribers
                 const subscribersResponse = await fetch('/api/admin/newsletter/subscribers')
+                console.log('Subscribers response:', subscribersResponse.status)
                 if (subscribersResponse.ok) {
                     const subscribersData = await subscribersResponse.json()
                     const apiSubscribers: NewsletterSubscriber[] = subscribersData.subscribers.map((s: any) => ({
@@ -100,14 +112,19 @@ export default function AdminNewsletter() {
                 })
             } catch (error) {
                 console.error('Error fetching newsletter data:', error)
+            } finally {
+                setDataLoading(false)
             }
         }
 
         fetchData()
-    }, [])
+    }, [mounted])
 
     const generateNewsletter = async (language: string) => {
         try {
+            console.log('Generating newsletter for language:', language)
+            setGenerating(language)
+
             const response = await fetch('/api/newsletter/weekly-recap/preview', {
                 method: 'POST',
                 headers: {
@@ -121,16 +138,38 @@ export default function AdminNewsletter() {
                 })
             })
 
+            console.log('Generate response status:', response.status)
+
             if (response.ok) {
                 const data = await response.json()
+                console.log('Generated newsletter data:', data)
                 alert(`Newsletter generated successfully!\nSubject: ${data.subject}\nContent length: ${data.content.length} characters`)
             } else {
+                const errorData = await response.text()
+                console.error('Failed to generate newsletter:', errorData)
                 alert('Failed to generate newsletter')
             }
         } catch (error) {
             console.error('Error generating newsletter:', error)
             alert('Error generating newsletter')
+        } finally {
+            setGenerating(null)
         }
+    }
+
+    if (!mounted) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="animate-pulse">
+                    <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
+                    <div className="space-y-3">
+                        <div className="h-12 bg-gray-200 rounded"></div>
+                        <div className="h-12 bg-gray-200 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     if (loading) {
@@ -142,6 +181,7 @@ export default function AdminNewsletter() {
     }
 
     if (!user || user.role !== 'admin') {
+        console.log('User not admin, showing null:', { user, loading })
         return null
     }
 
@@ -165,24 +205,36 @@ export default function AdminNewsletter() {
                         <div className="flex space-x-2">
                             <button
                                 onClick={() => generateNewsletter('en')}
-                                className="bg-casablanca-blue text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center"
+                                disabled={generating === 'en'}
+                                className={`px-4 py-2 rounded-md flex items-center ${generating === 'en'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-casablanca-blue hover:bg-blue-700'
+                                    } text-white`}
                             >
                                 <DocumentTextIcon className="h-4 w-4 mr-2" />
-                                Generate EN
+                                {generating === 'en' ? 'Generating...' : 'Generate EN'}
                             </button>
                             <button
                                 onClick={() => generateNewsletter('fr')}
-                                className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 flex items-center"
+                                disabled={generating === 'fr'}
+                                className={`px-4 py-2 rounded-md flex items-center ${generating === 'fr'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-purple-600 hover:bg-purple-700'
+                                    } text-white`}
                             >
                                 <DocumentTextIcon className="h-4 w-4 mr-2" />
-                                Generate FR
+                                {generating === 'fr' ? 'Generating...' : 'Generate FR'}
                             </button>
                             <button
                                 onClick={() => generateNewsletter('ar')}
-                                className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 flex items-center"
+                                disabled={generating === 'ar'}
+                                className={`px-4 py-2 rounded-md flex items-center ${generating === 'ar'
+                                    ? 'bg-gray-400 cursor-not-allowed'
+                                    : 'bg-green-600 hover:bg-green-700'
+                                    } text-white`}
                             >
                                 <DocumentTextIcon className="h-4 w-4 mr-2" />
-                                Generate AR
+                                {generating === 'ar' ? 'Generating...' : 'Generate AR'}
                             </button>
                         </div>
                     </div>
@@ -200,7 +252,9 @@ export default function AdminNewsletter() {
                                     <div className="ml-5 w-0 flex-1">
                                         <dl>
                                             <dt className="text-sm font-medium text-gray-500 truncate">Total Subscribers</dt>
-                                            <dd className="text-lg font-medium text-gray-900">{stats.totalSubscribers}</dd>
+                                            <dd className="text-lg font-medium text-gray-900">
+                                                {dataLoading ? '...' : stats.totalSubscribers}
+                                            </dd>
                                         </dl>
                                     </div>
                                 </div>
@@ -217,7 +271,9 @@ export default function AdminNewsletter() {
                                     <div className="ml-5 w-0 flex-1">
                                         <dl>
                                             <dt className="text-sm font-medium text-gray-500 truncate">Active Subscribers</dt>
-                                            <dd className="text-lg font-medium text-gray-900">{stats.activeSubscribers}</dd>
+                                            <dd className="text-lg font-medium text-gray-900">
+                                                {dataLoading ? '...' : stats.activeSubscribers}
+                                            </dd>
                                         </dl>
                                     </div>
                                 </div>
@@ -234,7 +290,9 @@ export default function AdminNewsletter() {
                                     <div className="ml-5 w-0 flex-1">
                                         <dl>
                                             <dt className="text-sm font-medium text-gray-500 truncate">Total Campaigns</dt>
-                                            <dd className="text-lg font-medium text-gray-900">{stats.totalCampaigns}</dd>
+                                            <dd className="text-lg font-medium text-gray-900">
+                                                {dataLoading ? '...' : stats.totalCampaigns}
+                                            </dd>
                                         </dl>
                                     </div>
                                 </div>
@@ -251,7 +309,9 @@ export default function AdminNewsletter() {
                                     <div className="ml-5 w-0 flex-1">
                                         <dl>
                                             <dt className="text-sm font-medium text-gray-500 truncate">Avg Open Rate</dt>
-                                            <dd className="text-lg font-medium text-gray-900">{stats.averageOpenRate.toFixed(1)}%</dd>
+                                            <dd className="text-lg font-medium text-gray-900">
+                                                {dataLoading ? '...' : `${stats.averageOpenRate.toFixed(1)}%`}
+                                            </dd>
                                         </dl>
                                     </div>
                                 </div>
@@ -265,149 +325,169 @@ export default function AdminNewsletter() {
                             <h3 className="text-lg font-medium text-gray-900">Recent Campaigns</h3>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Campaign
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Recipients
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Open Rate
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Click Rate
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Language
-                                        </th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {campaigns.map((campaign) => (
-                                        <tr key={campaign.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4">
-                                                <div>
-                                                    <div className="text-sm font-medium text-gray-900">{campaign.subject}</div>
-                                                    <div className="text-sm text-gray-500">
-                                                        {campaign.sentAt ? `Sent: ${new Date(campaign.sentAt).toLocaleDateString()}` :
-                                                            campaign.scheduledFor ? `Scheduled: ${new Date(campaign.scheduledFor).toLocaleDateString()}` :
-                                                                'Draft'}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${campaign.status === 'sent' ? 'bg-green-100 text-green-800' :
-                                                    campaign.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
-                                                        'bg-gray-100 text-gray-800'
-                                                    }`}>
-                                                    {campaign.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {campaign.recipientCount.toLocaleString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {campaign.openRate > 0 ? `${campaign.openRate}%` : '-'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {campaign.clickRate > 0 ? `${campaign.clickRate}%` : '-'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${campaign.language === 'en' ? 'bg-blue-100 text-blue-800' :
-                                                    campaign.language === 'fr' ? 'bg-purple-100 text-purple-800' :
-                                                        'bg-green-100 text-green-800'
-                                                    }`}>
-                                                    {campaign.language.toUpperCase()}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex justify-end space-x-2">
-                                                    <button className="text-blue-600 hover:text-blue-900">
-                                                        <EyeIcon className="h-4 w-4" />
-                                                    </button>
-                                                    {campaign.status === 'draft' && (
-                                                        <button className="text-green-600 hover:text-green-900">
-                                                            <PlayIcon className="h-4 w-4" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </td>
+                            {dataLoading ? (
+                                <div className="p-6">
+                                    <div className="animate-pulse space-y-3">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Campaign
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Recipients
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Open Rate
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Click Rate
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Language
+                                            </th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Actions
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {campaigns.map((campaign) => (
+                                            <tr key={campaign.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <div className="text-sm font-medium text-gray-900">{campaign.subject}</div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {campaign.sentAt ? `Sent: ${new Date(campaign.sentAt).toLocaleDateString()}` :
+                                                                campaign.scheduledFor ? `Scheduled: ${new Date(campaign.scheduledFor).toLocaleDateString()}` :
+                                                                    'Draft'}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${campaign.status === 'sent' ? 'bg-green-100 text-green-800' :
+                                                        campaign.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
+                                                            'bg-gray-100 text-gray-800'
+                                                        }`}>
+                                                        {campaign.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {campaign.recipientCount.toLocaleString()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {campaign.openRate > 0 ? `${campaign.openRate}%` : '-'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {campaign.clickRate > 0 ? `${campaign.clickRate}%` : '-'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${campaign.language === 'en' ? 'bg-blue-100 text-blue-800' :
+                                                        campaign.language === 'fr' ? 'bg-purple-100 text-purple-800' :
+                                                            'bg-green-100 text-green-800'
+                                                        }`}>
+                                                        {campaign.language.toUpperCase()}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <div className="flex justify-end space-x-2">
+                                                        <button className="text-blue-600 hover:text-blue-900">
+                                                            <EyeIcon className="h-4 w-4" />
+                                                        </button>
+                                                        {campaign.status === 'draft' && (
+                                                            <button className="text-green-600 hover:text-green-900">
+                                                                <PlayIcon className="h-4 w-4" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
                     </div>
 
                     {/* Subscribers */}
                     <div className="bg-white shadow rounded-lg">
                         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h3 className="text-lg font-medium text-gray-900">Subscribers ({subscribers.length})</h3>
+                            <h3 className="text-lg font-medium text-gray-900">Subscribers ({dataLoading ? '...' : subscribers.length})</h3>
                             <button className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700 flex items-center">
                                 <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
                                 Export CSV
                             </button>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Subscribed
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Last Email
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Language
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {subscribers.map((subscriber) => (
-                                        <tr key={subscriber.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                {subscriber.email}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${subscriber.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                                    }`}>
-                                                    {subscriber.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(subscriber.subscribedAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {subscriber.lastEmailSent ? new Date(subscriber.lastEmailSent).toLocaleDateString() : 'Never'}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${subscriber.language === 'en' ? 'bg-blue-100 text-blue-800' :
-                                                    subscriber.language === 'fr' ? 'bg-purple-100 text-purple-800' :
-                                                        'bg-green-100 text-green-800'
-                                                    }`}>
-                                                    {subscriber.language.toUpperCase()}
-                                                </span>
-                                            </td>
+                            {dataLoading ? (
+                                <div className="p-6">
+                                    <div className="animate-pulse space-y-3">
+                                        {[1, 2, 3].map(i => (
+                                            <div key={i} className="h-12 bg-gray-200 rounded"></div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Email
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Status
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Subscribed
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Last Email
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Language
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {subscribers.map((subscriber) => (
+                                            <tr key={subscriber.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {subscriber.email}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${subscriber.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                        }`}>
+                                                        {subscriber.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {new Date(subscriber.subscribedAt).toLocaleDateString()}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {subscriber.lastEmailSent ? new Date(subscriber.lastEmailSent).toLocaleDateString() : 'Never'}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${subscriber.language === 'en' ? 'bg-blue-100 text-blue-800' :
+                                                        subscriber.language === 'fr' ? 'bg-purple-100 text-purple-800' :
+                                                            'bg-green-100 text-green-800'
+                                                        }`}>
+                                                        {subscriber.language.toUpperCase()}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            )}
                         </div>
                     </div>
                 </div>

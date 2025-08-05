@@ -45,6 +45,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const africanMarketsData = loadJsonData('apps/backend/data/cse_companies_african_markets.json') || [];
         const bourseData = loadJsonData('apps/backend/etl/casablanca_bourse_data_20250725_123947.json') || {};
 
+        // Handle data-quality type
+        if (type === 'data-quality') {
+            const totalCompanies = africanMarketsData.length;
+            const companiesWithPrice = africanMarketsData.filter((company: any) => company.price && company.price > 0).length;
+            const companiesWithMarketCap = africanMarketsData.filter((company: any) => company.market_cap_billion && company.market_cap_billion > 0).length;
+
+            // Mock data for reports and news coverage
+            const companiesWithReports = Math.floor(totalCompanies * 0.75); // 75% have reports
+            const companiesWithNews = Math.floor(totalCompanies * 0.85); // 85% have news
+
+            const qualityMetrics = {
+                total_companies: totalCompanies,
+                companies_with_price: companiesWithPrice,
+                companies_with_market_cap: companiesWithMarketCap,
+                price_coverage: totalCompanies > 0 ? Math.round((companiesWithPrice / totalCompanies) * 100) : 0,
+                market_cap_coverage: totalCompanies > 0 ? Math.round((companiesWithMarketCap / totalCompanies) * 100) : 0,
+                companies_with_reports: companiesWithReports,
+                companies_with_news: companiesWithNews,
+                reports_coverage: totalCompanies > 0 ? Math.round((companiesWithReports / totalCompanies) * 100) : 0,
+                news_coverage: totalCompanies > 0 ? Math.round((companiesWithNews / totalCompanies) * 100) : 0
+            };
+
+            const response = {
+                success: true,
+                data: {
+                    metadata: {
+                        total_companies: totalCompanies,
+                        data_quality: qualityMetrics
+                    },
+                    quality_metrics: qualityMetrics
+                },
+                timestamp: new Date().toISOString()
+            };
+
+            return res.status(200).json(response);
+        }
+
         // Calculate market summary
         const totalMarketCap = africanMarketsData.reduce((sum: number, company: any) => {
             return sum + (company.market_cap_billion ? company.market_cap_billion * 1e9 : 0);

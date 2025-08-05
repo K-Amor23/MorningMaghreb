@@ -1,204 +1,215 @@
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline'
+import React, { useState, useEffect } from 'react'
+import { TrophyIcon, UserIcon, CalendarIcon } from '@heroicons/react/24/outline'
+import { useLocalStorageGetter } from '@/lib/useClientOnly'
 
-interface PaperTradingAccount {
+interface Contest {
     id: string
-    user_id: string
-    account_name: string
-    initial_balance: number
-    current_balance: number
-    total_pnl: number
-    total_pnl_percent: number
-    is_active: boolean
-    created_at: string
-    updated_at: string
+    name: string
+    description: string
+    start_date: string
+    end_date: string
+    prize_pool: number
+    max_participants: number
+    current_participants: number
+    entry_fee: number
+    status: 'upcoming' | 'active' | 'ended'
 }
 
 interface JoinContestFormProps {
-    onJoin: (accountId: string) => void
-    onCancel: () => void
-    loading: boolean
+    contest: Contest
+    onJoin?: (contestId: string) => void
 }
 
-export default function JoinContestForm({ onJoin, onCancel, loading }: JoinContestFormProps) {
-    const [accounts, setAccounts] = useState<PaperTradingAccount[]>([])
-    const [selectedAccount, setSelectedAccount] = useState<string>('')
-    const [loadingAccounts, setLoadingAccounts] = useState(true)
+export default function JoinContestForm({ contest, onJoin }: JoinContestFormProps) {
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState(false)
+    const { getItem, mounted } = useLocalStorageGetter()
 
-    useEffect(() => {
-        loadAccounts()
-    }, [])
+    const handleJoinContest = async () => {
+        if (!mounted) return
 
-    const loadAccounts = async () => {
+        setLoading(true)
+        setError(null)
+
         try {
-            setLoadingAccounts(true)
-            const response = await fetch('/api/paper-trading/accounts', {
+            const token = getItem('access_token')
+            const response = await fetch(`/api/contest/${contest.id}/join`, {
+                method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
             })
 
             if (response.ok) {
-                const accountsData = await response.json()
-                setAccounts(accountsData)
+                setSuccess(true)
+                onJoin?.(contest.id)
+            } else {
+                const data = await response.json()
+                setError(data.message || 'Failed to join contest')
             }
         } catch (error) {
-            console.error('Error loading accounts:', error)
+            console.error('Error joining contest:', error)
+            setError('Failed to join contest. Please try again.')
         } finally {
-            setLoadingAccounts(false)
+            setLoading(false)
         }
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if (selectedAccount) {
-            onJoin(selectedAccount)
-        }
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        })
     }
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'MAD',
-            minimumFractionDigits: 2
+            minimumFractionDigits: 0
         }).format(amount)
     }
 
-    const formatPercent = (percent: number) => {
-        return `${percent >= 0 ? '+' : ''}${percent.toFixed(2)}%`
-    }
-
-    const getColorForChange = (value: number) => {
-        if (value > 0) return 'text-green-600 dark:text-green-400'
-        if (value < 0) return 'text-red-600 dark:text-red-400'
-        return 'text-gray-600 dark:text-gray-400'
+    if (!mounted) {
+        return (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <div className="animate-pulse">
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-6"></div>
+                    <div className="space-y-3">
+                        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4">
-                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            Join Contest
-                        </h3>
-                        <button
-                            onClick={onCancel}
-                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                        >
-                            <XMarkIcon className="h-6 w-6" />
-                        </button>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center space-x-3 mb-4">
+                <TrophyIcon className="h-8 w-8 text-yellow-500" />
+                <div>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        Join Contest
+                    </h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {contest.name}
+                    </p>
+                </div>
+            </div>
+
+            <div className="space-y-4 mb-6">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                        {contest.description}
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                        <CalendarIcon className="h-4 w-4 text-gray-400" />
+                        <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Start Date</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {formatDate(contest.start_date)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <CalendarIcon className="h-4 w-4 text-gray-400" />
+                        <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">End Date</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {formatDate(contest.end_date)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <TrophyIcon className="h-4 w-4 text-yellow-500" />
+                        <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Prize Pool</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {formatCurrency(contest.prize_pool)}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                        <UserIcon className="h-4 w-4 text-blue-500" />
+                        <div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">Participants</p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {contest.current_participants}/{contest.max_participants}
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6">
-                    <div className="mb-6">
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                            Select a paper trading account to join the contest. Make sure your account has at least 3 positions.
+                {contest.entry_fee > 0 && (
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                            Entry Fee: {formatCurrency(contest.entry_fee)}
                         </p>
-
-                        {loadingAccounts ? (
-                            <div className="space-y-3">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className="animate-pulse">
-                                        <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : accounts.length === 0 ? (
-                            <div className="text-center py-8">
-                                <div className="text-gray-400 dark:text-gray-500 text-4xl mb-4">📊</div>
-                                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                    No paper trading accounts found
-                                </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
-                                    Create a paper trading account first to join the contest
-                                </p>
-                                <Link
-                                    href="/paper-trading"
-                                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
-                                >
-                                    Create Paper Trading Account
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
-                                {accounts.map((account) => (
-                                    <label
-                                        key={account.id}
-                                        className={`block cursor-pointer p-4 border rounded-lg transition-colors ${selectedAccount === account.id
-                                            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                                            }`}
-                                    >
-                                        <div className="flex items-center">
-                                            <input
-                                                type="radio"
-                                                name="account"
-                                                value={account.id}
-                                                checked={selectedAccount === account.id}
-                                                onChange={(e) => setSelectedAccount(e.target.value)}
-                                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                                            />
-                                            <div className="ml-3 flex-1">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                                        {account.account_name}
-                                                    </span>
-                                                    {selectedAccount === account.id && (
-                                                        <CheckIcon className="h-5 w-5 text-blue-600" />
-                                                    )}
-                                                </div>
-                                                <div className="mt-1 grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                                    <div>
-                                                        <span className="font-medium">Balance:</span> {formatCurrency(account.current_balance)}
-                                                    </div>
-                                                    <div>
-                                                        <span className="font-medium">P&L:</span>
-                                                        <span className={getColorForChange(account.total_pnl_percent)}>
-                                                            {' '}{formatPercent(account.total_pnl_percent)}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </label>
-                                ))}
-                            </div>
-                        )}
                     </div>
-
-                    <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4 mb-6">
-                        <h4 className="text-sm font-semibold text-yellow-900 dark:text-yellow-100 mb-2">
-                            Contest Requirements
-                        </h4>
-                        <ul className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
-                            <li>• Account must have at least 3 positions</li>
-                            <li>• Only one account per user can participate</li>
-                            <li>• You cannot change accounts once joined</li>
-                            <li>• Contest ranking is based on total return percentage</li>
-                        </ul>
-                    </div>
-
-                    <div className="flex space-x-3">
-                        <button
-                            type="button"
-                            onClick={onCancel}
-                            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={!selectedAccount || loading}
-                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {loading ? 'Joining...' : 'Join Contest'}
-                        </button>
-                    </div>
-                </form>
+                )}
             </div>
+
+            {error && (
+                <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                </div>
+            )}
+
+            {success && (
+                <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+                    <p className="text-sm text-green-700 dark:text-green-300">
+                        Successfully joined the contest!
+                    </p>
+                </div>
+            )}
+
+            <button
+                onClick={handleJoinContest}
+                disabled={loading || success || contest.status !== 'active'}
+                className="w-full px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+                {loading ? (
+                    <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Joining...</span>
+                    </>
+                ) : success ? (
+                    <>
+                        <TrophyIcon className="h-4 w-4" />
+                        <span>Joined!</span>
+                    </>
+                ) : contest.status !== 'active' ? (
+                    <>
+                        <CalendarIcon className="h-4 w-4" />
+                        <span>Contest {contest.status}</span>
+                    </>
+                ) : (
+                    <>
+                        <TrophyIcon className="h-4 w-4" />
+                        <span>Join Contest</span>
+                    </>
+                )}
+            </button>
+
+            {contest.status !== 'active' && (
+                <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                    {contest.status === 'upcoming'
+                        ? 'This contest has not started yet.'
+                        : 'This contest has ended.'
+                    }
+                </p>
+            )}
         </div>
     )
 } 

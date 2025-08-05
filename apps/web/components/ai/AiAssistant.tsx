@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
-import { PaperAirplaneIcon, SparklesIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
+import React, { useState, useEffect, useRef } from 'react'
+import { SparklesIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import { useLocalStorageGetter } from '@/lib/useClientOnly'
 
 interface Message {
     id: string
@@ -20,17 +21,11 @@ export default function AiAssistant({
     selectedTickers,
     onPortfolioAnalysis
 }: AiAssistantProps) {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: '1',
-            role: 'assistant',
-            content: "Hello! I'm your AI financial assistant. I can help you analyze companies, compare stocks, assess portfolio risk, and provide market insights. What would you like to know?",
-            timestamp: new Date()
-        }
-    ])
+    const [messages, setMessages] = useState<Message[]>([])
     const [inputValue, setInputValue] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const messagesEndRef = useRef<HTMLDivElement>(null)
+    const { getItem, mounted } = useLocalStorageGetter()
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -42,18 +37,18 @@ export default function AiAssistant({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!inputValue.trim() || isLoading) return
+        if (!inputValue.trim() || isLoading || !mounted) return
 
+        setIsLoading(true)
+
+        // Add user message
         const userMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
             content: inputValue,
             timestamp: new Date()
         }
-
         setMessages(prev => [...prev, userMessage])
-        setInputValue('')
-        setIsLoading(true)
 
         // Add loading message
         const loadingMessage: Message = {
@@ -66,11 +61,12 @@ export default function AiAssistant({
         setMessages(prev => [...prev, loadingMessage])
 
         try {
+            const token = getItem('supabase.auth.token')
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+                    ...(token && { 'Authorization': `Bearer ${token}` })
                 },
                 body: JSON.stringify({
                     messages: [
@@ -109,7 +105,7 @@ export default function AiAssistant({
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+                            ...(token && { 'Authorization': `Bearer ${token}` })
                         },
                         body: JSON.stringify({ portfolio_id: portfolioId })
                     })
@@ -151,6 +147,28 @@ export default function AiAssistant({
         setInputValue(question)
     }
 
+    // Don't render until mounted to prevent hydration mismatch
+    if (!mounted) {
+        return (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg h-96 flex flex-col">
+                <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center space-x-2">
+                        <SparklesIcon className="h-5 w-5 text-blue-500" />
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            AI Assistant
+                        </h3>
+                    </div>
+                </div>
+                <div className="flex-1 p-4">
+                    <div className="animate-pulse">
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg h-96 flex flex-col">
             <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
@@ -163,21 +181,40 @@ export default function AiAssistant({
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {messages.length === 0 && (
+                    <div className="text-center text-gray-500 dark:text-gray-400">
+                        <SparklesIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p className="text-sm">Ask me anything about Moroccan markets, stocks, or your portfolio.</p>
+
+                        <div className="mt-4 space-y-2">
+                            {suggestedQuestions.map((question, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => handleSuggestedQuestion(question)}
+                                    className="block w-full text-left p-2 text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                                >
+                                    {question}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 {messages.map((message) => (
                     <div
                         key={message.id}
                         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.role === 'user'
+                            className={`max-w-xs lg:max-w-md px-3 py-2 rounded-lg ${message.role === 'user'
                                     ? 'bg-blue-500 text-white'
                                     : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
                                 }`}
                         >
                             {message.isLoading ? (
                                 <div className="flex items-center space-x-2">
-                                    <ArrowPathIcon className="h-4 w-4 animate-spin" />
-                                    <span>Thinking...</span>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                                    <span className="text-sm">Thinking...</span>
                                 </div>
                             ) : (
                                 <p className="text-sm whitespace-pre-wrap">{message.content}</p>
@@ -188,39 +225,20 @@ export default function AiAssistant({
                 <div ref={messagesEndRef} />
             </div>
 
-            {messages.length === 1 && (
-                <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        Try asking:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                        {suggestedQuestions.map((question, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleSuggestedQuestion(question)}
-                                className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                            >
-                                {question}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            )}
-
             <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex space-x-2">
                     <input
                         type="text"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
-                        placeholder="Ask about companies, portfolio analysis, or market insights..."
-                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                        placeholder="Ask about markets, stocks, or your portfolio..."
+                        className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                         disabled={isLoading}
                     />
                     <button
                         type="submit"
-                        disabled={!inputValue.trim() || isLoading}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
+                        disabled={isLoading || !inputValue.trim()}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <PaperAirplaneIcon className="h-4 w-4" />
                     </button>

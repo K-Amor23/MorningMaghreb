@@ -23,9 +23,17 @@ const mockTickerData: TickerData[] = [
 
 export default function TickerBar() {
   const [tickerData, setTickerData] = useState<TickerData[]>(mockTickerData)
+  const [mounted, setMounted] = useState(false)
 
-  // Simulate live updates - only run on client side
+  // Ensure component is mounted before starting live updates
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Simulate live updates - only run on client side after mounting
+  useEffect(() => {
+    if (!mounted) return
+
     const interval = setInterval(() => {
       setTickerData(prev => prev.map(item => ({
         ...item,
@@ -36,7 +44,7 @@ export default function TickerBar() {
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [mounted])
 
   return (
     <div className="bg-white border-b border-gray-200 overflow-hidden relative z-10">
@@ -51,9 +59,8 @@ export default function TickerBar() {
                   <div className="flex items-center space-x-3 whitespace-nowrap">
                     <div className="text-sm font-medium">{item.symbol}</div>
                     <div className="text-sm">{item.price.toFixed(2)}</div>
-                    <div className={`flex items-center text-xs ${
-                      item.changePercent >= 0 ? 'text-green-300' : 'text-red-300'
-                    }`}>
+                    <div className={`flex items-center text-xs ${item.changePercent >= 0 ? 'text-green-300' : 'text-red-300'
+                      }`}>
                       {item.changePercent >= 0 ? (
                         <ArrowUpIcon className="h-3 w-3 mr-1" />
                       ) : (

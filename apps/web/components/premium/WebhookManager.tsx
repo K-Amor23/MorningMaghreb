@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { PlusIcon, TrashIcon, BellIcon, ClockIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
-import { toast } from 'react-hot-toast'
-import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
+import { BellIcon, PlusIcon, TrashIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { useLocalStorageGetter } from '@/lib/useClientOnly'
 
 interface Webhook {
   id: string
@@ -9,200 +8,110 @@ interface Webhook {
   url: string
   events: string[]
   is_active: boolean
-  last_delivery?: string
-  delivery_count: number
-  failure_count: number
   created_at: string
+  last_triggered?: string
+  secret_key?: string
 }
 
-interface WebhookDelivery {
-  id: string
-  webhook_id: string
-  event_type: string
-  status: 'success' | 'failed' | 'pending'
-  response_code?: number
-  response_time_ms?: number
-  created_at: string
-}
-
-interface WebhookManagerProps {
-  userSubscriptionTier: string
-}
-
-export default function WebhookManager({ userSubscriptionTier }: WebhookManagerProps) {
+export default function WebhookManager() {
   const [webhooks, setWebhooks] = useState<Webhook[]>([])
-  const [deliveries, setDeliveries] = useState<WebhookDelivery[]>([])
+  const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [selectedWebhook, setSelectedWebhook] = useState<string | null>(null)
-
   const [newWebhook, setNewWebhook] = useState({
     name: '',
     url: '',
-    events: ['price_alert', 'earnings_release'],
-    secret: ''
+    events: [] as string[]
   })
+  const [showSecret, setShowSecret] = useState<string | null>(null)
+  const { getItem, mounted } = useLocalStorageGetter()
 
   const availableEvents = [
-    { value: 'price_alert', label: 'Price Alerts', description: 'When stock prices cross thresholds' },
-    { value: 'earnings_release', label: 'Earnings Releases', description: 'When companies announce earnings' },
-    { value: 'dividend_payment', label: 'Dividend Payments', description: 'When dividends are paid' },
-    { value: 'corporate_action', label: 'Corporate Actions', description: 'Mergers, acquisitions, splits' },
-    { value: 'macro_update', label: 'Macro Updates', description: 'Economic indicator releases' },
-    { value: 'news_alert', label: 'News Alerts', description: 'Breaking financial news' }
+    'price_alert',
+    'portfolio_change',
+    'market_open',
+    'market_close',
+    'earnings_release',
+    'dividend_payment'
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess('PREMIUM_FEATURES')) {
+    if (mounted) {
       fetchWebhooks()
     }
-  }, [userSubscriptionTier])
+  }, [mounted])
 
   const fetchWebhooks = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/webhooks', {
+      const token = getItem('supabase.auth.token')
+      const response = await fetch('/api/premium/webhooks', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
       if (response.ok) {
         const data = await response.json()
-        setWebhooks(data)
-      } else {
-        toast.error('Failed to fetch webhooks')
+        setWebhooks(data.webhooks || [])
       }
     } catch (error) {
       console.error('Error fetching webhooks:', error)
-      toast.error('Failed to fetch webhooks')
     } finally {
       setLoading(false)
     }
   }
 
   const createWebhook = async () => {
+    if (!newWebhook.name.trim() || !newWebhook.url.trim()) return
+
     try {
-      setLoading(true)
-      const response = await fetch('/api/webhooks', {
+      const token = getItem('supabase.auth.token')
+      const response = await fetch('/api/premium/webhooks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(newWebhook)
       })
 
       if (response.ok) {
-        const webhook = await response.json()
-        setWebhooks([webhook, ...webhooks])
+        const data = await response.json()
+        setWebhooks(prev => [...prev, data.webhook])
         setShowCreateForm(false)
-        setNewWebhook({
-          name: '',
-          url: '',
-          events: ['price_alert', 'earnings_release'],
-          secret: ''
-        })
-        toast.success('Webhook created successfully')
-      } else {
-        toast.error('Failed to create webhook')
+        setNewWebhook({ name: '', url: '', events: [] })
       }
     } catch (error) {
       console.error('Error creating webhook:', error)
-      toast.error('Failed to create webhook')
-    } finally {
-      setLoading(false)
     }
   }
 
   const deleteWebhook = async (webhookId: string) => {
-    if (!confirm('Are you sure you want to delete this webhook? This action cannot be undone.')) {
-      return
-    }
+    if (!confirm('Are you sure you want to delete this webhook?')) return
 
     try {
-      const response = await fetch(`/api/webhooks/${webhookId}`, {
+      const token = getItem('supabase.auth.token')
+      const response = await fetch(`/api/premium/webhooks/${webhookId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
       if (response.ok) {
-        setWebhooks(webhooks.filter(webhook => webhook.id !== webhookId))
-        toast.success('Webhook deleted successfully')
-      } else {
-        toast.error('Failed to delete webhook')
+        setWebhooks(prev => prev.filter(webhook => webhook.id !== webhookId))
       }
     } catch (error) {
       console.error('Error deleting webhook:', error)
-      toast.error('Failed to delete webhook')
     }
   }
 
-  const toggleWebhook = async (webhookId: string, isActive: boolean) => {
-    try {
-      const response = await fetch(`/api/webhooks/${webhookId}/toggle`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
-        },
-        body: JSON.stringify({ is_active: !isActive })
-      })
-
-      if (response.ok) {
-        setWebhooks(webhooks.map(webhook =>
-          webhook.id === webhookId
-            ? { ...webhook, is_active: !isActive }
-            : webhook
-        ))
-        toast.success(`Webhook ${!isActive ? 'activated' : 'deactivated'} successfully`)
-      } else {
-        toast.error('Failed to toggle webhook')
-      }
-    } catch (error) {
-      console.error('Error toggling webhook:', error)
-      toast.error('Failed to toggle webhook')
-    }
-  }
-
-  const testWebhook = async (webhookId: string) => {
-    try {
-      const response = await fetch(`/api/webhooks/${webhookId}/test`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
-        }
-      })
-
-      if (response.ok) {
-        toast.success('Test webhook sent successfully')
-      } else {
-        toast.error('Failed to send test webhook')
-      }
-    } catch (error) {
-      console.error('Error testing webhook:', error)
-      toast.error('Failed to send test webhook')
-    }
-  }
-
-  const fetchDeliveries = async (webhookId: string) => {
-    try {
-      const response = await fetch(`/api/webhooks/${webhookId}/deliveries`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
-        }
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setDeliveries(data)
-        setSelectedWebhook(webhookId)
-      }
-    } catch (error) {
-      console.error('Error fetching deliveries:', error)
-    }
+  const toggleEvent = (event: string) => {
+    setNewWebhook(prev => ({
+      ...prev,
+      events: prev.events.includes(event)
+        ? prev.events.filter(e => e !== event)
+        : [...prev.events, event]
+    }))
   }
 
   const formatDate = (dateString: string) => {
@@ -215,40 +124,15 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
     })
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'success':
-        return <CheckCircleIcon className="h-4 w-4 text-green-500" />
-      case 'failed':
-        return <XCircleIcon className="h-4 w-4 text-red-500" />
-      case 'pending':
-        return <ClockIcon className="h-4 w-4 text-yellow-500" />
-      default:
-        return <ClockIcon className="h-4 w-4 text-gray-500" />
-    }
-  }
-
-  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
+  if (!mounted) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-yellow-800">
-              {isPremiumEnforced() ? 'Institutional Tier Required' : 'Feature Disabled'}
-            </h3>
-            <div className="mt-2 text-sm text-yellow-700">
-              <p>
-                {isPremiumEnforced()
-                  ? 'Webhook management is available for institutional tier subscribers. Upgrade your subscription to access this feature.'
-                  : 'Webhook management is currently disabled. Contact support for access.'
-                }
-              </p>
-            </div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-6"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -256,235 +140,185 @@ export default function WebhookManager({ userSubscriptionTier }: WebhookManagerP
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Webhook Management</h2>
-          <p className="text-sm text-gray-600">
-            Set up real-time data delivery via webhooks for automated notifications
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Webhook Manager
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Manage webhooks for real-time notifications
           </p>
         </div>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
         >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Create Webhook
+          <PlusIcon className="h-4 w-4" />
+          <span>New Webhook</span>
         </button>
       </div>
 
-      {/* Create Webhook Form */}
       {showCreateForm && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Webhook</h3>
+        <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+            Create New Webhook
+          </h3>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Webhook Name
               </label>
               <input
                 type="text"
                 value={newWebhook.name}
-                onChange={(e) => setNewWebhook({ ...newWebhook, name: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="e.g., Price Alerts for ATW"
+                onChange={(e) => setNewWebhook(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="e.g., Price Alerts, Portfolio Updates"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Webhook URL
               </label>
               <input
                 type="url"
                 value={newWebhook.url}
-                onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="https://your-server.com/webhook"
+                onChange={(e) => setNewWebhook(prev => ({ ...prev, url: e.target.value }))}
+                placeholder="https://your-domain.com/webhook"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Secret Key (Optional)
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Events to Listen For
               </label>
-              <input
-                type="text"
-                value={newWebhook.secret}
-                onChange={(e) => setNewWebhook({ ...newWebhook, secret: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Secret key for webhook verification"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Events to Subscribe
-              </label>
-              <div className="mt-2 space-y-2">
-                {availableEvents.map((event) => (
-                  <label key={event.value} className="flex items-center">
+              <div className="grid grid-cols-2 gap-2">
+                {availableEvents.map(event => (
+                  <label key={event} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      checked={newWebhook.events.includes(event.value)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setNewWebhook({
-                            ...newWebhook,
-                            events: [...newWebhook.events, event.value]
-                          })
-                        } else {
-                          setNewWebhook({
-                            ...newWebhook,
-                            events: newWebhook.events.filter(evt => evt !== event.value)
-                          })
-                        }
-                      }}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      checked={newWebhook.events.includes(event)}
+                      onChange={() => toggleEvent(event)}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <div className="ml-3">
-                      <div className="text-sm font-medium text-gray-900">{event.label}</div>
-                      <div className="text-sm text-gray-500">{event.description}</div>
-                    </div>
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {event.replace('_', ' ')}
+                    </span>
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => setShowCreateForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Cancel
-              </button>
+            <div className="flex space-x-3">
               <button
                 onClick={createWebhook}
-                disabled={loading || !newWebhook.name || !newWebhook.url}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                disabled={!newWebhook.name.trim() || !newWebhook.url.trim()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
               >
-                {loading ? 'Creating...' : 'Create Webhook'}
+                Create Webhook
+              </button>
+              <button
+                onClick={() => {
+                  setShowCreateForm(false)
+                  setNewWebhook({ name: '', url: '', events: [] })
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
+              >
+                Cancel
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Webhooks List */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {webhooks.map((webhook) => (
-            <li key={webhook.id}>
-              <div className="px-4 py-4 sm:px-6">
+      {loading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="animate-pulse">
+              <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {webhooks.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <BellIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>No webhooks configured yet</p>
+              <p className="text-sm mt-1">Create your first webhook to get started</p>
+            </div>
+          ) : (
+            webhooks.map(webhook => (
+              <div key={webhook.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <BellIcon className="h-5 w-5 text-gray-400" />
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h3 className="font-medium text-gray-900 dark:text-white">
+                        {webhook.name}
+                      </h3>
+                      <span className={`px-2 py-1 text-xs rounded-full ${webhook.is_active
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                        }`}>
+                        {webhook.is_active ? 'Active' : 'Inactive'}
+                      </span>
                     </div>
-                    <div className="ml-4">
-                      <div className="flex items-center">
-                        <p className="text-sm font-medium text-gray-900">{webhook.name}</p>
-                        <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${webhook.is_active
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                          }`}>
-                          {webhook.is_active ? 'Active' : 'Inactive'}
+
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {webhook.url}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {webhook.events.map(event => (
+                        <span
+                          key={event}
+                          className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded"
+                        >
+                          {event.replace('_', ' ')}
                         </span>
-                      </div>
-                      <p className="text-sm text-gray-500">{webhook.url}</p>
-                      <div className="mt-1 flex items-center space-x-2">
-                        <span className="text-xs text-gray-500">
-                          {webhook.events.length} events • {webhook.delivery_count} deliveries
-                        </span>
-                        {webhook.failure_count > 0 && (
-                          <span className="text-xs text-red-500">
-                            {webhook.failure_count} failures
-                          </span>
-                        )}
-                      </div>
+                      ))}
+                    </div>
+
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      Created: {formatDate(webhook.created_at)}
+                      {webhook.last_triggered && ` • Last triggered: ${formatDate(webhook.last_triggered)}`}
                     </div>
                   </div>
+
                   <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => testWebhook(webhook.id)}
-                      className="text-blue-600 hover:text-blue-900 text-sm font-medium"
-                    >
-                      Test
-                    </button>
-                    <button
-                      onClick={() => toggleWebhook(webhook.id, webhook.is_active)}
-                      className={`text-sm font-medium ${webhook.is_active
-                        ? 'text-yellow-600 hover:text-yellow-900'
-                        : 'text-green-600 hover:text-green-900'
-                        }`}
-                    >
-                      {webhook.is_active ? 'Deactivate' : 'Activate'}
-                    </button>
-                    <button
-                      onClick={() => fetchDeliveries(webhook.id)}
-                      className="text-gray-600 hover:text-gray-900 text-sm font-medium"
-                    >
-                      History
-                    </button>
+                    {webhook.secret_key && (
+                      <button
+                        onClick={() => setShowSecret(showSecret === webhook.id ? null : webhook.id)}
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                      >
+                        {showSecret === webhook.id ? (
+                          <EyeSlashIcon className="h-4 w-4" />
+                        ) : (
+                          <EyeIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
                     <button
                       onClick={() => deleteWebhook(webhook.id)}
-                      className="text-red-600 hover:text-red-900 text-sm font-medium"
+                      className="text-red-600 hover:text-red-800 dark:text-red-400"
                     >
-                      Delete
+                      <TrashIcon className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
 
-      {/* Delivery History Modal */}
-      {selectedWebhook && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Delivery History</h3>
-              <div className="max-h-96 overflow-y-auto">
-                <div className="space-y-2">
-                  {deliveries.map((delivery) => (
-                    <div key={delivery.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        {getStatusIcon(delivery.status)}
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{delivery.event_type}</p>
-                          <p className="text-xs text-gray-500">{formatDate(delivery.created_at)}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-medium ${delivery.status === 'success' ? 'text-green-600' :
-                          delivery.status === 'failed' ? 'text-red-600' : 'text-yellow-600'
-                          }`}>
-                          {delivery.status}
-                        </p>
-                        {delivery.response_code && (
-                          <p className="text-xs text-gray-500">Code: {delivery.response_code}</p>
-                        )}
-                        {delivery.response_time_ms && (
-                          <p className="text-xs text-gray-500">{delivery.response_time_ms}ms</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {showSecret === webhook.id && webhook.secret_key && (
+                  <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm font-mono">
+                    {webhook.secret_key}
+                  </div>
+                )}
               </div>
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => setSelectedWebhook(null)}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
+            ))
+          )}
         </div>
       )}
     </div>

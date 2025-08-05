@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "data": [],
+  "count": 0,
+  "timestamp": "2025-07-30T12:22:57.913779",
+  "output_file": "apps/backend/data/financial_reports/financial_reports_20250730_122257.json",
+  "summary": {
+    "by_source": {},
+    "by_type": {},
+    "by_year": {}
+  }
+}

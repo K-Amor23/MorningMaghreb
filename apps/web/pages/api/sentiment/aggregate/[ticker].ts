@@ -21,6 +21,31 @@ export default async function handler(
       return res.status(400).json({ error: 'Ticker is required' })
     }
 
+    // For now, return mock aggregate data for testing
+    const mockAggregate = {
+      ticker: ticker.toUpperCase(),
+      bullish_count: Math.floor(Math.random() * 50) + 10,
+      neutral_count: Math.floor(Math.random() * 30) + 5,
+      bearish_count: Math.floor(Math.random() * 20) + 2,
+      total_votes: 0,
+      bullish_percentage: 0,
+      neutral_percentage: 0,
+      bearish_percentage: 0,
+      average_confidence: 3.5,
+      last_updated: new Date().toISOString(),
+    }
+
+    // Calculate percentages
+    const total = mockAggregate.bullish_count + mockAggregate.neutral_count + mockAggregate.bearish_count
+    mockAggregate.total_votes = total
+    mockAggregate.bullish_percentage = total > 0 ? (mockAggregate.bullish_count / total) * 100 : 0
+    mockAggregate.neutral_percentage = total > 0 ? (mockAggregate.neutral_count / total) * 100 : 0
+    mockAggregate.bearish_percentage = total > 0 ? (mockAggregate.bearish_count / total) * 100 : 0
+
+    res.status(200).json(mockAggregate)
+
+    // TODO: Uncomment this when database is properly configured
+    /*
     // Get sentiment aggregate for the ticker
     const { data: aggregate, error } = await supabase
       .from('sentiment_aggregates')
@@ -50,9 +75,10 @@ export default async function handler(
     }
 
     res.status(200).json(aggregate)
+    */
   } catch (error) {
     console.error('Error in aggregate endpoint:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to fetch sentiment aggregate'
     })

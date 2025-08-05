@@ -1,195 +1,107 @@
 import React, { useState, useEffect } from 'react'
-import { GlobeAltIcon, ArrowPathIcon, DocumentTextIcon, LanguageIcon } from '@heroicons/react/24/outline'
-import { toast } from 'react-hot-toast'
-import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
+import { LanguageIcon, PlusIcon, TrashIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'
+import { useLocalStorageGetter } from '@/lib/useClientOnly'
 
 interface Translation {
   id: string
-  source_text: string
   source_language: string
   target_language: string
-  translated_text: string
+  content: string
+  translated_content: string
   status: 'pending' | 'completed' | 'failed'
   created_at: string
-  word_count: number
+  completed_at?: string
 }
 
-interface TranslationRequest {
-  text: string
-  source_language: string
-  target_language: string
-  content_type: string
-}
-
-interface TranslationManagerProps {
-  userSubscriptionTier: string
-}
-
-export default function TranslationManager({ userSubscriptionTier }: TranslationManagerProps) {
+export default function TranslationManager() {
   const [translations, setTranslations] = useState<Translation[]>([])
-  const [loading, setLoading] = useState(false)
-  const [showTranslateForm, setShowTranslateForm] = useState(false)
-
-  const [translationRequest, setTranslationRequest] = useState<TranslationRequest>({
-    text: '',
+  const [loading, setLoading] = useState(true)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [newTranslation, setNewTranslation] = useState({
     source_language: 'en',
     target_language: 'fr',
-    content_type: 'report'
+    content: ''
   })
+  const [showTranslated, setShowTranslated] = useState<string | null>(null)
+  const { getItem, mounted } = useLocalStorageGetter()
 
-  const languages = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'fr', name: 'French', flag: '🇫🇷' },
-    { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
-    { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-    { code: 'de', name: 'German', flag: '🇩🇪' }
-  ]
-
-  const contentTypes = [
-    { value: 'report', label: 'Financial Report', description: 'Company reports and analysis' },
-    { value: 'summary', label: 'AI Summary', description: 'AI-generated content summaries' },
-    { value: 'news', label: 'News Article', description: 'Financial news and updates' },
-    { value: 'email', label: 'Email Content', description: 'Newsletter and email content' },
-    { value: 'custom', label: 'Custom Text', description: 'Any other text content' }
-  ]
-
-  const sampleTexts = [
-    {
-      label: 'Financial Report Summary',
-      text: 'Attijariwafa Bank reported strong Q3 2024 results with revenue growth of 12.5% year-over-year. Net income increased by 8.3% to MAD 2.1 billion, driven by improved operational efficiency and expanding market share in key segments.',
-      type: 'report'
-    },
-    {
-      label: 'Market Analysis',
-      text: 'The Moroccan stock market showed resilience despite global economic uncertainties. The MASI index gained 2.3% this week, with banking and telecommunications sectors leading the gains.',
-      type: 'summary'
-    },
-    {
-      label: 'Economic Update',
-      text: 'The Bank Al-Maghrib maintained its key policy rate at 3% during the latest monetary policy meeting, citing stable inflation expectations and moderate economic growth projections.',
-      type: 'news'
-    }
+  const availableLanguages = [
+    { code: 'en', name: 'English' },
+    { code: 'fr', name: 'French' },
+    { code: 'ar', name: 'Arabic' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'de', name: 'German' },
+    { code: 'zh', name: 'Chinese' }
   ]
 
   useEffect(() => {
-    if (checkPremiumAccess('PREMIUM_FEATURES')) {
+    if (mounted) {
       fetchTranslations()
     }
-  }, [userSubscriptionTier])
+  }, [mounted])
 
   const fetchTranslations = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/translations', {
+      const token = getItem('supabase.auth.token')
+      const response = await fetch('/api/premium/translations', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
       if (response.ok) {
         const data = await response.json()
-        setTranslations(data)
-      } else {
-        toast.error('Failed to fetch translations')
+        setTranslations(data.translations || [])
       }
     } catch (error) {
       console.error('Error fetching translations:', error)
-      toast.error('Failed to fetch translations')
     } finally {
       setLoading(false)
     }
   }
 
-  const translateText = async () => {
+  const createTranslation = async () => {
+    if (!newTranslation.content.trim()) return
+
     try {
-      setLoading(true)
-      const response = await fetch('/api/translations/translate', {
+      const token = getItem('supabase.auth.token')
+      const response = await fetch('/api/premium/translations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(translationRequest)
+        body: JSON.stringify(newTranslation)
       })
 
       if (response.ok) {
-        const translation = await response.json()
-        setTranslations([translation, ...translations])
-        setShowTranslateForm(false)
-        setTranslationRequest({
-          text: '',
-          source_language: 'en',
-          target_language: 'fr',
-          content_type: 'report'
-        })
-        toast.success('Translation completed successfully')
-      } else {
-        toast.error('Failed to translate text')
+        const data = await response.json()
+        setTranslations(prev => [...prev, data.translation])
+        setShowCreateForm(false)
+        setNewTranslation({ source_language: 'en', target_language: 'fr', content: '' })
       }
     } catch (error) {
-      console.error('Error translating text:', error)
-      toast.error('Failed to translate text')
-    } finally {
-      setLoading(false)
+      console.error('Error creating translation:', error)
     }
   }
 
-  const quickTranslate = async (text: string, sourceLang: string, targetLang: string) => {
+  const deleteTranslation = async (translationId: string) => {
+    if (!confirm('Are you sure you want to delete this translation?')) return
+
     try {
-      setLoading(true)
-      const response = await fetch('/api/translations/translate', {
-        method: 'POST',
+      const token = getItem('supabase.auth.token')
+      const response = await fetch(`/api/premium/translations/${translationId}`, {
+        method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
-        },
-        body: JSON.stringify({
-          text,
-          source_language: sourceLang,
-          target_language: targetLang,
-          content_type: 'custom'
-        })
+          'Authorization': `Bearer ${token}`
+        }
       })
 
       if (response.ok) {
-        const translation = await response.json()
-        setTranslations([translation, ...translations])
-        toast.success('Quick translation completed')
-      } else {
-        toast.error('Failed to translate text')
+        setTranslations(prev => prev.filter(translation => translation.id !== translationId))
       }
     } catch (error) {
-      console.error('Error translating text:', error)
-      toast.error('Failed to translate text')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const detectLanguage = async (text: string) => {
-    try {
-      const response = await fetch('/api/translations/detect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`
-        },
-        body: JSON.stringify({ text })
-      })
-
-      if (response.ok) {
-        const result = await response.json()
-        setTranslationRequest({
-          ...translationRequest,
-          source_language: result.detected_language
-        })
-        toast.success(`Detected language: ${result.detected_language.toUpperCase()}`)
-      } else {
-        toast.error('Failed to detect language')
-      }
-    } catch (error) {
-      console.error('Error detecting language:', error)
-      toast.error('Failed to detect language')
+      console.error('Error deleting translation:', error)
     }
   }
 
@@ -204,44 +116,18 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
   }
 
   const getLanguageName = (code: string) => {
-    const language = languages.find(lang => lang.code === code)
-    return language ? `${language.flag} ${language.name}` : code.toUpperCase()
+    return availableLanguages.find(lang => lang.code === code)?.name || code
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'text-green-600 bg-green-100'
-      case 'pending':
-        return 'text-yellow-600 bg-yellow-100'
-      case 'failed':
-        return 'text-red-600 bg-red-100'
-      default:
-        return 'text-gray-600 bg-gray-100'
-    }
-  }
-
-  if (!checkPremiumAccess('PREMIUM_FEATURES')) {
+  if (!mounted) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-yellow-800">
-              {isPremiumEnforced() ? 'Pro Tier Required' : 'Feature Disabled'}
-            </h3>
-            <div className="mt-2 text-sm text-yellow-700">
-              <p>
-                {isPremiumEnforced()
-                  ? 'Multilingual features are available for Pro and Institutional tier subscribers. Upgrade your subscription to access this feature.'
-                  : 'Multilingual features are currently disabled. Contact support for access.'
-                }
-              </p>
-            </div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-6"></div>
+          <div className="space-y-3">
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -249,225 +135,180 @@ export default function TranslationManager({ userSubscriptionTier }: Translation
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Multilingual Translation</h2>
-          <p className="text-sm text-gray-600">
-            AI-powered translation for financial content in multiple languages
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            Translation Manager
+          </h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            Manage multilingual content and translations
           </p>
         </div>
         <button
-          onClick={() => setShowTranslateForm(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          onClick={() => setShowCreateForm(true)}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
         >
-          <GlobeAltIcon className="h-4 w-4 mr-2" />
-          Translate Text
+          <PlusIcon className="h-4 w-4" />
+          <span>New Translation</span>
         </button>
       </div>
 
-      {/* Quick Translation Samples */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Translation Samples</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sampleTexts.map((sample, index) => (
-            <div key={index} className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-2">{sample.label}</h4>
-              <p className="text-sm text-gray-600 mb-3 line-clamp-3">{sample.text}</p>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => quickTranslate(sample.text, 'en', 'fr')}
-                  className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded hover:bg-blue-200"
-                >
-                  🇫🇷 French
-                </button>
-                <button
-                  onClick={() => quickTranslate(sample.text, 'en', 'ar')}
-                  className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200"
-                >
-                  🇸🇦 Arabic
-                </button>
-                <button
-                  onClick={() => quickTranslate(sample.text, 'en', 'es')}
-                  className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded hover:bg-yellow-200"
-                >
-                  🇪🇸 Spanish
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Translation Form */}
-      {showTranslateForm && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Translate Text</h3>
+      {showCreateForm && (
+        <div className="mb-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+            Create New Translation
+          </h3>
 
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Source Language
-              </label>
-              <select
-                value={translationRequest.source_language}
-                onChange={(e) => setTranslationRequest({ ...translationRequest, source_language: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                {languages.map((language) => (
-                  <option key={language.code} value={language.code}>
-                    {language.flag} {language.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Target Language
-              </label>
-              <select
-                value={translationRequest.target_language}
-                onChange={(e) => setTranslationRequest({ ...translationRequest, target_language: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                {languages.map((language) => (
-                  <option key={language.code} value={language.code}>
-                    {language.flag} {language.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Content Type
-              </label>
-              <select
-                value={translationRequest.content_type}
-                onChange={(e) => setTranslationRequest({ ...translationRequest, content_type: e.target.value })}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              >
-                {contentTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Text to Translate
-              </label>
-              <div className="mt-1 relative">
-                <textarea
-                  value={translationRequest.text}
-                  onChange={(e) => setTranslationRequest({ ...translationRequest, text: e.target.value })}
-                  rows={6}
-                  className="block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Enter text to translate..."
-                />
-                {translationRequest.text && (
-                  <button
-                    onClick={() => detectLanguage(translationRequest.text)}
-                    className="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600"
-                    title="Detect language"
-                  >
-                    <LanguageIcon className="h-4 w-4" />
-                  </button>
-                )}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Source Language
+                </label>
+                <select
+                  value={newTranslation.source_language}
+                  onChange={(e) => setNewTranslation(prev => ({ ...prev, source_language: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  {availableLanguages.map(lang => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <p className="mt-1 text-xs text-gray-500">
-                {translationRequest.text.length} characters
-              </p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Target Language
+                </label>
+                <select
+                  value={newTranslation.target_language}
+                  onChange={(e) => setNewTranslation(prev => ({ ...prev, target_language: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  {availableLanguages.map(lang => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="flex justify-end space-x-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Content to Translate
+              </label>
+              <textarea
+                value={newTranslation.content}
+                onChange={(e) => setNewTranslation(prev => ({ ...prev, content: e.target.value }))}
+                placeholder="Enter the text you want to translate..."
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            <div className="flex space-x-3">
               <button
-                onClick={() => setShowTranslateForm(false)}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                onClick={createTranslation}
+                disabled={!newTranslation.content.trim()}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50"
               >
-                Cancel
+                Create Translation
               </button>
               <button
-                onClick={translateText}
-                disabled={loading || !translationRequest.text}
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                onClick={() => {
+                  setShowCreateForm(false)
+                  setNewTranslation({ source_language: 'en', target_language: 'fr', content: '' })
+                }}
+                className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
               >
-                {loading ? 'Translating...' : 'Translate'}
+                Cancel
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Translation History */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
-            Translation History
-          </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
-            Recent translations and their status
-          </p>
-        </div>
-        <ul className="divide-y divide-gray-200">
-          {translations.map((translation) => (
-            <li key={translation.id}>
-              <div className="px-4 py-4 sm:px-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-3">
-                      <GlobeAltIcon className="h-5 w-5 text-gray-400" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {getLanguageName(translation.source_language)} → {getLanguageName(translation.target_language)}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {translation.word_count} words • {formatDate(translation.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-600 line-clamp-2">
-                        {translation.source_text}
-                      </p>
-                      {translation.status === 'completed' && (
-                        <p className="text-sm text-gray-800 mt-1 line-clamp-2">
-                          {translation.translated_text}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className="ml-4 flex-shrink-0">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(translation.status)}`}>
-                      {translation.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Language Support Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-medium text-blue-900 mb-4">Supported Languages</h3>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {languages.map((language) => (
-            <div key={language.code} className="flex items-center space-x-2">
-              <span className="text-lg">{language.flag}</span>
-              <span className="text-sm font-medium text-blue-900">{language.name}</span>
+      {loading ? (
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="animate-pulse">
+              <div className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
             </div>
           ))}
         </div>
-        <p className="mt-4 text-sm text-blue-700">
-          AI-powered translation optimized for financial and business content.
-          Supports bidirectional translation between all supported languages.
-        </p>
-      </div>
+      ) : (
+        <div className="space-y-3">
+          {translations.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <LanguageIcon className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p>No translations created yet</p>
+              <p className="text-sm mt-1">Create your first translation to get started</p>
+            </div>
+          ) : (
+            translations.map(translation => (
+              <div key={translation.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h3 className="font-medium text-gray-900 dark:text-white">
+                        {getLanguageName(translation.source_language)} → {getLanguageName(translation.target_language)}
+                      </h3>
+                      <span className={`px-2 py-1 text-xs rounded-full ${translation.status === 'completed'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        : translation.status === 'failed'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                        }`}>
+                        {translation.status}
+                      </span>
+                    </div>
+
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {translation.content.substring(0, 100)}...
+                    </div>
+
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      Created: {formatDate(translation.created_at)}
+                      {translation.completed_at && ` • Completed: ${formatDate(translation.completed_at)}`}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    {translation.translated_content && (
+                      <button
+                        onClick={() => setShowTranslated(showTranslated === translation.id ? null : translation.id)}
+                        className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                      >
+                        {showTranslated === translation.id ? (
+                          <EyeSlashIcon className="h-4 w-4" />
+                        ) : (
+                          <EyeIcon className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteTranslation(translation.id)}
+                      className="text-red-600 hover:text-red-800 dark:text-red-400"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {showTranslated === translation.id && translation.translated_content && (
+                  <div className="mt-2 p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm">
+                    {translation.translated_content}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   )
 } 

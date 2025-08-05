@@ -28,6 +28,31 @@ interface DataQualityResponse {
 // Fetcher function for SWR
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
+// Client-side time component to prevent hydration errors
+function ClientTime() {
+    const [mounted, setMounted] = useState(false)
+    const [time, setTime] = useState<string>('')
+
+    useEffect(() => {
+        setMounted(true)
+        const updateTime = () => {
+            setTime(new Date().toLocaleTimeString())
+        }
+
+        updateTime()
+        const interval = setInterval(updateTime, 1000)
+
+        return () => clearInterval(interval)
+    }, [])
+
+    // Show a placeholder during SSR and initial render
+    if (!mounted) {
+        return <span>--:--:--</span>
+    }
+
+    return <span>{time}</span>
+}
+
 const DataQualityIndicator = () => {
     const { data, error, isLoading } = useSWR<DataQualityResponse>(
         '/api/market-data/unified?type=data-quality',
@@ -195,7 +220,7 @@ const DataQualityIndicator = () => {
 
             {/* Last Updated */}
             <div className="mt-4 text-xs text-gray-400 text-center">
-                Last updated: {new Date().toLocaleTimeString()}
+                Last updated: <ClientTime />
             </div>
         </div>
     )
