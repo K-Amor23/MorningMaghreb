@@ -5,6 +5,7 @@ import { fetchMarketData } from '@/lib/marketData'
 import { MarketQuote } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import { useClientOnly, safeRandom } from '@/lib/hydration'
 
 interface WatchlistItem {
   ticker: string
@@ -28,6 +29,7 @@ export default function Watchlist({ userId }: WatchlistProps) {
   const [watchlist, setWatchlist] = useState<WatchlistItem[]>([])
   const [loading, setLoading] = useState(true)
   const [removingTicker, setRemovingTicker] = useState<string | null>(null)
+  const mounted = useClientOnly()
 
   const fetchWatchlist = async () => {
     try {
@@ -125,19 +127,21 @@ export default function Watchlist({ userId }: WatchlistProps) {
 
   // Simulate real-time updates
   useEffect(() => {
+    if (!mounted) return
+
     const interval = setInterval(() => {
       // In a real app, you would fetch live data here
       // For now, we'll just simulate some price movements
       setWatchlist(prev => prev.map(item => ({
         ...item,
-        price: item.price + (Math.random() - 0.5) * 2,
-        change: item.change + (Math.random() - 0.5) * 0.5,
-        change_percent: ((item.change + (Math.random() - 0.5) * 0.5) / item.price) * 100
+        price: item.price + safeRandom(-1, 1),
+        change: item.change + safeRandom(-0.25, 0.25),
+        change_percent: ((item.change + safeRandom(-0.25, 0.25)) / item.price) * 100
       })))
     }, 5000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [mounted])
 
   if (loading) {
     return (

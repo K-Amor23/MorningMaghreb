@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useUser } from '@/lib/useUser'
 import { checkPremiumAccess } from '@/lib/featureFlags'
+import { safeRandom } from '@/lib/hydration'
 import { 
   CurrencyDollarIcon, 
   ChartBarIcon, 
@@ -162,9 +163,9 @@ export default function CurrencyConverter() {
       
       trends.push({
         date: date.toISOString().split('T')[0],
-        bam_rate: 10.25 + (Math.random() - 0.5) * 0.1,
-        best_rate: 10.15 + (Math.random() - 0.5) * 0.1,
-        avg_rate: 10.20 + (Math.random() - 0.5) * 0.05
+        bam_rate: 10.25 + safeRandom(-0.05, 0.05),
+        best_rate: 10.15 + safeRandom(-0.05, 0.05),
+        avg_rate: 10.20 + safeRandom(-0.025, 0.025)
       })
     }
     

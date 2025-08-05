@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
+import { useClientOnly, safeRandom } from '@/lib/hydration'
 
 interface TickerData {
   symbol: string
@@ -23,12 +24,7 @@ const mockTickerData: TickerData[] = [
 
 export default function TickerBar() {
   const [tickerData, setTickerData] = useState<TickerData[]>(mockTickerData)
-  const [mounted, setMounted] = useState(false)
-
-  // Ensure component is mounted before starting live updates
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useClientOnly()
 
   // Simulate live updates - only run on client side after mounting
   useEffect(() => {
@@ -37,9 +33,9 @@ export default function TickerBar() {
     const interval = setInterval(() => {
       setTickerData(prev => prev.map(item => ({
         ...item,
-        price: item.price + (Math.random() - 0.5) * 0.1,
-        change: item.change + (Math.random() - 0.5) * 0.05,
-        changePercent: ((item.change + (Math.random() - 0.5) * 0.05) / item.price) * 100
+        price: item.price + safeRandom(-0.05, 0.05),
+        change: item.change + safeRandom(-0.025, 0.025),
+        changePercent: ((item.change + safeRandom(-0.025, 0.025)) / item.price) * 100
       })))
     }, 5000)
 
