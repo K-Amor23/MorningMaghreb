@@ -12,10 +12,11 @@
     "analyze": "ANALYZE=true npm run build"
   },
   "dependencies": {
-    "@morningmaghreb/shared": "file:../../packages/shared",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.2",
+    "@morningmaghreb/shared": "file:../../packages/shared",
+    "@sendgrid/mail": "^8.1.5",
     "@supabase/supabase-js": "^2.38.0",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
