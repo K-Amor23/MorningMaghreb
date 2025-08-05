@@ -247,7 +247,7 @@ export default function CurrencyConverter() {
   return (
     <>
       <Head>
-        <title>Currency Converter & Remittance Advisor | Casablanca Insights</title>
+        <title>Currency Converter & Remittance Advisor | Morning Maghreb</title>
         <meta name="description" content="Compare USD to MAD exchange rates across remittance services and get AI-powered recommendations for the best time to transfer money." />
       </Head>
 

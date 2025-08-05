@@ -71,7 +71,7 @@ export default function News() {
   return (
     <>
       <Head>
-        <title>News - Casablanca Insight</title>
+        <title>News - Morning Maghreb</title>
         <meta 
           name="description" 
           content="Latest financial news, market updates, and AI-powered insights about the Moroccan economy and Casablanca Stock Exchange." 

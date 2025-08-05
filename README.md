@@ -1,4 +1,4 @@
-# Casablanca Insight
+# Morning Maghreb
 
 **A Morocco-focused market research & analytics webapp**
 

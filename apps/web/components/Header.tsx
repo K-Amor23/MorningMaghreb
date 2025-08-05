@@ -84,7 +84,7 @@ export default function Header() {
             <Link href="/" className="flex items-center space-x-2">
               <ChartBarIcon className="h-8 w-8 text-casablanca-blue" />
               <span className="text-xl font-bold text-casablanca-blue">
-                Casablanca Insight
+                Morning Maghreb
               </span>
             </Link>
           </div>

@@ -164,7 +164,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard - Casablanca Insight</title>
+        <title>Dashboard - Morning Maghreb</title>
         <meta name="description" content="Your financial dashboard" />
       </Head>
 
@@ -175,7 +175,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-center py-4">
               <div className="flex items-center space-x-4">
                 <h1 className="text-2xl font-bold text-casablanca-blue">
-                  Casablanca Insight
+                  Morning Maghreb
                 </h1>
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   <ClockIcon className="inline h-4 w-4 mr-1" />

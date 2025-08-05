@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Casablanca Insight - Morocco Market Research & Analytics</title>
+        <title>Morning Maghreb - Morocco Market Research & Analytics</title>
         <meta
           name="description"
           content="Real-time Morocco market data, CSE quotes, MASI/MADEX indices, top movers, macro indicators, and AI-powered insights with Morning Maghreb newsletter."

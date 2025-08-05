@@ -10,7 +10,7 @@ export default function Markets() {
   return (
     <>
       <Head>
-        <title>Markets - Casablanca Insight</title>
+        <title>Markets - Morning Maghreb</title>
         <meta 
           name="description" 
           content="Detailed market data, charts, and analysis for the Casablanca Stock Exchange (CSE), MASI and MADEX indices." 

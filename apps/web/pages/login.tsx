@@ -56,8 +56,8 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Sign In - Casablanca Insight</title>
-        <meta name="description" content="Sign in to your Casablanca Insight account" />
+        <title>Sign In - Morning Maghreb</title>
+        <meta name="description" content="Sign in to your Morning Maghreb account" />
       </Head>
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -86,7 +86,7 @@ export default function Login() {
                 <UserIcon className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold text-casablanca-blue">
-                Casablanca Insight
+                Morning Maghreb
               </span>
             </div>
           </div>

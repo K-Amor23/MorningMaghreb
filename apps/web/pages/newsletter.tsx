@@ -93,7 +93,7 @@ export default function NewsletterPage() {
   return (
     <>
       <Head>
-        <title>Morning Maghreb Newsletter - Casablanca Insight</title>
+        <title>Morning Maghreb Newsletter - Morning Maghreb</title>
         <meta 
           name="description" 
           content="Subscribe to Morning Maghreb - your daily source for Moroccan market insights, CSE analysis, and AI-powered financial intelligence." 

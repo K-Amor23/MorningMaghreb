@@ -98,7 +98,7 @@ function LoadingScreen() {
   return (
     <View style={styles.loadingContainer}>
       <Text style={styles.loadingIcon}>📈</Text>
-      <Text style={styles.loadingText}>Casablanca Insight</Text>
+      <Text style={styles.loadingText}>Morning Maghreb</Text>
       <Text style={styles.loadingSubtext}>Loading...</Text>
     </View>
   )

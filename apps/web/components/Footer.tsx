@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="flex items-center space-x-2 mb-2">
               <ChartBarIcon className="h-5 w-5 text-casablanca-blue" />
               <span className="text-lg font-bold text-casablanca-blue">
-                Casablanca Insights
+                Morning Maghreb
               </span>
             </div>
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-3">
@@ -88,7 +88,7 @@ export default function Footer() {
         <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row justify-between items-center">
             <p className="text-sm text-gray-400 dark:text-gray-500">
-              &copy; 2024 Casablanca Insights. All rights reserved.
+              &copy; 2024 Morning Maghreb. All rights reserved.
             </p>
             <div className="mt-2 sm:mt-0 flex space-x-4 text-xs text-gray-400 dark:text-gray-500">
               <Link href="/about" className="hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
