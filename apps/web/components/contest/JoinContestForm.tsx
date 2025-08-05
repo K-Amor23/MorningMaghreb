@@ -8,11 +8,12 @@ interface Contest {
     description: string
     start_date: string
     end_date: string
-    prize_pool: number
-    max_participants: number
-    current_participants: number
-    entry_fee: number
-    status: 'upcoming' | 'active' | 'ended'
+    status: string
+    prize_amount: number
+    min_positions: number
+    max_participants?: number
+    created_at: string
+    updated_at: string
 }
 
 interface JoinContestFormProps {
@@ -135,7 +136,7 @@ export default function JoinContestForm({ contest, onJoin }: JoinContestFormProp
                         <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Prize Pool</p>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                {formatCurrency(contest.prize_pool)}
+                                {formatCurrency(contest.prize_amount)}
                             </p>
                         </div>
                     </div>
@@ -145,16 +146,16 @@ export default function JoinContestForm({ contest, onJoin }: JoinContestFormProp
                         <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Participants</p>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                {contest.current_participants}/{contest.max_participants}
+                                {contest.max_participants || 'Unlimited'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {contest.entry_fee > 0 && (
+                {contest.min_positions > 0 && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
                         <p className="text-sm text-blue-700 dark:text-blue-300">
-                            Entry Fee: {formatCurrency(contest.entry_fee)}
+                            Min Positions: {contest.min_positions}
                         </p>
                     </div>
                 )}

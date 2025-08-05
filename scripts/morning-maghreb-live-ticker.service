@@ -1,0 +1,20 @@
+[Unit]
+Description=Morning Maghreb Live Ticker Orchestrator
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=karimamor
+WorkingDirectory=/Users/karimamor/Library/Mobile Documents/com~apple~CloudDocs/Data/ClonedGit/Casablanca-Insights
+ExecStart=/usr/bin/python3 /Users/karimamor/Library/Mobile Documents/com~apple~CloudDocs/Data/ClonedGit/Casablanca-Insights/scripts/live_ticker_orchestrator.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables
+Environment=PYTHONPATH=/Users/karimamor/Library/Mobile Documents/com~apple~CloudDocs/Data/ClonedGit/Casablanca-Insights
+
+[Install]
+WantedBy=multi-user.target 

@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useUser, useProAccess } from '@/lib/useUser'
 import { checkPremiumAccess, isPremiumEnforced } from '@/lib/featureFlags'
-import { 
-  KeyIcon, 
-  DocumentArrowDownIcon, 
+import {
+  KeyIcon,
+  DocumentArrowDownIcon,
   DocumentTextIcon,
   ShieldCheckIcon,
   ChartBarIcon,
@@ -91,7 +91,7 @@ export default function PremiumFeatures() {
               {isPremiumEnforced() ? 'Premium Required' : 'Feature Disabled'}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
-              {isPremiumEnforced() 
+              {isPremiumEnforced()
                 ? 'Upgrade to Premium to access advanced features including API keys, data exports, custom reports, webhooks, and multilingual support.'
                 : 'Advanced features are currently disabled. Contact support for access.'
               }
@@ -113,17 +113,17 @@ export default function PremiumFeatures() {
   const renderActiveComponent = () => {
     switch (activeTab) {
       case 'api-keys':
-        return <ApiKeyManager userSubscriptionTier={userSubscriptionTier} />
+        return <ApiKeyManager />
       case 'exports':
-        return <DataExporter userSubscriptionTier={userSubscriptionTier} />
+        return <DataExporter />
       case 'reports':
-        return <ReportBuilder userSubscriptionTier={userSubscriptionTier} />
+        return <ReportBuilder />
       case 'webhooks':
-        return <WebhookManager userSubscriptionTier={userSubscriptionTier} />
+        return <WebhookManager />
       case 'translations':
-        return <TranslationManager userSubscriptionTier={userSubscriptionTier} />
+        return <TranslationManager />
       default:
-        return <ApiKeyManager userSubscriptionTier={userSubscriptionTier} />
+        return <ApiKeyManager />
     }
   }
 
@@ -280,21 +280,20 @@ export default function PremiumFeatures() {
               <nav className="-mb-px flex space-x-8 overflow-x-auto">
                 {tabs.map((tab) => {
                   const Icon = tab.icon
-                  const hasAccess = userSubscriptionTier === tab.tier || 
+                  const hasAccess = userSubscriptionTier === tab.tier ||
                     (tab.tier === 'pro' && userSubscriptionTier === 'admin')
-                  
+
                   return (
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
                       disabled={!hasAccess}
-                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${
-                        activeTab === tab.id
+                      className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 transition-colors ${activeTab === tab.id
                           ? 'border-casablanca-blue text-casablanca-blue'
                           : hasAccess
                             ? 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
                             : 'border-transparent text-gray-300 cursor-not-allowed dark:text-gray-600'
-                      }`}
+                        }`}
                     >
                       <Icon className="w-5 h-5" />
                       <span>{tab.name}</span>
@@ -332,7 +331,7 @@ export default function PremiumFeatures() {
                   <li>• Basic portfolio tracking</li>
                 </ul>
               </div>
-              
+
               <div className="text-center p-4 border border-blue-200 dark:border-blue-800 rounded-lg bg-blue-50 dark:bg-blue-900/10">
                 <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">Pro</h4>
                 <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
@@ -346,7 +345,7 @@ export default function PremiumFeatures() {
                   <li>• Advanced analytics</li>
                 </ul>
               </div>
-              
+
               <div className="text-center p-4 border border-purple-200 dark:border-purple-800 rounded-lg bg-purple-50 dark:bg-purple-900/10">
                 <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Institutional</h4>
                 <p className="text-sm text-purple-700 dark:text-purple-300 mb-3">
@@ -370,4 +369,3 @@ export default function PremiumFeatures() {
   )
 }
 
- 

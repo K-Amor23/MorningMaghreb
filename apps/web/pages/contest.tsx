@@ -410,11 +410,10 @@ export default function ContestPage() {
                 )}
 
                 {/* Join Contest Modal */}
-                {showJoinForm && (
+                {showJoinForm && activeContest && (
                     <JoinContestForm
+                        contest={activeContest}
                         onJoin={handleJoinContest}
-                        onCancel={() => setShowJoinForm(false)}
-                        loading={refreshing}
                     />
                 )}
             </main>

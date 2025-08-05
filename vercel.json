@@ -1,25 +1,19 @@
 {
   "version": 2,
-  "name": "casablanca-insight",
   "builds": [
     {
-      "src": "package.json",
+      "src": "apps/web/package.json",
       "use": "@vercel/next"
     }
   ],
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key",
-    "NEXT_PUBLIC_API_URL": "@api_url",
-    "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
-    "OPENAI_API_KEY": "@openai_api_key",
-    "SENDGRID_API_KEY": "@sendgrid_api_key"
-  },
-  "functions": {
-    "pages/api/**/*.ts": {
-      "maxDuration": 30
-    }
+    "NEXT_PUBLIC_SUPABASE_URL": "https://gzsgehciddnrssuqxtsj.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0",
+    "NEXT_PUBLIC_API_URL": "https://morningmaghreb-api.onrender.com",
+    "SENDGRID_FROM_EMAIL": "admin@morningmaghreb.com",
+    "NEXT_PUBLIC_ENV": "production",
+    "NEXT_PUBLIC_PREMIUM_ENFORCEMENT": "true"
   },
   "headers": [
     {
@@ -43,7 +37,7 @@
   "rewrites": [
     {
       "source": "/api/backend/(.*)",
-      "destination": "https://casablanca-insight-api.onrender.com/api/$1"
+      "destination": "https://morningmaghreb-api.onrender.com/api/$1"
     }
   ]
-} 
+}

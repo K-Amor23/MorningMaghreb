@@ -1,0 +1,59 @@
+{
+  "companies": [
+    {
+      "ticker": "ATW",
+      "name": "Attijariwafa Bank",
+      "sector": "Banking",
+      "price": 410.1,
+      "change_1d_percent": 0.31,
+      "change_ytd_percent": 5.25,
+      "market_cap_billion": 24.56,
+      "size_category": "Large Cap",
+      "sector_group": "Financial Services",
+      "updated_at": "2025-08-05T16:00:49.863514"
+    },
+    {
+      "ticker": "IAM",
+      "name": "Maroc Telecom",
+      "sector": "Telecommunications",
+      "price": 156.3,
+      "change_1d_percent": -1.33,
+      "change_ytd_percent": -2.15,
+      "market_cap_billion": 15.68,
+      "size_category": "Large Cap",
+      "sector_group": "Telecommunications",
+      "updated_at": "2025-08-05T16:00:49.863518"
+    },
+    {
+      "ticker": "BCP",
+      "name": "Banque Centrale Populaire",
+      "sector": "Banking",
+      "price": 245.8,
+      "change_1d_percent": 0.85,
+      "change_ytd_percent": 3.42,
+      "market_cap_billion": 18.92,
+      "size_category": "Large Cap",
+      "sector_group": "Financial Services",
+      "updated_at": "2025-08-05T16:00:49.863519"
+    },
+    {
+      "ticker": "BMCE",
+      "name": "BMCE Bank",
+      "sector": "Banking",
+      "price": 189.5,
+      "change_1d_percent": -0.52,
+      "change_ytd_percent": 1.87,
+      "market_cap_billion": 12.34,
+      "size_category": "Large Cap",
+      "sector_group": "Financial Services",
+      "updated_at": "2025-08-05T16:00:49.863520"
+    }
+  ],
+  "market_summary": {
+    "total_companies": 4,
+    "total_market_cap": 71.5,
+    "average_change_1d": -0.17,
+    "average_change_ytd": 2.1,
+    "updated_at": "2025-08-05T16:00:49.863522"
+  }
+}

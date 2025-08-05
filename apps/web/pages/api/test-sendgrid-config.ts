@@ -11,7 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const apiKey = process.env.SENDGRID_API_KEY;
     const fromEmail = process.env.SENDGRID_FROM_EMAIL;
 
-    const config = {
+    const config: any = {
       apiKeyExists: !!apiKey,
       apiKeyLength: apiKey ? apiKey.length : 0,
       fromEmailExists: !!fromEmail,
@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Test SendGrid connection
     if (apiKey) {
       sgMail.setApiKey(apiKey);
-      
+
       try {
         // Test with a simple email to yourself
         const testMsg = {
@@ -78,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   } catch (error) {
     console.error('SendGrid config test error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Internal server error',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
