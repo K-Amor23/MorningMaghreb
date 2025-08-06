@@ -631,8 +631,10 @@ CREATE INDEX IF NOT EXISTS idx_sentiment_votes_sentiment ON sentiment_votes(sent
 CREATE INDEX IF NOT EXISTS idx_sentiment_aggregates_ticker ON sentiment_aggregates(ticker);
 
 -- Unique constraint for sentiment votes (one vote per user per ticker per day)
+-- Using a computed column instead of function in index
+ALTER TABLE sentiment_votes ADD COLUMN IF NOT EXISTS vote_date DATE GENERATED ALWAYS AS (created_at::date) STORED;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sentiment_votes_unique_daily 
-ON sentiment_votes(user_id, ticker, DATE(created_at));
+ON sentiment_votes(user_id, ticker, vote_date);
 
 -- Newsletter indexes
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email ON newsletter_subscribers(email);
