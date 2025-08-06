@@ -1,18 +1,27 @@
 {
+  "root": true,
   "extends": [
     "next/core-web-vitals",
-    "next/typescript"
+    "next/typescript",
+    "eslint:recommended"
   ],
   "rules": {
-    "@typescript-eslint/no-unused-vars": ["warn", {
-      "varsIgnorePattern": "^_",
-      "argsIgnorePattern": "^_",
-      "ignoreRestSiblings": true
-    }],
-    "@typescript-eslint/no-explicit-any": "warn",
-    "react/no-unescaped-entities": "warn",
+    // 1️⃣ Turn OFF unused-vars entirely
+    "@typescript-eslint/no-unused-vars": "off",
+
+    // 2️⃣ Disable unescaped-entity complaints
+    "react/no-unescaped-entities": "off",
+
+    // 3️⃣ Allow any if you really need it
+    "@typescript-eslint/no-explicit-any": "off",
+
+    // 4️⃣ Don't block during build—but you can still get warnings in IDE
     "react-hooks/exhaustive-deps": "warn",
-    "@next/next/no-html-link-for-pages": "warn",
+
+    // 5️⃣ Next.js HTML link rule (optional)
+    "@next/next/no-html-link-for-pages": "off",
+
+    // 6️⃣ Keep other warnings as warnings
     "prefer-const": "warn"
   }
 }

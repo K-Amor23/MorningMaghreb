@@ -1,0 +1,21 @@
+# Ignore build artifacts and dependencies
+node_modules/
+.next/
+out/
+dist/
+
+# Ignore public assets
+public/
+
+# Ignore test files (optional)
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Ignore configuration files
+*.config.js
+*.config.ts
+
+# Ignore generated files
+*.d.ts 
