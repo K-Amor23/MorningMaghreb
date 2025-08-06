@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -20,6 +20,20 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Handle browser back button
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Allow the back button to work normally
+      return undefined
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -29,7 +43,14 @@ export default function Login() {
       const authData = await authService.login({ email, password })
 
       toast.success('Successfully signed in!')
-      router.push('/dashboard')
+      
+      // Check if there's a redirect parameter
+      const { redirect } = router.query
+      if (redirect && typeof redirect === 'string') {
+        router.push(redirect)
+      } else {
+        router.push('/dashboard')
+      }
     } catch (error: any) {
       console.error('Login error:', error)
       let errorMessage = 'Failed to sign in. Please try again.'
@@ -66,13 +87,38 @@ export default function Login() {
           <button
             type="button"
             onClick={() => {
-              if (window.history.length > 1) {
-                router.back()
+              // Get the redirect parameter
+              const { redirect } = router.query
+              
+              // If there's a redirect parameter, navigate to it
+              if (redirect && typeof redirect === 'string') {
+                router.push(redirect)
               } else {
-                router.push('/')
+                // Try to go back, but with a fallback
+                try {
+                  if (window.history.length > 1) {
+                    router.back()
+                  } else {
+                    router.push('/')
+                  }
+                } catch (error) {
+                  // If back navigation fails, go to home
+                  router.push('/')
+                }
               }
             }}
-            className="mb-4 text-casablanca-blue hover:underline flex items-center"
+            onKeyDown={(e) => {
+              // Also handle keyboard navigation
+              if (e.key === 'Escape') {
+                const { redirect } = router.query
+                if (redirect && typeof redirect === 'string') {
+                  router.push(redirect)
+                } else {
+                  router.push('/')
+                }
+              }
+            }}
+            className="mb-4 text-casablanca-blue hover:underline flex items-center focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:ring-offset-2 rounded"
           >
             <svg className="h-5 w-5 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
