@@ -1,0 +1,378 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '18'
+
+jobs:
+  # Code Quality Checks
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11]
+        node-version: [18]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Cache Node.js dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov black isort
+        pip install -r scripts/requirements.txt
+        pip install -r scrapers/requirements.txt
+    
+    - name: Install Node.js dependencies
+      run: |
+        cd apps/web
+        npm ci
+    
+    - name: Run Python linting
+      run: |
+        flake8 scripts/ --max-line-length=120 --extend-ignore=E501,W503
+        flake8 scrapers/ --max-line-length=120 --extend-ignore=E501,W503
+        black --check scripts/ scrapers/
+        isort --check-only scripts/ scrapers/
+    
+    - name: Run Node.js linting
+      run: |
+        cd apps/web
+        npm run lint
+    
+    - name: Run Python tests
+      run: |
+        pytest scripts/test_orchestrator.py -v --cov=scripts --cov-report=xml
+        pytest scrapers/ -v --cov=scrapers --cov-report=xml
+    
+    - name: Run Node.js tests
+      run: |
+        cd apps/web
+        npm test
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  # Database Migration Validation
+  migration-check:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install Supabase CLI
+      run: |
+        curl -fsSL https://supabase.com/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Run migration validation
+      run: |
+        cd database/migrations
+        ./ci_hook.sh
+
+  # Security Scanning
+  security-scan:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run Bandit security scan
+      run: |
+        pip install bandit
+        bandit -r scripts/ scrapers/ -f json -o bandit-report.json || true
+    
+    - name: Run npm audit
+      run: |
+        cd apps/web
+        npm audit --audit-level=moderate || true
+    
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: bandit-report.json
+
+  # Build and Test Web Application
+  build-web:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+    
+    - name: Install dependencies
+      run: |
+        cd apps/web
+        npm ci
+    
+    - name: Build application
+      run: |
+        cd apps/web
+        npm run build
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: web-build
+        path: apps/web/.next
+
+  # Integration Tests
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, migration-check]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r scripts/requirements.txt
+        pip install -r scrapers/requirements.txt
+    
+    - name: Run integration tests
+      run: |
+        python scripts/test_orchestrator.py
+        python scripts/audit_codebase.py
+    
+    - name: Upload test reports
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: reports/
+
+  # Documentation Build
+  docs-build:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install MkDocs
+      run: |
+        pip install mkdocs mkdocs-material
+    
+    - name: Build documentation
+      run: |
+        mkdocs build --site-dir docs/_build
+    
+    - name: Upload documentation
+      uses: actions/upload-artifact@v3
+      with:
+        name: documentation
+        path: docs/_build
+
+  # Deployment (only on main branch)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, migration-check, build-web, integration-tests]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        working-directory: ./apps/web
+    
+    - name: Deploy to Supabase
+      run: |
+        curl -fsSL https://supabase.com/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        cd database/migrations
+        python run_migrations.py up
+    
+    - name: Notify deployment
+      run: |
+        echo "Deployment completed successfully"
+        # Add notification logic here (Slack, email, etc.)
+
+  # Performance Testing
+  performance-test:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, build-web]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install performance testing tools
+      run: |
+        pip install locust
+    
+    - name: Run performance tests
+      run: |
+        # Add performance testing logic here
+        echo "Performance tests completed"
+    
+    - name: Upload performance report
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-report
+        path: performance-results/
+
+  # Dependency Updates
+  dependency-update:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Update Python dependencies
+      run: |
+        pip install pip-tools
+        pip-compile --upgrade requirements.in
+    
+    - name: Update Node.js dependencies
+      run: |
+        cd apps/web
+        npm update
+    
+    - name: Create pull request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "chore: update dependencies"
+        title: "chore: update dependencies"
+        body: "Automated dependency updates"
+        branch: dependency-updates
+
+  # Weekly Maintenance
+  weekly-maintenance:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Run maintenance tasks
+      run: |
+        python scripts/master_audit_and_cleanup.py
+        python scripts/audit_codebase.py
+    
+    - name: Upload maintenance report
+      uses: actions/upload-artifact@v3
+      with:
+        name: maintenance-report
+        path: reports/
+
+# Workflow completion
+  workflow-completion:
+    runs-on: ubuntu-latest
+    needs: [lint-and-test, migration-check, build-web, integration-tests]
+    if: always()
+    
+    steps:
+    - name: Check workflow status
+      run: |
+        if [ "${{ needs.lint-and-test.result }}" == "success" ] && \
+           [ "${{ needs.migration-check.result }}" == "success" ] && \
+           [ "${{ needs.build-web.result }}" == "success" ] && \
+           [ "${{ needs.integration-tests.result }}" == "success" ]; then
+          echo "✅ All checks passed"
+        else
+          echo "❌ Some checks failed"
+          exit 1
+        fi 

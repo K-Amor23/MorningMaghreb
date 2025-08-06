@@ -50,6 +50,11 @@ export default async function handler(
         }
 
         const token = authHeader.split(' ')[1]
+
+        if (!supabase) {
+            return res.status(500).json({ error: 'Database not configured' })
+        }
+
         const { data: { user }, error: authError } = await supabase.auth.getUser(token)
 
         if (authError || !user) {

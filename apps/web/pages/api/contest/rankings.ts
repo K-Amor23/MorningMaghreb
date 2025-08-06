@@ -31,11 +31,19 @@ export default async function handler(
 
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.split(' ')[1]
-            const { data: { user } } = await supabase.auth.getUser(token)
-            currentUserId = user?.id
+            if (!supabase) {
+                console.error('Supabase is not configured')
+            } else {
+                const { data: { user } } = await supabase.auth.getUser(token)
+                currentUserId = user?.id
+            }
         }
 
         // Fetch contest rankings from database
+        if (!supabase) {
+            return res.status(500).json({ error: 'Database not configured' })
+        }
+
         const { data: entries, error } = await supabase
             .from('contest_entries')
             .select(`
@@ -82,28 +90,32 @@ export default async function handler(
             const userRanking = rankings.find(r => r.user_id === currentUserId)
             if (!userRanking) {
                 // Get user's rank from database
-                const { data: userEntry } = await supabase
-                    .from('contest_entries')
-                    .select('*')
-                    .eq('contest_id', contest_id)
-                    .eq('user_id', currentUserId)
-                    .eq('status', 'active')
-                    .single()
+                if (!supabase) {
+                    console.error('Supabase is not configured')
+                } else {
+                    const { data: userEntry } = await supabase
+                        .from('contest_entries')
+                        .select('*')
+                        .eq('contest_id', contest_id)
+                        .eq('user_id', currentUserId)
+                        .eq('status', 'active')
+                        .single()
 
-                if (userEntry) {
-                    const userRank = {
-                        contest_id: userEntry.contest_id,
-                        user_id: userEntry.user_id,
-                        username: userEntry.username || `Trader_${userEntry.user_id.slice(-8)}`,
-                        rank: userEntry.rank || 0,
-                        total_return_percent: userEntry.total_return_percent || 0,
-                        total_return: userEntry.total_return || 0,
-                        position_count: userEntry.position_count || 0,
-                        last_updated: userEntry.updated_at,
-                        is_winner: false,
-                        prize_amount: 0
+                    if (userEntry) {
+                        const userRank = {
+                            contest_id: userEntry.contest_id,
+                            user_id: userEntry.user_id,
+                            username: userEntry.username || `Trader_${userEntry.user_id.slice(-8)}`,
+                            rank: userEntry.rank || 0,
+                            total_return_percent: userEntry.total_return_percent || 0,
+                            total_return: userEntry.total_return || 0,
+                            position_count: userEntry.position_count || 0,
+                            last_updated: userEntry.updated_at,
+                            is_winner: false,
+                            prize_amount: 0
+                        }
+                        rankings.push(userRank)
                     }
-                    rankings.push(userRank)
                 }
             }
         }

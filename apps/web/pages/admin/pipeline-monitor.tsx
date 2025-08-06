@@ -14,6 +14,11 @@ export default function PipelineMonitor() {
 
     const fetchPipelineStatus = async () => {
         try {
+            if (!supabase) {
+                console.error('Supabase is not configured')
+                return
+            }
+
             // Get latest pipeline notification
             const { data: notifications } = await supabase
                 .from('pipeline_notifications')

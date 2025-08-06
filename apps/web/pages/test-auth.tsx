@@ -42,7 +42,7 @@ export default function TestAuth() {
       // Test 3: Check current session
       if (supabase) {
         const { data: { session }, error } = await supabase.auth.getSession()
-        
+
         if (error) {
           results.push(`❌ Error getting session: ${error.message}`)
         } else if (session) {
@@ -60,7 +60,7 @@ export default function TestAuth() {
             .from('profiles')
             .select('count')
             .limit(1)
-          
+
           if (error) {
             results.push(`❌ Database connection error: ${error.message}`)
           } else {
@@ -84,6 +84,11 @@ export default function TestAuth() {
     const testPassword = 'testpassword123'
 
     try {
+      if (!supabase) {
+        toast.error('Supabase is not configured')
+        return
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email: testEmail,
         password: testPassword,
@@ -104,6 +109,11 @@ export default function TestAuth() {
     const testPassword = 'testpassword123'
 
     try {
+      if (!supabase) {
+        toast.error('Supabase is not configured')
+        return
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: testEmail,
         password: testPassword,
@@ -122,6 +132,11 @@ export default function TestAuth() {
 
   const signOut = async () => {
     try {
+      if (!supabase) {
+        toast.error('Supabase is not configured')
+        return
+      }
+
       const { error } = await supabase.auth.signOut()
       if (error) {
         toast.error(`Signout failed: ${error.message}`)
@@ -146,7 +161,7 @@ export default function TestAuth() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Configuration Test Results
           </h2>
-          
+
           {loading ? (
             <div className="animate-pulse">
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
@@ -175,7 +190,7 @@ export default function TestAuth() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
             Authentication Tests
           </h2>
-          
+
           <div className="space-y-4">
             <button
               onClick={testSignUp}
@@ -183,14 +198,14 @@ export default function TestAuth() {
             >
               Test Sign Up
             </button>
-            
+
             <button
               onClick={testSignIn}
               className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-4"
             >
               Test Sign In
             </button>
-            
+
             {session && (
               <button
                 onClick={signOut}

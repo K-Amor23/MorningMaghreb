@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-08-06T15:58:11.915039",
+  "tests": [
+    {
+      "name": "smoke_test",
+      "status": "failed",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "test_financialreportsscraper",
+      "status": "failed",
+      "scraper": "FinancialReportsScraper",
+      "category": "financial_reports",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "test_casablancaboursescraper",
+      "status": "failed",
+      "scraper": "CasablancaBourseScraper",
+      "category": "market_data",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "test_newssentimentscraper",
+      "status": "failed",
+      "scraper": "NewsSentimentScraper",
+      "category": "news_sentiment",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "network_failure_test",
+      "status": "skipped",
+      "reason": "Requires network mocking setup"
+    },
+    {
+      "name": "invalid_data_test",
+      "status": "failed",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "data_validation_tests",
+      "status": "failed",
+      "error": "No module named 'scrapers'"
+    },
+    {
+      "name": "utility_tests",
+      "status": "failed",
+      "error": "No module named 'scrapers'"
+    }
+  ],
+  "summary": {
+    "total_tests": 8,
+    "successful": 0,
+    "failed": 7,
+    "skipped": 1,
+    "success_rate": 0.0
+  }
+}

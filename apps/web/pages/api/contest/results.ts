@@ -34,22 +34,30 @@ export default async function handler(
 
         if (authHeader && authHeader.startsWith('Bearer ')) {
             const token = authHeader.split(' ')[1]
-            const { data: { user } } = await supabase.auth.getUser(token)
-            currentUserId = user?.id
+            if (!supabase) {
+                console.error('Supabase is not configured')
+            } else {
+                const { data: { user } } = await supabase.auth.getUser(token)
+                currentUserId = user?.id
 
-            // Check if user is admin
-            if (currentUserId) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('tier')
-                    .eq('id', currentUserId)
-                    .single()
+                // Check if user is admin
+                if (currentUserId) {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('tier')
+                        .eq('id', currentUserId)
+                        .single()
 
-                isAdmin = profile?.tier === 'admin'
+                    isAdmin = profile?.tier === 'admin'
+                }
             }
         }
 
         // Fetch contest results
+        if (!supabase) {
+            return res.status(500).json({ error: 'Database not configured' })
+        }
+
         const { data: entries, error } = await supabase
             .from('contest_entries')
             .select(`
@@ -79,12 +87,18 @@ export default async function handler(
         const prizeAmount = 100 // $100 monthly prize
 
         // Check if prize has been distributed
-        const { data: prizeDistribution } = await supabase
-            .from('contest_prizes')
-            .select('*')
-            .eq('contest_id', contest_id)
-            .eq('winner_id', winner.user_id)
-            .single()
+        let prizeDistribution = null
+        if (!supabase) {
+            console.error('Supabase is not configured')
+        } else {
+            const { data } = await supabase
+                .from('contest_prizes')
+                .select('*')
+                .eq('contest_id', contest_id)
+                .eq('winner_id', winner.user_id)
+                .single()
+            prizeDistribution = data
+        }
 
         const result: ContestResult = {
             contest_id,
@@ -119,6 +133,11 @@ export default async function handler(
 
 async function distributePrize(contestId: string, winnerId: string, prizeAmount: number) {
     try {
+        if (!supabase) {
+            console.error('Supabase is not configured')
+            return
+        }
+
         // Record prize distribution
         await supabase
             .from('contest_prizes')

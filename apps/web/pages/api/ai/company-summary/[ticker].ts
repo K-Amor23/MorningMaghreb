@@ -109,25 +109,29 @@ export default async function handler(
 
         // Check cache first (only if ai_summaries table exists)
         try {
-            const cacheKey = `ai_summary:${ticker}:${language}`
-            const { data: cachedSummary } = await supabase
-                .from('ai_summaries')
-                .select('*')
-                .eq('ticker', ticker)
-                .eq('language', language)
-                .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // 24 hour cache
-                .single()
+            if (!supabase) {
+                console.log('Supabase is not configured, proceeding without cache')
+            } else {
+                const cacheKey = `ai_summary:${ticker}:${language}`
+                const { data: cachedSummary } = await supabase
+                    .from('ai_summaries')
+                    .select('*')
+                    .eq('ticker', ticker)
+                    .eq('language', language)
+                    .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()) // 24 hour cache
+                    .single()
 
-            if (cachedSummary) {
-                return res.status(200).json({
-                    ticker: ticker,
-                    summary: cachedSummary.summary,
-                    language: language,
-                    generated_at: cachedSummary.created_at,
-                    company_data: cachedSummary.company_data,
-                    tokens_used: cachedSummary.tokens_used || 0,
-                    cached: true
-                })
+                if (cachedSummary) {
+                    return res.status(200).json({
+                        ticker: ticker,
+                        summary: cachedSummary.summary,
+                        language: language,
+                        generated_at: cachedSummary.created_at,
+                        company_data: cachedSummary.company_data,
+                        tokens_used: cachedSummary.tokens_used || 0,
+                        cached: true
+                    })
+                }
             }
         } catch (error) {
             console.log('Cache table not available, proceeding without cache')
@@ -136,14 +140,18 @@ export default async function handler(
         // Fetch real company data from database
         let companyData = null
         try {
-            const { data, error } = await supabase
-                .from('companies')
-                .select('*')
-                .eq('ticker', ticker)
-                .single()
+            if (!supabase) {
+                console.log('Supabase is not configured, using mock data')
+            } else {
+                const { data, error } = await supabase
+                    .from('companies')
+                    .select('*')
+                    .eq('ticker', ticker)
+                    .single()
 
-            if (!error && data) {
-                companyData = data
+                if (!error && data) {
+                    companyData = data
+                }
             }
         } catch (error) {
             console.log('Companies table not available, using mock data')
@@ -210,16 +218,20 @@ export default async function handler(
 
         // Cache the result (only if table exists)
         try {
-            await supabase
-                .from('ai_summaries')
-                .insert({
-                    ticker: ticker,
-                    language: language as string,
-                    summary: summary,
-                    company_data: enrichedCompanyData,
-                    tokens_used: tokensUsed,
-                    created_at: new Date().toISOString()
-                })
+            if (!supabase) {
+                console.log('Supabase is not configured, skipping cache')
+            } else {
+                await supabase
+                    .from('ai_summaries')
+                    .insert({
+                        ticker: ticker,
+                        language: language as string,
+                        summary: summary,
+                        company_data: enrichedCompanyData,
+                        tokens_used: tokensUsed,
+                        created_at: new Date().toISOString()
+                    })
+            }
         } catch (error) {
             console.log('Could not cache result, ai_summaries table not available')
         }
