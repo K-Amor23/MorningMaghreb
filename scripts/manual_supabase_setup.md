@@ -8,7 +8,7 @@ This guide will help you set up your new Supabase database with the complete sch
 
 1. Go to [https://supabase.com](https://supabase.com)
 2. Sign in to your account
-3. Select your project: `kszekypwdjqaycpuayda`
+3. Select your project: `supabase-sky-garden`
 4. Navigate to the **SQL Editor**
 
 ### 2. Apply the Complete Schema
@@ -82,7 +82,7 @@ Make sure these are set in your Vercel deployment:
 
 ```json
 {
-  "NEXT_PUBLIC_SUPABASE_URL": "https://kszekypwdjqaycpuayda.supabase.co",
+  "NEXT_PUBLIC_SUPABASE_URL": "https://supabase-sky-garden.supabase.co",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY": "your_anon_key",
   "SUPABASE_SERVICE_ROLE_KEY": "your_service_role_key"
 }

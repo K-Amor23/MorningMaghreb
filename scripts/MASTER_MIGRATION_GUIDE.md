@@ -26,7 +26,7 @@ The `database/MASTER_SCHEMA_MIGRATION.sql` file contains **everything** you need
 ### **Step 1: Access Your Supabase Dashboard**
 1. Go to [https://supabase.com](https://supabase.com)
 2. Sign in to your account
-3. Select your project: `kszekypwdjqaycpuayda`
+3. Select your project: `supabase-sky-garden`
 4. Navigate to **SQL Editor**
 
 ### **Step 2: Run the Master Migration**
@@ -224,7 +224,7 @@ WHERE pronamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public');
 ### **3. Configure Environment Variables**
 Ensure your app has the correct Supabase credentials:
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://kszekypwdjqaycpuayda.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://supabase-sky-garden.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```

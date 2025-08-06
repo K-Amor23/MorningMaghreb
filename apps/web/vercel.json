@@ -1,9 +1,9 @@
 {
   "version": 2,
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://kszekypwdjqaycpuayda.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzemVreXB3ZGpxYXljcHVheWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxNjgxNTUsImV4cCI6MjA2Nzc0NDE1NX0.lEygnmyvx_7bZreLOeHOxLC8mh8GqlfTywsJ06tdZkU",
-    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzemVreXB3ZGpxYXljcHVheWRhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MjE2ODE1NSwiZXhwIjoyMDY3NzQ0MTU1fQ.7iA4blj2cdFTQcBo4IVP1w71psgqdJAEc83ht_YVueY",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://supabase-sky-garden.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "YOUR_NEW_ANON_KEY_HERE",
+    "SUPABASE_SERVICE_ROLE_KEY": "YOUR_NEW_SERVICE_ROLE_KEY_HERE",
     "NEXT_PUBLIC_API_URL": "https://morningmaghreb-api.onrender.com",
     "SENDGRID_FROM_EMAIL": "admin@morningmaghreb.com",
     "NEXT_PUBLIC_ENV": "production",
