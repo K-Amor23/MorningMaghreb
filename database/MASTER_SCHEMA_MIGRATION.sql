@@ -631,8 +631,25 @@ CREATE INDEX IF NOT EXISTS idx_sentiment_votes_sentiment ON sentiment_votes(sent
 CREATE INDEX IF NOT EXISTS idx_sentiment_aggregates_ticker ON sentiment_aggregates(ticker);
 
 -- Unique constraint for sentiment votes (one vote per user per ticker per day)
--- Using a computed column instead of function in index
-ALTER TABLE sentiment_votes ADD COLUMN IF NOT EXISTS vote_date DATE GENERATED ALWAYS AS (created_at::date) STORED;
+-- Add vote_date column and create trigger to maintain it
+ALTER TABLE sentiment_votes ADD COLUMN IF NOT EXISTS vote_date DATE;
+
+-- Function to update vote_date
+CREATE OR REPLACE FUNCTION update_vote_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.vote_date = NEW.created_at::date;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+-- Trigger to automatically update vote_date
+CREATE TRIGGER update_sentiment_votes_vote_date
+    BEFORE INSERT OR UPDATE ON sentiment_votes
+    FOR EACH ROW
+    EXECUTE FUNCTION update_vote_date();
+
+-- Create unique index on the vote_date column
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sentiment_votes_unique_daily 
 ON sentiment_votes(user_id, ticker, vote_date);
 
