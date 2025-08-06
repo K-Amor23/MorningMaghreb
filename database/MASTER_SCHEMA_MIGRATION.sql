@@ -678,7 +678,17 @@ BEGIN
     END IF;
 END $$;
 
-CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_type ON newsletter_campaigns(status);
+-- Add status column check for newsletter_campaigns
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'newsletter_campaigns' AND column_name = 'status'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_type ON newsletter_campaigns(status);
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_sent_at ON newsletter_campaigns(sent_at);
 
 -- Contest indexes
