@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured, isSupabaseAvailable } from '@/lib/supabase'
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,10 +10,24 @@ export default async function handler(
   }
 
   try {
-    // Check supabase config
-    if (!isSupabaseConfigured() || !supabase) {
-      return res.status(500).json({ error: 'Database connection not configured' })
+    // Check if Supabase is properly configured
+    if (!isSupabaseConfigured()) {
+      console.error('Supabase not configured - missing environment variables')
+      return res.status(500).json({ 
+        error: 'Database not configured',
+        message: 'Supabase credentials are missing. Please check your environment variables.',
+        details: 'NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set'
+      })
     }
+
+    if (!isSupabaseAvailable()) {
+      console.error('Supabase client not available')
+      return res.status(500).json({ 
+        error: 'Database connection failed',
+        message: 'Unable to connect to the database. Please check your Supabase configuration.'
+      })
+    }
+
     const { email, name, preferences } = req.body
 
     // Validate input
@@ -22,18 +36,26 @@ export default async function handler(
     }
 
     // Check if email already exists
-    const { data: existing, error: checkError } = await supabase
+    const { data: existing, error: checkError } = await supabase!
       .from('newsletter_subscribers')
       .select('email')
       .eq('email', email)
       .single()
+
+    if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found"
+      console.error('Error checking existing email:', checkError)
+      return res.status(500).json({ 
+        error: 'Database error',
+        message: 'Failed to check existing subscription'
+      })
+    }
 
     if (existing) {
       return res.status(409).json({ error: 'Email already subscribed' })
     }
 
     // Insert new subscriber
-    const { data, error } = await supabase
+    const { data, error } = await supabase!
       .from('newsletter_subscribers')
       .insert([
         {
@@ -52,7 +74,21 @@ export default async function handler(
 
     if (error) {
       console.error('Newsletter signup error:', error)
-      return res.status(500).json({ error: 'Failed to subscribe' })
+      
+      // Check if it's a table not found error
+      if (error.code === '42P01') {
+        return res.status(500).json({ 
+          error: 'Database table missing',
+          message: 'Newsletter subscribers table does not exist. Please run the database setup.',
+          details: 'Run: python scripts/deploy_master_pipeline_tables.py'
+        })
+      }
+      
+      return res.status(500).json({ 
+        error: 'Failed to subscribe',
+        message: 'Database error occurred while processing your subscription.',
+        details: error.message
+      })
     }
 
     // TODO: Send welcome email via SendGrid
@@ -67,7 +103,8 @@ export default async function handler(
     console.error('Newsletter signup error:', error)
     res.status(500).json({ 
       error: 'Internal server error',
-      message: 'Failed to process newsletter signup'
+      message: 'Failed to process newsletter signup',
+      details: error instanceof Error ? error.message : 'Unknown error'
     })
   }
 }

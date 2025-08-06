@@ -73,11 +73,11 @@ export default function Header() {
   const handleLanguageChange = (code: string) => {
     i18n.changeLanguage(code)
     setShowLangDropdown(false)
-    
+
     // Add visual feedback
     setLanguageChanged(true)
     setTimeout(() => setLanguageChanged(false), 2000)
-    
+
     // Save to localStorage
     localStorage.setItem('i18nextLng', code)
   }
