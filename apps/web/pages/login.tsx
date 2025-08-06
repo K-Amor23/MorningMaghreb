@@ -27,12 +27,24 @@ export default function Login() {
       return undefined
     }
 
+    const handlePopState = (e: PopStateEvent) => {
+      // Handle browser back button
+      const { redirect } = router.query
+      if (redirect && typeof redirect === 'string') {
+        router.push(redirect)
+      } else {
+        router.push('/')
+      }
+    }
+
     window.addEventListener('beforeunload', handleBeforeUnload)
+    window.addEventListener('popstate', handlePopState)
     
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
+      window.removeEventListener('popstate', handlePopState)
     }
-  }, [])
+  }, [router.query])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
