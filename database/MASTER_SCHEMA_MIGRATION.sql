@@ -205,8 +205,7 @@ CREATE TABLE IF NOT EXISTS sentiment_votes (
     sentiment VARCHAR(20) CHECK (sentiment IN ('positive', 'negative', 'neutral')),
     confidence DECIMAL(3,2) DEFAULT 1.0,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, ticker, created_at::date)
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Sentiment aggregates table
@@ -619,6 +618,10 @@ CREATE INDEX IF NOT EXISTS idx_sentiment_votes_user_id ON sentiment_votes(user_i
 CREATE INDEX IF NOT EXISTS idx_sentiment_votes_ticker ON sentiment_votes(ticker);
 CREATE INDEX IF NOT EXISTS idx_sentiment_votes_sentiment ON sentiment_votes(sentiment);
 CREATE INDEX IF NOT EXISTS idx_sentiment_aggregates_ticker ON sentiment_aggregates(ticker);
+
+-- Unique constraint for sentiment votes (one vote per user per ticker per day)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sentiment_votes_unique_daily 
+ON sentiment_votes(user_id, ticker, DATE(created_at));
 
 -- Newsletter indexes
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email ON newsletter_subscribers(email);
