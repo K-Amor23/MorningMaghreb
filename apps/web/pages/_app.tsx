@@ -10,6 +10,8 @@ import KeyboardShortcuts from '@/components/KeyboardShortcuts'
 import PWAInstaller from '@/components/PWAInstaller'
 import '@/lib/i18n'
 import FeatureFlagsDebug from '@/components/FeatureFlagsDebug'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Analytics } from '@vercel/analytics/next'
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -47,6 +49,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <KeyboardShortcuts />
         <PWAInstaller />
         <FeatureFlagsDebug />
+        <SpeedInsights />
+        <Analytics />
       </ThemeProvider>
     </SWRConfig>
   )
