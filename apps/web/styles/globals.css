@@ -98,95 +98,86 @@ body {
 /* Ticker bar animation */
 @keyframes scroll {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(-100%); }
 }
 
 .animate-scroll {
   animation: scroll 30s linear infinite;
 }
 
-/* Search bar expansion behavior */
+/* Search bar styling */
 .search-bar-container {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: visible;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  width: 100%;
+  @apply relative w-full max-w-lg;
 }
 
 .search-bar-input {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  height: 44px;
-  min-height: 44px;
-  box-sizing: border-box;
-  width: 100%;
+  @apply w-full px-4 py-2 pl-10 pr-4 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400;
 }
 
 .search-bar-input:focus {
-  transform: scale(1.02);
+  @apply outline-none ring-2 ring-casablanca-blue border-casablanca-blue;
 }
 
-/* Ensure search bar maintains proper width during transition */
 .search-bar-wrapper {
-  min-width: 48px;
-  max-width: 100%;
-  overflow: visible;
-  position: relative;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  width: 100%;
+  @apply relative flex items-center;
+  transition: all 0.3s ease-in-out;
 }
 
-/* Ensure search results don't get cut off */
 .search-bar-wrapper .absolute {
-  overflow: visible;
+  @apply pointer-events-none;
 }
 
-/* Header transitions for search expansion */
+/* Header transitions */
 .header-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease-in-out;
 }
 
-/* Smooth opacity and scale transitions for header elements */
 .header-element {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
-/* Search expansion animation */
 .search-expand {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Z-index management for proper layering */
-/* Base layer for ticker bar */
+/* Z-index layers */
 .ticker-bar {
   z-index: 10;
 }
 
-/* Header layer */
 .header-layer {
-  z-index: 20;
+  z-index: 30;
 }
 
-/* Dropdown and modal layers */
 .dropdown-layer {
-  z-index: 150;
+  z-index: 100;
 }
 
 .modal-layer {
   z-index: 200;
 }
 
-/* Ensure dropdowns always appear above other content */
+/* Dropdown and modal styling */
 .dropdown-menu {
-  position: relative;
-  z-index: 150;
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg;
 }
 
-/* Ensure modals appear above everything */
 .modal-overlay {
-  position: fixed;
-  z-index: 200;
+  @apply fixed inset-0 bg-black bg-opacity-50;
+}
+
+/* Language change notification animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
 }

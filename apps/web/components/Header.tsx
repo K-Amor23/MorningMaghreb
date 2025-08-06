@@ -16,12 +16,13 @@ import AccountDropdown from './AccountDropdown'
 import { useAuth } from '../hooks/useAuth'
 
 export default function Header() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user } = useAuth()
   const [showMobileSearch, setShowMobileSearch] = useState(false)
   const [showLangDropdown, setShowLangDropdown] = useState(false)
   const [showMarketsDropdown, setShowMarketsDropdown] = useState(false)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
+  const [languageChanged, setLanguageChanged] = useState(false)
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const marketsDropdownRef = useRef<HTMLDivElement>(null)
 
@@ -64,14 +65,21 @@ export default function Header() {
   }, [])
 
   const languages = [
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'fr', label: 'Français', flag: '🇫🇷' },
-    { code: 'ar', label: 'العربية', flag: '🇲🇦' },
+    { code: 'en', label: t('language.english'), flag: '🇬🇧' },
+    { code: 'fr', label: t('language.french'), flag: '🇫🇷' },
+    { code: 'ar', label: t('language.arabic'), flag: '🇲🇦' },
   ]
 
   const handleLanguageChange = (code: string) => {
     i18n.changeLanguage(code)
     setShowLangDropdown(false)
+    
+    // Add visual feedback
+    setLanguageChanged(true)
+    setTimeout(() => setLanguageChanged(false), 2000)
+    
+    // Save to localStorage
+    localStorage.setItem('i18nextLng', code)
   }
 
   return (
@@ -108,7 +116,7 @@ export default function Header() {
                 onClick={() => setShowMarketsDropdown(!showMarketsDropdown)}
                 className="flex items-center space-x-1 text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
               >
-                <span>Markets</span>
+                <span>{t('nav.markets')}</span>
                 <ChevronDownIcon className="h-4 w-4" />
               </button>
 
@@ -123,62 +131,62 @@ export default function Header() {
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      📈 Stocks
+                      📈 {t('markets.stocks')}
                     </Link>
                     <Link
                       href="/markets/bonds"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      💰 Bonds
+                      💰 {t('markets.bonds')}
                     </Link>
                     <Link
                       href="/markets/etfs"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      📊 ETFs
+                      📊 {t('markets.etfs')}
                     </Link>
 
                     <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Macro Data
+                      {t('markets.macro')}
                     </div>
                     <Link
                       href="/macro/gdp"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      📊 GDP
+                      📊 {t('markets.gdp')}
                     </Link>
                     <Link
                       href="/macro/interest-rates"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      💰 Interest Rates
+                      💰 {t('markets.interest_rates')}
                     </Link>
                     <Link
                       href="/macro/inflation"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      📈 Inflation
+                      📈 {t('markets.inflation')}
                     </Link>
                     <Link
                       href="/macro/exchange-rates"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      💱 Exchange Rates
+                      💱 {t('markets.exchange_rates')}
                     </Link>
                     <Link
                       href="/macro/trade-balance"
                       className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors"
                       onClick={() => setShowMarketsDropdown(false)}
                     >
-                      📊 Trade Balance
+                      📊 {t('markets.trade_balance')}
                     </Link>
                   </div>
                 </div>
@@ -188,37 +196,37 @@ export default function Header() {
               href="/portfolio"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
-              Portfolio
+              {t('nav.portfolio')}
             </Link>
             <Link
               href="/news"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
-              News
+              {t('nav.news')}
             </Link>
             <Link
               href="/newsletter"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
-              Newsletter
+              {t('nav.newsletter')}
             </Link>
             <Link
               href="/compliance"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
-              Market Guide
+              {t('nav.compliance')}
             </Link>
             <Link
               href="/advanced-features"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
-              Advanced
+              {t('nav.advanced')}
             </Link>
             <Link
               href="/premium"
               className="text-sm text-yellow-600 font-semibold hover:text-yellow-700 px-2 py-2 transition-colors border border-yellow-600 rounded-lg hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
             >
-              Premium
+              {t('nav.premium')}
             </Link>
             {user?.role === 'admin' && (
               <Link
@@ -226,7 +234,7 @@ export default function Header() {
                 className="text-sm text-red-600 font-semibold hover:text-red-700 px-2 py-2 transition-colors border border-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"
               >
                 <Cog6ToothIcon className="h-4 w-4 mr-1" />
-                Admin
+                {t('nav.admin')}
               </Link>
             )}
           </nav>
@@ -250,7 +258,7 @@ export default function Header() {
             {/* Language selector */}
             <div className="relative" ref={langDropdownRef}>
               <button
-                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors"
+                className={`p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100 transition-colors ${languageChanged ? 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400' : ''}`}
                 onClick={() => setShowLangDropdown((v) => !v)}
                 aria-label="Select language"
               >
@@ -262,7 +270,7 @@ export default function Header() {
                     <button
                       key={lang.code}
                       onClick={() => handleLanguageChange(lang.code)}
-                      className={`w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors ${i18n.language === lang.code ? 'font-bold' : ''}`}
+                      className={`w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors ${i18n.language === lang.code ? 'font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : ''}`}
                     >
                       <span className="mr-2 text-lg">{lang.flag}</span> {lang.label}
                     </button>
@@ -296,6 +304,16 @@ export default function Header() {
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Language change notification */}
+      {languageChanged && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[200] animate-fade-in">
+          <div className="flex items-center space-x-2">
+            <GlobeAltIcon className="h-4 w-4" />
+            <span>Language changed to {languages.find(l => l.code === i18n.language)?.label}</span>
           </div>
         </div>
       )}
