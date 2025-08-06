@@ -572,6 +572,17 @@ CREATE TABLE IF NOT EXISTS market_data (
 -- 12. INDEXES FOR PERFORMANCE
 -- ============================================================================
 
+-- Add size_category column if it doesn't exist (for existing tables)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'companies' AND column_name = 'size_category'
+    ) THEN
+        ALTER TABLE companies ADD COLUMN size_category VARCHAR(20) CHECK (size_category IN ('Micro Cap', 'Small Cap', 'Mid Cap', 'Large Cap'));
+    END IF;
+END $$;
+
 -- Core company indexes
 CREATE INDEX IF NOT EXISTS idx_companies_ticker ON companies(ticker);
 CREATE INDEX IF NOT EXISTS idx_companies_sector ON companies(sector);
