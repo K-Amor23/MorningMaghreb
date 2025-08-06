@@ -13,7 +13,7 @@ export default async function handler(
     // Check if Supabase is properly configured
     if (!isSupabaseConfigured()) {
       console.error('Supabase not configured - missing environment variables')
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Database not configured',
         message: 'Supabase credentials are missing. Please check your environment variables.',
         details: 'NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be set'
@@ -22,7 +22,7 @@ export default async function handler(
 
     if (!isSupabaseAvailable()) {
       console.error('Supabase client not available')
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Database connection failed',
         message: 'Unable to connect to the database. Please check your Supabase configuration.'
       })
@@ -44,7 +44,7 @@ export default async function handler(
 
     if (checkError && checkError.code !== 'PGRST116') { // PGRST116 is "not found"
       console.error('Error checking existing email:', checkError)
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Database error',
         message: 'Failed to check existing subscription'
       })
@@ -74,17 +74,17 @@ export default async function handler(
 
     if (error) {
       console.error('Newsletter signup error:', error)
-      
+
       // Check if it's a table not found error
       if (error.code === '42P01') {
-        return res.status(500).json({ 
+        return res.status(500).json({
           error: 'Database table missing',
           message: 'Newsletter subscribers table does not exist. Please run the database setup.',
           details: 'Run: python scripts/deploy_master_pipeline_tables.py'
         })
       }
-      
-      return res.status(500).json({ 
+
+      return res.status(500).json({
         error: 'Failed to subscribe',
         message: 'Database error occurred while processing your subscription.',
         details: error.message
@@ -101,7 +101,7 @@ export default async function handler(
     })
   } catch (error) {
     console.error('Newsletter signup error:', error)
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to process newsletter signup',
       details: error instanceof Error ? error.message : 'Unknown error'
