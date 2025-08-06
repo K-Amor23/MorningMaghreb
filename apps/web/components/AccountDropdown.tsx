@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { useUser } from '@/lib/useUser'
-import { 
+import { useUser } from '@/lib'
+import {
   UserCircleIcon,
   Cog6ToothIcon,
   CreditCardIcon,
@@ -14,7 +14,7 @@ import {
   HeartIcon,
   CurrencyDollarIcon
 } from '@heroicons/react/24/outline'
-import { 
+import {
   CheckCircleIcon,
   ExclamationTriangleIcon
 } from '@heroicons/react/24/solid'
@@ -149,7 +149,7 @@ export default function AccountDropdown() {
                   <Cog6ToothIcon className="h-4 w-4 mr-3" />
                   Account Settings
                 </Link>
-                
+
                 <Link
                   href="/dashboard"
                   className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
