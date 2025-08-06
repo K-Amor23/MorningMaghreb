@@ -609,7 +609,18 @@ CREATE INDEX IF NOT EXISTS idx_company_news_ticker_published ON company_news(tic
 -- User indexes
 CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
 CREATE INDEX IF NOT EXISTS idx_profiles_tier ON profiles(tier);
-CREATE INDEX IF NOT EXISTS idx_profiles_status ON profiles(status);
+
+-- Add status column check for profiles
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'profiles' AND column_name = 'status'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_profiles_status ON profiles(status);
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_profiles_stripe_customer ON profiles(stripe_customer_id);
 
 -- Watchlist indexes
@@ -655,12 +666,32 @@ ON sentiment_votes(user_id, ticker, vote_date);
 
 -- Newsletter indexes
 CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_email ON newsletter_subscribers(email);
-CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status ON newsletter_subscribers(status);
+
+-- Add status column if it doesn't exist and create index
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'newsletter_subscribers' AND column_name = 'status'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_newsletter_subscribers_status ON newsletter_subscribers(status);
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_type ON newsletter_campaigns(status);
 CREATE INDEX IF NOT EXISTS idx_newsletter_campaigns_sent_at ON newsletter_campaigns(sent_at);
 
 -- Contest indexes
-CREATE INDEX IF NOT EXISTS idx_contests_status ON contests(status);
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'contests' AND column_name = 'status'
+    ) THEN
+        CREATE INDEX IF NOT EXISTS idx_contests_status ON contests(status);
+    END IF;
+END $$;
+
 CREATE INDEX IF NOT EXISTS idx_contests_dates ON contests(start_date, end_date);
 CREATE INDEX IF NOT EXISTS idx_contest_entries_contest_id ON contest_entries(contest_id);
 CREATE INDEX IF NOT EXISTS idx_contest_entries_user_id ON contest_entries(user_id);
