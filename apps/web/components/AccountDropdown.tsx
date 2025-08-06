@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { useUser } from '../lib'
+import { useUser } from '../lib/useUser'
 import {
   UserCircleIcon,
   Cog6ToothIcon,
