@@ -13,7 +13,9 @@
     "NEXT_PUBLIC_API_URL": "https://morningmaghreb-api.onrender.com",
     "SENDGRID_FROM_EMAIL": "admin@morningmaghreb.com",
     "NEXT_PUBLIC_ENV": "production",
-    "NEXT_PUBLIC_PREMIUM_ENFORCEMENT": "true"
+    "NEXT_PUBLIC_PREMIUM_ENFORCEMENT": "true",
+    "NEXT_PUBLIC_ENABLE_PASSWORD_PROTECTION": "true",
+    "NEXT_PUBLIC_SITE_PASSWORD": "morningmaghreb2024"
   },
   "headers": [
     {

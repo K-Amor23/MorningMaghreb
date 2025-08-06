@@ -1,6 +1,6 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { SWRConfig } from 'swr'
 import { supabase } from '@/lib/supabase'
@@ -12,8 +12,12 @@ import '@/lib/i18n'
 import FeatureFlagsDebug from '@/components/FeatureFlagsDebug'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Analytics } from '@vercel/analytics/next'
+import PasswordProtection from '@/components/PasswordProtection'
+import { isPasswordProtectionEnabled, getCorrectPassword } from '@/lib/passwordConfig'
 
 export default function App({ Component, pageProps }: AppProps) {
+  const [accessGranted, setAccessGranted] = useState(false)
+
   useEffect(() => {
     // Only set up auth listener if Supabase is configured
     if (supabase) {
@@ -32,7 +36,11 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [])
 
-  return (
+  const handleAccessGranted = () => {
+    setAccessGranted(true)
+  }
+
+  const appContent = (
     <SWRConfig value={swrConfig}>
       <ThemeProvider>
         <Component {...pageProps} />
@@ -53,5 +61,20 @@ export default function App({ Component, pageProps }: AppProps) {
         <Analytics />
       </ThemeProvider>
     </SWRConfig>
+  )
+
+  // If password protection is disabled, render normally
+  if (!isPasswordProtectionEnabled()) {
+    return appContent
+  }
+
+  // If password protection is enabled, wrap with PasswordProtection
+  return (
+    <PasswordProtection
+      correctPassword={getCorrectPassword()}
+      onAccessGranted={handleAccessGranted}
+    >
+      {appContent}
+    </PasswordProtection>
   )
 }
