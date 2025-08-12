@@ -20,31 +20,10 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Handle browser back button
+  // No popstate hijacking — let the browser back button behave naturally
   useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      // Allow the back button to work normally
-      return undefined
-    }
-
-    const handlePopState = (e: PopStateEvent) => {
-      // Handle browser back button
-      const { redirect } = router.query
-      if (redirect && typeof redirect === 'string') {
-        router.push(redirect)
-      } else {
-        router.push('/')
-      }
-    }
-
-    window.addEventListener('beforeunload', handleBeforeUnload)
-    window.addEventListener('popstate', handlePopState)
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload)
-      window.removeEventListener('popstate', handlePopState)
-    }
-  }, [router.query])
+    // Intentionally empty: removing previous popstate handler that caused loops
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -99,35 +78,28 @@ export default function Login() {
           <button
             type="button"
             onClick={() => {
-              // Get the redirect parameter
-              const { redirect } = router.query
-              
-              // If there's a redirect parameter, navigate to it
-              if (redirect && typeof redirect === 'string') {
-                router.push(redirect)
-              } else {
-                // Try to go back, but with a fallback
-                try {
-                  if (window.history.length > 1) {
-                    router.back()
-                  } else {
-                    router.push('/')
-                  }
-                } catch (error) {
-                  // If back navigation fails, go to home
-                  router.push('/')
+              try {
+                const sameOriginReferrer =
+                  typeof document !== 'undefined' &&
+                  document.referrer &&
+                  new URL(document.referrer).origin === window.location.origin &&
+                  !document.referrer.includes('/login')
+
+                if (sameOriginReferrer && window.history.length > 1) {
+                  router.back()
+                  return
                 }
+
+                // Fallback: go home instead of redirect target to avoid protected-route loops
+                router.push('/')
+              } catch (_err) {
+                router.push('/')
               }
             }}
             onKeyDown={(e) => {
               // Also handle keyboard navigation
               if (e.key === 'Escape') {
-                const { redirect } = router.query
-                if (redirect && typeof redirect === 'string') {
-                  router.push(redirect)
-                } else {
-                  router.push('/')
-                }
+                router.push('/')
               }
             }}
             className="mb-4 text-casablanca-blue hover:underline flex items-center focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:ring-offset-2 rounded"
