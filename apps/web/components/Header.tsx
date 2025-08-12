@@ -23,6 +23,7 @@ export default function Header() {
   const [showMarketsDropdown, setShowMarketsDropdown] = useState(false)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
   const [languageChanged, setLanguageChanged] = useState(false)
+  const [isAdminCookie, setIsAdminCookie] = useState(false)
   const langDropdownRef = useRef<HTMLDivElement>(null)
   const marketsDropdownRef = useRef<HTMLDivElement>(null)
 
@@ -61,6 +62,14 @@ export default function Header() {
     document.addEventListener('searchStateChange', handleSearchStateChange as EventListener)
     return () => {
       document.removeEventListener('searchStateChange', handleSearchStateChange as EventListener)
+    }
+  }, [])
+
+  // Check admin cookie for client-side hiding of Admin link
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const match = document.cookie.match(/(?:^|; )mm_tier=([^;]+)/)
+      setIsAdminCookie(match?.[1] === 'admin')
     }
   }, [])
 
@@ -228,7 +237,7 @@ export default function Header() {
             >
               {t('nav.premium')}
             </Link>
-            {user?.role === 'admin' && (
+            {(user?.role === 'admin' || isAdminCookie) && (
               <Link
                 href="/admin"
                 className="text-sm text-red-600 font-semibold hover:text-red-700 px-2 py-2 transition-colors border border-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center"

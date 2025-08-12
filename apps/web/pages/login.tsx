@@ -34,7 +34,7 @@ export default function Login() {
       const authData = await authService.login({ email, password })
 
       toast.success('Successfully signed in!')
-      
+
       // Check if there's a redirect parameter
       const { redirect } = router.query
       if (redirect && typeof redirect === 'string') {

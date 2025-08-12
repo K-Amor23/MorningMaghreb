@@ -152,6 +152,16 @@ class AuthService {
 
         const authData = await response.json()
         this.saveTokens(authData.access_token, authData.refresh_token)
+        // Set a lightweight cookie for middleware checks (not security-critical)
+        if (typeof document !== 'undefined') {
+            try {
+                const profileResp = await fetch('/api/auth/profile')
+                if (profileResp.ok) {
+                    const user = (await profileResp.json()) as User
+                    document.cookie = `mm_tier=${user.tier}; Path=/; SameSite=Lax`;
+                }
+            } catch {}
+        }
         return authData
     }
 
@@ -166,6 +176,9 @@ class AuthService {
             }
         }
         this.clearTokens()
+        if (typeof document !== 'undefined') {
+            document.cookie = 'mm_tier=; Max-Age=0; Path=/; SameSite=Lax'
+        }
     }
 
     async getProfile(): Promise<User> {
