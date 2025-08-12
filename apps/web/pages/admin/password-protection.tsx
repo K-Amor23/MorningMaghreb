@@ -24,11 +24,14 @@ export default function PasswordProtectionAdmin() {
     setMessage('')
 
     try {
-      // In a real implementation, you would make an API call to update the password
-      // For now, we'll just show a success message
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      setMessage('Password updated successfully! The new password will take effect on the next deployment.')
+      // Store/update preview password in cookie via lightweight API
+      const res = await fetch('/api/password/set', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword })
+      })
+      if (!res.ok) throw new Error('Failed to update password')
+      setMessage('Password updated successfully!')
       setCurrentPassword('')
       setNewPassword('')
     } catch (error) {
@@ -41,8 +44,8 @@ export default function PasswordProtectionAdmin() {
   const handleToggleProtection = async () => {
     setIsLoading(true)
     try {
-      // In a real implementation, you would make an API call to toggle protection
-      await new Promise(resolve => setTimeout(resolve, 500))
+      const res = await fetch('/api/password/toggle', { method: 'POST' })
+      if (!res.ok) throw new Error('Failed to toggle protection')
       setIsEnabled(!isEnabled)
       setMessage(`Password protection ${!isEnabled ? 'enabled' : 'disabled'} successfully!`)
     } catch (error) {
