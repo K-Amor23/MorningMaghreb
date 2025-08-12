@@ -8,8 +8,11 @@ set -e
 echo "🚀 Starting Morning Maghreb Airflow Local Production..."
 echo "======================================================"
 
-# Navigate to Airflow directory
-cd apps/backend/airflow
+# Navigate to Airflow directory (robust to spaces)
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+AIRFLOW_DIR="$PROJECT_ROOT/apps/backend/airflow"
+cd "$AIRFLOW_DIR"
 
 # Check if Python and pip are available
 if ! command -v python3 &> /dev/null; then
@@ -24,56 +27,51 @@ export PATH="/Users/karimamor/Library/Python/3.9/bin:$PATH"
 echo "📦 Installing Airflow..."
 python3 -m pip install apache-airflow==2.7.1
 
-# Create environment file for Airflow
-cat > .env << 'EOF'
-# Airflow Production Environment for Morning Maghreb
+# Load project .env.local for Supabase values (if present)
+ENV_LOCAL="$PROJECT_ROOT/../.env.local"
+if [ ! -f "$ENV_LOCAL" ]; then
+  # Try project root as fallback
+  ENV_LOCAL="$PROJECT_ROOT/.env.local"
+fi
+
+if [ -f "$ENV_LOCAL" ]; then
+  echo "🔑 Loading Supabase config from: $ENV_LOCAL"
+  # shellcheck disable=SC2046
+  export $(grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_ANON_KEY|SUPABASE_SERVICE_ROLE_KEY)=' "$ENV_LOCAL" | xargs)
+else
+  echo "⚠️  .env.local not found. Ensure Supabase env vars are exported in your shell."
+fi
+
+# Create environment file for Airflow, sourcing Supabase from env
+cat > .env << EOF
+# Airflow Environment
 AIRFLOW_UID=50000
 _AIRFLOW_WWW_USER_USERNAME=admin
 _AIRFLOW_WWW_USER_PASSWORD=admin
-
-# Database Configuration
-POSTGRES_DB=airflow
-POSTGRES_USER=airflow
-POSTGRES_PASSWORD=airflow
-
-# Supabase Configuration (New Database)
-NEXT_PUBLIC_SUPABASE_URL=https://gzsgehciddnrssuqxtsj.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0
-
-# Environment
-ENVIRONMENT=production
-AIRFLOW_ENV=production
 
 # Logging
 AIRFLOW__LOGGING__LOGGING_LEVEL=INFO
 AIRFLOW__LOGGING__FAB_LOGGING_LEVEL=WARN
 
+# Environment
+ENVIRONMENT=production
+AIRFLOW_ENV=production
+
+# Supabase (from env)
+NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+
 # ETL Configuration
-ETL_COMPANIES=["ATW", "IAM", "BCP", "BMCE", "CIH", "WAA", "CMT", "SID"]
+ETL_COMPANIES=["ATW","IAM","BCP","BMCE","CIH","WAA","CMT","SID"]
 ETL_BATCH_SIZE=10
 ETL_MAX_RETRIES=3
 ETL_SCHEDULE_INTERVAL=0 6 * * *
 EOF
 
-echo "✅ Environment file created"
+echo "✅ Environment file created (Supabase pulled from .env.local/env)"
 
-# Update DAG files to use new database
-echo "📊 Updating DAG files with new database configuration..."
-
-# Update main ETL DAG
-sed -i '' 's|https://kszekypwdjqaycpuayda.supabase.co|https://gzsgehciddnrssuqxtsj.supabase.co|g' dags/casablanca_etl_dag.py
-sed -i '' 's|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZXlwd2RqYXljcHVheWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxNjgxNTUsImV4cCI6MjA2Nzc0NDE1NX0.lEygnmyvx_7bZreLOeHOxLC8mh8GqlfTywsJ06tdZkU|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk|g' dags/casablanca_etl_dag.py
-
-# Update live quotes DAG
-sed -i '' 's|https://kszekypwdjqaycpuayda.supabase.co|https://gzsgehciddnrssuqxtsj.supabase.co|g' dags/casablanca_live_quotes_dag.py
-sed -i '' 's|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZXlwd2RqYXljcHVheWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxNjgxNTUsImV4cCI6MjA2Nzc0NDE1NX0.lEygnmyvx_7bZreLOeHOxLC8mh8GqlfTywsJ06tdZkU|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk|g' dags/casablanca_live_quotes_dag.py
-
-# Update enhanced ETL DAG
-sed -i '' 's|https://kszekypwdjqaycpuayda.supabase.co|https://gzsgehciddnrssuqxtsj.supabase.co|g' dags/enhanced_casablanca_etl_dag.py
-sed -i '' 's|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZXlwd2RqYXljcHVheWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIxNjgxNTUsImV4cCI6MjA2Nzc0NDE1NX0.lEygnmyvx_7bZreLOeHOxLC8mh8GqlfTywsJ06tdZkU|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk|g' dags/enhanced_casablanca_etl_dag.py
-
-echo "✅ DAG files updated with new database configuration"
+echo "📊 DAG files unchanged; DAGs read Supabase from env at runtime"
 
 # Set Airflow home
 export AIRFLOW_HOME=$(pwd)
@@ -94,13 +92,13 @@ airflow users create \
 
 # Set Airflow variables
 echo "⚙️ Setting Airflow variables..."
-airflow variables set ETL_COMPANIES '["ATW", "IAM", "BCP", "BMCE", "CIH", "WAA", "CMT", "SID"]'
+airflow variables set ETL_COMPANIES '["ATW","IAM","BCP","BMCE","CIH","WAA","CMT","SID"]'
 airflow variables set ETL_BATCH_SIZE 10
 airflow variables set ETL_MAX_RETRIES 3
 airflow variables set ENVIRONMENT production
-airflow variables set SUPABASE_URL https://gzsgehciddnrssuqxtsj.supabase.co
-airflow variables set SUPABASE_ANON_KEY eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk
-airflow variables set SUPABASE_SERVICE_KEY eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0
+airflow variables set SUPABASE_URL "$NEXT_PUBLIC_SUPABASE_URL"
+airflow variables set SUPABASE_ANON_KEY "$NEXT_PUBLIC_SUPABASE_ANON_KEY"
+airflow variables set SUPABASE_SERVICE_KEY "$SUPABASE_SERVICE_ROLE_KEY"
 
 echo "✅ Airflow variables configured"
 

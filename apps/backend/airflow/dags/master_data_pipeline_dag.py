@@ -73,97 +73,51 @@ def initialize_supabase_client():
         raise
 
 def scrape_african_markets_data(**context):
-    """Scrape data from African Markets"""
+    """Scrape data from African Markets and upsert to master `companies`.
+    Uses generated JSON from scraper if available; otherwise keeps mock fallback for resilience."""
     try:
         logger.info("Starting African Markets data scraping...")
         
-        # Initialize Supabase
-        supabase = initialize_supabase_client()
-        
-        # Mock data for demonstration (replace with actual scraping)
-        companies_data = [
-            {
-                "ticker": "ATW",
-                "name": "Attijariwafa Bank",
-                "sector": "Banking",
-                "price": 410.10,
-                "change_1d_percent": 0.31,
-                "change_ytd_percent": 5.25,
-                "market_cap_billion": 24.56,
-                "volume": 1250000,
-                "pe_ratio": 12.5,
-                "dividend_yield": 4.2,
-                "size_category": "Large Cap",
-                "sector_group": "Financial Services",
-                "scraped_at": datetime.now().isoformat()
-            },
-            {
-                "ticker": "IAM",
-                "name": "Maroc Telecom",
-                "sector": "Telecommunications",
-                "price": 156.30,
-                "change_1d_percent": -1.33,
-                "change_ytd_percent": -2.15,
-                "market_cap_billion": 15.68,
-                "volume": 890000,
-                "pe_ratio": 15.2,
-                "dividend_yield": 3.8,
-                "size_category": "Large Cap",
-                "sector_group": "Telecommunications",
-                "scraped_at": datetime.now().isoformat()
-            },
-            {
-                "ticker": "BCP",
-                "name": "Banque Centrale Populaire",
-                "sector": "Banking",
-                "price": 245.80,
-                "change_1d_percent": 0.85,
-                "change_ytd_percent": 8.45,
-                "market_cap_billion": 18.92,
-                "volume": 950000,
-                "pe_ratio": 11.8,
-                "dividend_yield": 5.1,
-                "size_category": "Large Cap",
-                "sector_group": "Financial Services",
-                "scraped_at": datetime.now().isoformat()
-            }
-        ]
-        
-        # Store in Supabase
-        for company in companies_data:
-            try:
-                # Upsert to company_prices table
-                result = supabase.table('company_prices').upsert({
-                    'ticker': company['ticker'],
-                    'company_name': company['name'],
-                    'sector': company['sector'],
-                    'price': company['price'],
-                    'change_1d_percent': company['change_1d_percent'],
-                    'change_ytd_percent': company['change_ytd_percent'],
-                    'market_cap_billion': company['market_cap_billion'],
-                    'volume': company['volume'],
-                    'pe_ratio': company['pe_ratio'],
-                    'dividend_yield': company['dividend_yield'],
-                    'size_category': company['size_category'],
-                    'sector_group': company['sector_group'],
-                    'date': datetime.now().date().isoformat(),
-                    'scraped_at': company['scraped_at']
-                }).execute()
-                
-                logger.info(f"✅ Stored data for {company['ticker']}")
-                
-            except Exception as e:
-                logger.error(f"❌ Failed to store data for {company['ticker']}: {e}")
-                continue
-        
-        # Store summary in XCom
-        context['task_instance'].xcom_push(
-            key='african_markets_data',
-            value=len(companies_data)
-        )
-        
-        logger.info(f"✅ Successfully scraped and stored {len(companies_data)} companies from African Markets")
-        return len(companies_data)
+        # Prefer importing from generated JSON via importer (real ~78 companies)
+        try:
+            from apps.backend.etl.import_african_markets_to_master import import_african_markets_into_supabase
+            results = import_african_markets_into_supabase()
+            total = results.get('total_companies', 0)
+            context['task_instance'].xcom_push(key='african_markets_data', value=total)
+            logger.info(f"✅ Imported African Markets companies into master: total={total}, new={results.get('new')}, updated={results.get('updated')}, failed={results.get('failed')}")
+            return total
+        except Exception as importer_error:
+            logger.warning(f"Importer failed, falling back to minimal mock: {importer_error}")
+            # Initialize Supabase and write minimal mock to keep pipeline alive
+            supabase = initialize_supabase_client()
+            companies_data = [
+                {"ticker": "ATW", "name": "Attijariwafa Bank", "sector": "Banking", "price": 410.10, "change_1d_percent": 0.31, "change_ytd_percent": 5.25, "market_cap_billion": 24.56, "volume": 1250000, "pe_ratio": 12.5, "dividend_yield": 4.2, "size_category": "Large Cap", "sector_group": "Financial Services", "scraped_at": datetime.now().isoformat()},
+                {"ticker": "IAM", "name": "Maroc Telecom", "sector": "Telecommunications", "price": 156.30, "change_1d_percent": -1.33, "change_ytd_percent": -2.15, "market_cap_billion": 15.68, "volume": 890000, "pe_ratio": 15.2, "dividend_yield": 3.8, "size_category": "Large Cap", "sector_group": "Telecommunications", "scraped_at": datetime.now().isoformat()},
+                {"ticker": "BCP", "name": "Banque Centrale Populaire", "sector": "Banking", "price": 245.80, "change_1d_percent": 0.85, "change_ytd_percent": 8.45, "market_cap_billion": 18.92, "volume": 950000, "pe_ratio": 11.8, "dividend_yield": 5.1, "size_category": "Large Cap", "sector_group": "Financial Services", "scraped_at": datetime.now().isoformat()}
+            ]
+            for company in companies_data:
+                try:
+                    supabase.table('company_prices').upsert({
+                        'ticker': company['ticker'],
+                        'company_name': company['name'],
+                        'sector': company['sector'],
+                        'price': company['price'],
+                        'change_1d_percent': company['change_1d_percent'],
+                        'change_ytd_percent': company['change_ytd_percent'],
+                        'market_cap_billion': company['market_cap_billion'],
+                        'volume': company['volume'],
+                        'pe_ratio': company['pe_ratio'],
+                        'dividend_yield': company['dividend_yield'],
+                        'size_category': company['size_category'],
+                        'sector_group': company['sector_group'],
+                        'date': datetime.now().date().isoformat(),
+                        'scraped_at': company['scraped_at']
+                    }).execute()
+                except Exception as e:
+                    logger.error(f"❌ Failed to store data for {company['ticker']}: {e}")
+            context['task_instance'].xcom_push(key='african_markets_data', value=len(companies_data))
+            logger.info(f"✅ Stored minimal mock African Markets data: {len(companies_data)} companies")
+            return len(companies_data)
         
     except Exception as e:
         logger.error(f"❌ Error in scrape_african_markets_data: {e}")

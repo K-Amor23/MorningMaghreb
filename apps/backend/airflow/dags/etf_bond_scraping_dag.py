@@ -5,17 +5,20 @@ Runs daily to fetch and update ETF and Bond data
 
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python import PythonOperator
 from airflow.models import Variable
 import sys
 import os
 
-# Add the backend directory to the Python path
-sys.path.append('/opt/airflow/apps/backend')
+# Add backend ETL path for local and container execution
+from pathlib import Path
+dag_dir = Path(__file__).resolve().parent
+backend_root = dag_dir.parent.parent  # apps/backend
+sys.path.append(str(backend_root / 'etl'))
+sys.path.append(str(backend_root))
 
 # Import the scraper
-from etl.etf_bond_scraper import MoroccanETFBondScraper
+from etf_bond_scraper import MoroccanETFBondScraper
 
 # Default arguments for the DAG
 default_args = {

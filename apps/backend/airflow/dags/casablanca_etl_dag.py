@@ -278,116 +278,160 @@ def combine_data_sources(**context):
         raise
 
 def fetch_ir_reports_task(**context):
-    """Task to fetch IR reports from company websites"""
+    """Task to fetch IR reports from company websites using real scraper"""
     try:
-        logger.info("Starting IR report fetching...")
-        
-        # Get companies to process (from Airflow variables or default)
-        companies = Variable.get("etl_companies", deserialize_json=True, default_var=["ATW", "IAM", "BCP", "BMCE"])
+        logger.info("Starting IR report fetching (real scraper)...")
+
+        # Resolve imports at runtime for container and local paths
+        import sys
+        from pathlib import Path as _Path
+        sys.path.extend(['/opt/airflow/etl', '/opt/airflow'])
+        # Local repo paths (when running Airflow outside Docker)
+        project_root = _Path(__file__).resolve().parents[3]
+        sys.path.append(str(project_root / 'apps' / 'backend' / 'etl'))
+        sys.path.append(str(project_root / 'apps' / 'backend'))
+
+        from fetch_ir_reports import IRReportFetcher  # type: ignore
+        from storage.local_fs import LocalFileStorage  # type: ignore
+
+        # Companies to process (Airflow Variable or default sample)
+        companies = Variable.get(
+            "etl_companies",
+            deserialize_json=True,
+            default_var=["ATW", "IAM", "BCP", "BMCE", "CIH", "WAA", "LBV", "TMA", "ADH", "LES", "SOT", "CTM"],
+        )
         year = context['execution_date'].year
-        
+
         logger.info(f"Fetching reports for companies: {companies}, year: {year}")
-        
-        # Simulate fetching reports (in production, this would use the actual fetcher)
-        reports = []
-        for company in companies:
-            reports.append({
-                'company': company,
-                'year': year,
-                'quarter': 1,
-                'report_type': 'annual',
-                'url': f'https://example.com/{company}/annual_report_{year}.pdf',
-                'filename': f'{company}_annual_{year}.pdf'
-            })
-        
-        # Simulate downloading files
-        downloaded_files = [f'/tmp/{report["filename"]}' for report in reports]
-        
-        # Store results in XCom for next task
-        context['task_instance'].xcom_push(
-            key='downloaded_files',
-            value=downloaded_files
-        )
-        
-        context['task_instance'].xcom_push(
-            key='reports_metadata',
-            value=[{
-                'company': r['company'],
-                'year': r['year'],
+
+        # Use container data path if present; otherwise fallback to repo data dir
+        data_dir = _Path('/opt/airflow/data') if _Path('/opt/airflow/data').exists() else (project_root / 'apps' / 'backend' / 'data')
+        storage = LocalFileStorage(base_path=str(data_dir))
+
+        async def run_fetch():
+            fetcher = IRReportFetcher(storage)
+            # Discover reports for selected companies
+            reports = await fetcher.fetch_all_reports(companies=companies, year=year)
+            # Download them to storage
+            downloaded_files = await fetcher.download_all_reports(reports)
+            return reports, downloaded_files
+
+        import asyncio
+        reports, downloaded_files = asyncio.run(run_fetch())
+
+        # Prepare metadata for downstream tasks
+        reports_metadata = []
+        for r in reports:
+            reports_metadata.append({
+                'company': r.get('company'),
+                'year': r.get('year', year),
                 'quarter': r.get('quarter'),
-                'report_type': r['report_type'],
-                'url': r['url']
-            } for r in reports]
-        )
-        
-        logger.info(f"Successfully fetched {len(reports)} reports, downloaded {len(downloaded_files)} files")
+                'report_type': r.get('report_type', 'other'),
+                'url': r.get('url')
+            })
+
+        # Store results in XCom
+        context['task_instance'].xcom_push(key='downloaded_files', value=downloaded_files)
+        context['task_instance'].xcom_push(key='reports_metadata', value=reports_metadata)
+
+        logger.info(f"Fetched {len(reports)} reports; downloaded {len(downloaded_files)} files")
         return len(downloaded_files)
-        
+
     except Exception as e:
         logger.error(f"Error in fetch_ir_reports_task: {e}")
         raise
 
 def extract_pdf_data_task(**context):
-    """Task to extract financial data from PDFs"""
+    """Task to extract financial data from PDFs using real extractor"""
     try:
-        logger.info("Starting PDF data extraction...")
-        
-        # Get downloaded files from previous task
-        downloaded_files = context['task_instance'].xcom_pull(
-            task_ids='fetch_ir_reports',
-            key='downloaded_files'
-        )
-        
-        reports_metadata = context['task_instance'].xcom_pull(
-            task_ids='fetch_ir_reports',
-            key='reports_metadata'
-        )
-        
+        logger.info("Starting PDF data extraction (real extractor)...")
+
+        # Resolve imports at runtime for container and local paths
+        import sys
+        from pathlib import Path as _Path
+        sys.path.extend(['/opt/airflow/etl', '/opt/airflow'])
+        project_root = _Path(__file__).resolve().parents[3]
+        sys.path.append(str(project_root / 'apps' / 'backend' / 'etl'))
+        sys.path.append(str(project_root / 'apps' / 'backend'))
+        from extract_from_pdf import PDFExtractor  # type: ignore
+        from models.financials import ReportType  # type: ignore
+
+        # Get downloaded files and metadata
+        ti = context['task_instance']
+        downloaded_files = ti.xcom_pull(task_ids='fetch_ir_reports', key='downloaded_files') or []
+        reports_metadata = ti.xcom_pull(task_ids='fetch_ir_reports', key='reports_metadata') or []
+
         if not downloaded_files:
             logger.warning("No files to process")
             return 0
-        
-        # Simulate PDF extraction (in production, this would use the actual extractor)
+
+        extractor = PDFExtractor()
         extracted_data = []
-        
+
         for i, pdf_path in enumerate(downloaded_files):
             try:
                 metadata = reports_metadata[i] if i < len(reports_metadata) else {}
-                
-                # Simulate extracted financial data
-                financial_data = {
-                    'company': metadata.get('company', 'UNKNOWN'),
-                    'year': metadata.get('year', datetime.now().year),
-                    'report_type': metadata.get('report_type', 'other'),
-                    'quarter': metadata.get('quarter'),
-                    'lines': [
-                        {'label': 'Revenue', 'value': 1000000, 'currency': 'MAD'},
-                        {'label': 'Net Income', 'value': 150000, 'currency': 'MAD'},
-                        {'label': 'Total Assets', 'value': 5000000, 'currency': 'MAD'}
-                    ]
-                }
-                
+                company = metadata.get('company', 'UNKNOWN')
+                year = metadata.get('year', datetime.now().year)
+                quarter = metadata.get('quarter')
+                report_type_str = (metadata.get('report_type') or 'other').upper()
+                try:
+                    report_type = getattr(ReportType, report_type_str) if hasattr(ReportType, report_type_str) else ReportType.OTHER
+                except Exception:
+                    report_type = ReportType.OTHER
+
+                result = extractor.extract_from_pdf(
+                    pdf_path=pdf_path,
+                    company=company,
+                    year=year,
+                    report_type=report_type,
+                    quarter=quarter,
+                )
+
                 extracted_data.append({
                     'pdf_path': pdf_path,
-                    'financial_data': financial_data,
-                    'metadata': metadata
+                    'financial_data': {
+                        'company': result.company,
+                        'year': result.year,
+                        'quarter': result.quarter,
+                        'report_type': str(result.report_type),
+                        'lines': [
+                            {'label': line.label, 'value': line.value, 'unit': line.unit, 'confidence': line.confidence}
+                            for line in (result.lines or [])
+                        ],
+                        'extraction_metadata': result.extraction_metadata,
+                    },
+                    'metadata': metadata,
                 })
-                
-                logger.info(f"Extracted {len(financial_data['lines'])} lines from {pdf_path}")
-                    
+
+                logger.info(f"Extracted {len(result.lines or [])} lines from {pdf_path}")
+
             except Exception as e:
                 logger.error(f"Error extracting from {pdf_path}: {e}")
                 continue
-        
+
+        # Persist a summary JSON to data/processed for auditing
+        try:
+            from pathlib import Path as _Path
+            import json as _json
+            # Prefer container path; fallback to repo data/processed
+            container_dir = _Path('/opt/airflow/data/processed')
+            out_dir = container_dir if container_dir.exists() else (project_root / 'apps' / 'backend' / 'data' / 'processed')
+            out_dir.mkdir(parents=True, exist_ok=True)
+            ts = context['execution_date'].strftime('%Y%m%d_%H%M%S')
+            out_file = out_dir / f'pdf_extraction_results_{ts}.json'
+            with open(out_file, 'w', encoding='utf-8') as f:
+                _json.dump({'count': len(extracted_data), 'items': extracted_data[:50]}, f, ensure_ascii=False, indent=2, default=str)
+            logger.info(f"Saved extraction summary to {out_file}")
+        except Exception as e:
+            logger.warning(f"Could not write extraction summary: {e}")
+
         # Store results in XCom
-        context['task_instance'].xcom_push(
-            key='extracted_data',
-            value=extracted_data
-        )
-        
+        context['task_instance'].xcom_push(key='extracted_data', value=extracted_data)
+
         logger.info(f"Successfully extracted data from {len(extracted_data)} PDFs")
         return len(extracted_data)
-        
+
     except Exception as e:
         logger.error(f"Error in extract_pdf_data_task: {e}")
         raise

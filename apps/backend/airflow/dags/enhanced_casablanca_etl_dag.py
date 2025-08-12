@@ -26,16 +26,17 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.models import Variable
 
-# Add the backend directory to Python path
+# Add backend ETL directories to Python path for both local and container
 backend_path = Path(__file__).parent.parent.parent
+sys.path.append(str(backend_path / 'etl'))
 sys.path.append(str(backend_path))
 
 # Import our scrapers
-from etl.african_markets_scraper import AfricanMarketsScraper
-from etl.casablanca_bourse_scraper import CasablancaBourseScraper
-from etl.financial_reports_scraper import FinancialReportsScraper
-from etl.news_sentiment_scraper import NewsSentimentScraper
-from etl.supabase_data_refresh import SupabaseDataRefresh
+from african_markets_scraper import AfricanMarketsScraper
+from casablanca_bourse_scraper import CasablancaBourseScraper
+from financial_reports_scraper_batch import BatchFinancialReportsScraper
+from news_sentiment_scraper import NewsSentimentScraper
+from supabase_data_refresh import SupabaseDataRefresh
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -171,7 +172,7 @@ def scrape_financial_reports(**context):
             companies = json.load(f)
         
         async def run_scraping():
-            scraper = FinancialReportsScraper()
+            scraper = BatchFinancialReportsScraper()
             
             # Scrape reports for each company
             total_reports = 0

@@ -1,5 +1,37 @@
 #!/usr/bin/env python3
 """
+Deploy master pipeline tables and ensure `companies` and `market_data` exist with indexes.
+Run this once against your Supabase project (service role key required).
+"""
+import os
+import sys
+from pathlib import Path
+
+SQL_FILES = [
+    Path('database/MASTER_SCHEMA_MIGRATION.sql'),
+    Path('database/master_pipeline_tables.sql'),
+]
+
+def main():
+    from supabase import create_client
+
+    url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
+    key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+    if not url or not key:
+        print('Missing env: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
+        sys.exit(1)
+
+    # Use PostgREST RPC is not ideal for running raw SQL. Recommend running via Supabase SQL editor
+    # or psql. Here we just print instructions.
+    print('Open Supabase SQL editor and run these files in order:')
+    for f in SQL_FILES:
+        print(f" - {f}")
+
+if __name__ == '__main__':
+    main()
+
+#!/usr/bin/env python3
+"""
 Deploy Master Pipeline Database Tables to Supabase
 
 This script creates all the necessary tables for the master Airflow pipeline

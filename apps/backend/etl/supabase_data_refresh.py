@@ -22,10 +22,10 @@ from typing import Dict, List, Any
 backend_path = Path(__file__).parent.parent
 sys.path.append(str(backend_path))
 
-# Import our scrapers
-from etl.african_markets_scraper import AfricanMarketsScraper
-from etl.bank_al_maghrib_scraper import BankAlMaghribScraper
-from etl.cse_company_scraper import CSEScraper
+# Import our scrapers (relative imports to work in Airflow without package install)
+from african_markets_scraper import AfricanMarketsScraper
+from bank_al_maghrib_scraper import BankAlMaghribScraper
+from cse_company_scraper import CSEScraper
 
 # Import Supabase client
 try:

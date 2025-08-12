@@ -31,6 +31,7 @@ Dependencies:
 """
 
 from datetime import datetime, timedelta
+import pendulum
 import logging
 import os
 import json
@@ -45,7 +46,11 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.postgres.hooks.postgres import PostgresHook
-from airflow.providers.celery.operators.celery import CeleryOperator
+# Optional Celery integration (skip if provider not installed)
+try:
+    from airflow.providers.celery.operators.celery import CeleryOperator
+except Exception:  # pragma: no cover
+    CeleryOperator = None  # type: ignore
 from airflow.models import Variable, Connection
 from airflow.utils.email import send_email
 from airflow.utils.session import provide_session
@@ -58,7 +63,7 @@ logger = logging.getLogger(__name__)
 default_args = {
     'owner': 'casablanca_team',
     'depends_on_past': False,
-    'start_date': datetime(2024, 1, 1, tzinfo=timedelta(hours=-5)),  # EST timezone
+    'start_date': pendulum.datetime(2024, 1, 1, tz='America/New_York'),  # EST timezone
     'email_on_failure': True,
     'email_on_retry': True,
     'retries': 3,
@@ -257,15 +262,19 @@ def parse_pdf_reports(**context):
             logger.warning("No files to parse")
             return []
         
+        # If Celery provider is not available, skip triggering background tasks and return 0
+        if CeleryOperator is None:
+            logger.warning("Celery provider not installed; skipping parse step")
+            context['task_instance'].xcom_push(key='celery_task_ids', value=[])
+            return 0
+
         # Trigger Celery tasks for each PDF
         celery_task_ids = []
-        
         for file_info in downloaded_files:
             try:
-                # Trigger Celery task to parse PDF
                 celery_task = CeleryOperator(
                     task_id=f"parse_pdf_{file_info['ticker']}",
-                    celery_task='etl.tasks.parse_ir_pdf',  # This should match your Celery task name
+                    celery_task='etl.tasks.parse_ir_pdf',
                     celery_task_kwargs={
                         'pdf_path': file_info['filepath'],
                         'ticker': file_info['ticker'],
@@ -274,17 +283,9 @@ def parse_pdf_reports(**context):
                     },
                     dag=dag
                 )
-                
-                # Execute the task
                 result = celery_task.execute(context=context)
-                celery_task_ids.append({
-                    'ticker': file_info['ticker'],
-                    'task_id': result,
-                    'filepath': file_info['filepath']
-                })
-                
+                celery_task_ids.append({'ticker': file_info['ticker'], 'task_id': result, 'filepath': file_info['filepath']})
                 logger.info(f"Triggered parsing task for {file_info['ticker']}")
-                
             except Exception as e:
                 logger.error(f"Error triggering parsing task for {file_info['ticker']}: {e}")
                 continue

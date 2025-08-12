@@ -747,7 +747,7 @@ def send_success_alert(**context):
 
 📈 Volume Data:
    • Volume records scraped: {volume_data.get('total_records', 0) if volume_data else 0}
-   • Total volume: {volume_data.get('total_volume', 0):,} if volume_data else 0}
+   • Total volume: {(volume_data.get('total_volume', 0) if volume_data else 0):,}
    • High volume alerts: {volume_data.get('high_volume_stocks', 0) if volume_data else 0}
    • Database updates: {volume_integration.get('database_updates', 0) if volume_integration else 0}
 
