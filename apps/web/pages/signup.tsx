@@ -31,10 +31,12 @@ export default function Signup() {
         throw new Error('Authentication service is not available')
       }
 
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: siteUrl ? `${siteUrl}/auth/callback` : undefined,
           data: {
             full_name: fullName,
           }
@@ -46,8 +48,10 @@ export default function Signup() {
       }
 
       if (data.user) {
-        toast.success('Account created successfully! Please check your email to verify your account.')
+        toast.success('Account created! Check your email for a verification link.')
         router.push('/login')
+      } else {
+        toast('If an account was created, a verification email has been sent.', { icon: '✉️' })
       }
     } catch (error: any) {
       console.error('Signup error:', error)
