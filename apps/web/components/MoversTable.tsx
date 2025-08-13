@@ -212,25 +212,13 @@ export default function MoversTable() {
         </div>
       )}
 
-      {/* Market Summary */}
-      {data?.data?.market_summary && (
+      {/* Summary */}
+      {data?.data && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="text-gray-500">Total Companies:</span>
-              <span className="ml-2 font-medium">{data.data.market_summary.total_companies}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Advancing:</span>
-              <span className="ml-2 font-medium text-green-600">{data.data.market_summary.positive_movers}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Declining:</span>
-              <span className="ml-2 font-medium text-red-600">{data.data.market_summary.negative_movers}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Market Cap:</span>
-              <span className="ml-2 font-medium">{data.data.market_summary.total_market_cap_formatted}</span>
+              <span className="ml-2 font-medium">{data.data.total_companies}</span>
             </div>
           </div>
         </div>
