@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { supabase, isSupabaseConfigured, isSupabaseAvailable } from '@/lib/supabase'
+import { getResendClient, isResendConfigured, getFromEmail, getReplyToEmail } from '@/lib/resend'
 
 export default async function handler(
   req: NextApiRequest,
@@ -91,8 +92,36 @@ export default async function handler(
       })
     }
 
-    // TODO: Send welcome email via SendGrid
-    // TODO: Add to mailing list
+    // Send welcome email via Resend (if configured)
+    try {
+      if (isResendConfigured()) {
+        const resend = getResendClient()
+        const from = getFromEmail()
+        const replyTo = getReplyToEmail()
+        const recipientName = name ? String(name) : 'there'
+
+        const subject = 'Welcome to Casablanca Insights Newsletter'
+        const html = `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+            <h2>Welcome, ${recipientName} 👋</h2>
+            <p>Thanks for subscribing to the Casablanca Insights newsletter.</p>
+            <p>We’ll send you concise market summaries, company spotlights, and curated news.</p>
+            <p style="margin-top:24px; font-size:12px; color:#6b7280;">If you didn’t sign up, you can ignore this email.</p>
+          </div>
+        `
+
+        await resend.emails.send({
+          from,
+          to: [email],
+          subject,
+          html,
+          ...(replyTo ? { reply_to: replyTo } : {}),
+        } as any)
+      }
+    } catch (e) {
+      console.error('Failed to send welcome email via Resend:', e)
+      // Do not fail the signup because of email issues
+    }
 
     res.status(201).json({
       success: true,

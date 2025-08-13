@@ -155,3 +155,11 @@ backend/data/processed/
 backend/data/temp/
 *.pdf
 *.log
+
+# Local-only
+.airflow-venv/
+apps/backend/airflow/airflow.db
+apps/backend/airflow/logs/
+apps/backend/airflow/airflow-webserver.pid
+apps/backend/airflow/standalone_admin_password.txt
+apps/backend/airflow/standalone.pid

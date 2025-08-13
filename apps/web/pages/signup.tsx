@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
-import { 
-  UserIcon, 
-  EnvelopeIcon, 
+import {
+  UserIcon,
+  EnvelopeIcon,
   LockClosedIcon,
   EyeIcon,
   EyeSlashIcon
@@ -20,6 +20,8 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(true)
+  const [acceptTerms, setAcceptTerms] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +33,10 @@ export default function Signup() {
         throw new Error('Authentication service is not available')
       }
 
+      if (!acceptTerms) {
+        throw new Error('You must accept the Terms and Privacy Policy to create an account.')
+      }
+
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -39,6 +45,8 @@ export default function Signup() {
           emailRedirectTo: siteUrl ? `${siteUrl}/auth/callback` : undefined,
           data: {
             full_name: fullName,
+            marketing_consent: subscribeNewsletter,
+            terms_accepted_at: new Date().toISOString(),
           }
         }
       })
@@ -48,6 +56,18 @@ export default function Signup() {
       }
 
       if (data.user) {
+        // If opted in, add to newsletter subscribers (best-effort)
+        if (subscribeNewsletter) {
+          try {
+            await fetch('/api/newsletter/signup', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, name: fullName })
+            })
+          } catch (_) {
+            // non-fatal
+          }
+        }
         toast.success('Account created! Check your email for a verification link.')
         router.push('/login')
       } else {
@@ -88,7 +108,7 @@ export default function Signup() {
             </svg>
             Back
           </button>
-          
+
           <div className="flex justify-center">
             <div className="flex items-center space-x-2">
               <div className="h-10 w-10 bg-casablanca-blue rounded-lg flex items-center justify-center">
@@ -208,6 +228,35 @@ export default function Signup() {
                   {loading ? 'Creating account...' : 'Create account'}
                 </button>
               </div>
+
+              {/* Compliance & Marketing */}
+              <div className="space-y-3">
+                <label className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 text-casablanca-blue border-gray-300 rounded"
+                    checked={acceptTerms}
+                    onChange={(e) => setAcceptTerms(e.target.checked)}
+                  />
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    I agree to the{' '}
+                    <Link href="/terms" className="text-casablanca-blue hover:underline">Terms</Link>{' '}and{' '}
+                    <Link href="/privacy" className="text-casablanca-blue hover:underline">Privacy Policy</Link>.
+                  </span>
+                </label>
+
+                <label className="flex items-start space-x-3">
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 text-casablanca-blue border-gray-300 rounded"
+                    checked={subscribeNewsletter}
+                    onChange={(e) => setSubscribeNewsletter(e.target.checked)}
+                  />
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    Subscribe to Morning Maghreb newsletter (you can unsubscribe anytime).
+                  </span>
+                </label>
+              </div>
             </form>
 
             <div className="mt-6">
@@ -226,10 +275,10 @@ export default function Signup() {
                   className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
                   <span className="ml-2">Sign up with Google</span>
                 </button>

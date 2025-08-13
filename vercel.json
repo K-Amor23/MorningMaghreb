@@ -15,7 +15,8 @@
     "NEXT_PUBLIC_ENV": "production",
     "NEXT_PUBLIC_PREMIUM_ENFORCEMENT": "true",
     "NEXT_PUBLIC_ENABLE_PASSWORD_PROTECTION": "true",
-    "NEXT_PUBLIC_SITE_PASSWORD": "morningmaghreb2024"
+    "NEXT_PUBLIC_SITE_PASSWORD": "morningmaghreb2024",
+    "ADMIN_API_TOKEN": "CHANGE_ME_ADMIN_TOKEN"
   },
   "headers": [
     {

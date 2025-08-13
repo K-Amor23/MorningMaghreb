@@ -100,6 +100,8 @@ CREATE TABLE IF NOT EXISTS profiles (
     preferences JSONB DEFAULT '{}',
     language_preference VARCHAR(10) DEFAULT 'en' CHECK (language_preference IN ('en', 'fr', 'ar')),
     newsletter_frequency VARCHAR(20) DEFAULT 'weekly' CHECK (newsletter_frequency IN ('daily', 'weekly', 'monthly')),
+    marketing_consent BOOLEAN DEFAULT false,
+    terms_accepted_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );

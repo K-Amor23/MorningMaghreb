@@ -81,7 +81,15 @@ class NewsSentimentScraper:
         self.priority_sources = [
             'reuters.com', 'bloomberg.com', 'ft.com', 'wsj.com',
             'moroccoworldnews.com', 'moroccotoday.news', 'lematin.ma',
-            'leconomiste.com', 'lnt.ma', '2m.ma', 'medias24.com'
+            'leconomiste.com', 'lnt.ma', '2m.ma', 'medias24.com',
+            'challenge.ma', 'mapexpress.ma', 'h24info.ma', 'telquel.ma', 'hespress.com',
+            'aujourdhui.ma', 'leseco.ma', 'boursenews.ma'
+        ]
+        # Languages/regions to try for Google News RSS
+        self.gnews_locales = [
+            {"hl": "en", "ceid": "MA:en", "gl": "MA"},
+            {"hl": "fr", "ceid": "MA:fr", "gl": "MA"},
+            {"hl": "ar", "ceid": "MA:ar", "gl": "MA"},
         ]
         
         logger.info(f"✅ News Sentiment Scraper initialized with {len(self.companies)} companies")
@@ -175,49 +183,52 @@ class NewsSentimentScraper:
         return any(priority in source.lower() for priority in self.priority_sources)
     
     async def fetch_google_news_rss(self, company_name: str, ticker: str) -> List[Dict]:
-        """Fetch news from Google News RSS for a company"""
+        """Fetch news from Google News RSS for a company, trying multiple locales and query variants"""
         try:
-            # Create search query
-            search_query = f"{company_name} {ticker} Morocco"
-            encoded_query = urllib.parse.quote(search_query)
-            
-            # Google News RSS URL
-            rss_url = f"https://news.google.com/rss/search?q={encoded_query}&hl=en&gl=MA&ceid=MA:en"
-            
             logger.info(f"🔍 Fetching news for {ticker} ({company_name})")
-            
-            async with self.session.get(rss_url) as response:
-                if response.status != 200:
-                    logger.warning(f"⚠️  Failed to fetch RSS for {ticker}: {response.status}")
-                    return []
-                
-                content = await response.text()
-                
-                # Parse RSS XML
-                try:
-                    root = ET.fromstring(content)
-                    items = root.findall('.//item')
-                    
-                    news_items = []
-                    for item in items[:20]:  # Limit to 20 most recent articles
-                        try:
-                            title_elem = item.find('title')
-                            link_elem = item.find('link')
-                            pub_date_elem = item.find('pubDate')
-                            source_elem = item.find('source')
-                            
-                            if not all([title_elem, link_elem]):
+
+            # Build multiple query variants
+            query_variants = [
+                f"{company_name} {ticker} Maroc",
+                f"{company_name} Maroc",
+                f"{company_name} Casablanca",
+                f"{ticker} Bourse",
+                f"{company_name} actualités",
+                f"{company_name} أخبار",
+            ]
+
+            all_items: List[Dict] = []
+            for loc in self.gnews_locales:
+                for q in query_variants:
+                    encoded_query = urllib.parse.quote(q)
+                    rss_url = (
+                        f"https://news.google.com/rss/search?q={encoded_query}"
+                        f"&hl={loc['hl']}&gl={loc['gl']}&ceid={loc['ceid']}"
+                    )
+                    try:
+                        async with self.session.get(rss_url) as response:
+                            if response.status != 200:
                                 continue
-                            
-                            title = self.clean_text(title_elem.text or "")
-                            link = link_elem.text or ""
-                            source = source_elem.text if source_elem is not None else self.extract_source_from_url(link)
-                            
-                            # Parse publication date
-                            pub_date = None
-                            if pub_date_elem and pub_date_elem.text:
-                                try:
-                                    # Parse various date formats
+                            content = await response.text()
+                    except Exception:
+                        continue
+
+                    try:
+                        root = ET.fromstring(content)
+                        items = root.findall('.//item')
+                        for item in items[:20]:
+                            try:
+                                title_elem = item.find('title')
+                                link_elem = item.find('link')
+                                pub_date_elem = item.find('pubDate')
+                                source_elem = item.find('source')
+                                if not all([title_elem, link_elem]):
+                                    continue
+                                title = self.clean_text(title_elem.text or "")
+                                link = link_elem.text or ""
+                                source = source_elem.text if source_elem is not None else self.extract_source_from_url(link)
+                                pub_date = None
+                                if pub_date_elem and pub_date_elem.text:
                                     date_str = pub_date_elem.text
                                     for fmt in ['%a, %d %b %Y %H:%M:%S %Z', '%a, %d %b %Y %H:%M:%S %z']:
                                         try:
@@ -225,47 +236,33 @@ class NewsSentimentScraper:
                                             break
                                         except ValueError:
                                             continue
-                                except Exception:
+                                if not pub_date:
                                     pub_date = datetime.now()
-                            
-                            if not pub_date:
-                                pub_date = datetime.now()
-                            
-                            # Analyze sentiment
-                            sentiment, sentiment_score = self.analyze_sentiment(title)
-                            
-                            # Create content preview
-                            content_preview = title[:200] + "..." if len(title) > 200 else title
-                            
-                            # Generate unique ID
-                            unique_id = hashlib.md5(f"{ticker}_{link}_{pub_date.isoformat()}".encode()).hexdigest()
-                            
-                            news_item = {
-                                'id': unique_id,
-                                'ticker': ticker,
-                                'headline': title,
-                                'source': source,
-                                'url': link,
-                                'published_at': pub_date.isoformat(),
-                                'sentiment': sentiment,
-                                'sentiment_score': sentiment_score,
-                                'content_preview': content_preview,
-                                'is_priority_source': self.is_priority_source(source),
-                                'scraped_at': datetime.now().isoformat()
-                            }
-                            
-                            news_items.append(news_item)
-                            
-                        except Exception as e:
-                            logger.warning(f"⚠️  Error parsing news item for {ticker}: {str(e)}")
-                            continue
-                    
-                    logger.info(f"✅ Found {len(news_items)} news items for {ticker}")
-                    return news_items
-                    
-                except ET.ParseError as e:
-                    logger.error(f"❌ Error parsing RSS XML for {ticker}: {str(e)}")
-                    return []
+                                sentiment, sentiment_score = self.analyze_sentiment(title)
+                                content_preview = title[:200] + "..." if len(title) > 200 else title
+                                unique_id = hashlib.md5(f"{ticker}_{link}_{pub_date.isoformat()}".encode()).hexdigest()
+                                news_item = {
+                                    'id': unique_id,
+                                    'ticker': ticker,
+                                    'headline': title,
+                                    'source': source,
+                                    'url': link,
+                                    'published_at': pub_date.isoformat(),
+                                    'sentiment': sentiment,
+                                    'sentiment_score': sentiment_score,
+                                    'content_preview': content_preview,
+                                    'is_priority_source': self.is_priority_source(source),
+                                    'scraped_at': datetime.now().isoformat()
+                                }
+                                all_items.append(news_item)
+                            except Exception as e:
+                                logger.warning(f"⚠️  Error parsing news item for {ticker}: {str(e)}")
+                                continue
+                    except ET.ParseError:
+                        continue
+
+            logger.info(f"✅ Found {len(all_items)} news items for {ticker}")
+            return all_items
                 
         except Exception as e:
             logger.error(f"❌ Error fetching news for {ticker}: {str(e)}")

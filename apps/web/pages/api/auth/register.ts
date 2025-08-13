@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { email, password, full_name, language_preference } = req.body
+        const { email, password, full_name, language_preference, marketing_consent } = req.body
 
         if (!email || !password || !full_name) {
             return res.status(400).json({ error: 'Email, password, and full name are required' })
@@ -23,7 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 email,
                 password,
                 full_name,
-                language_preference: language_preference || 'en'
+                language_preference: language_preference || 'en',
+                marketing_consent: Boolean(marketing_consent),
+                terms_accepted_at: new Date().toISOString(),
             }),
         })
 

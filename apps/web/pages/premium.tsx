@@ -123,14 +123,19 @@ export default function Premium() {
 
   const handleUpgrade = async () => {
     try {
-      // Redirect to Stripe checkout
-      const response = await fetch('/api/stripe/checkout', {
+      // Choose Stripe price IDs (replace with real Stripe price IDs)
+      const monthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_MONTHLY || 'price_monthly'
+      const yearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_YEARLY || 'price_yearly'
+
+      // Create checkout session
+      const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: billingCycle === 'monthly' ? 'price_monthly' : 'price_yearly',
+          priceId: billingCycle === 'monthly' ? monthlyPriceId : yearlyPriceId,
+          trialDays: 7,
           successUrl: `${window.location.origin}/dashboard?upgraded=true`,
           cancelUrl: `${window.location.origin}/premium`,
         }),
