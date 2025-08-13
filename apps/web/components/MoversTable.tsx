@@ -16,27 +16,12 @@ interface StockData {
   data_quality: string
 }
 
-interface QuotesResponse {
+interface MoversResponse {
   success: boolean
   data: {
-    quotes: StockData[]
-    pagination: {
-      page: number
-      limit: number
-      total: number
-      total_pages: number
-      has_next: boolean
-      has_prev: boolean
-    }
-    market_summary: {
-      total_companies: number
-      total_market_cap: number
-      total_market_cap_formatted: string
-      positive_movers: number
-      negative_movers: number
-      unchanged: number
-      average_price: number
-    }
+    top_gainers: StockData[]
+    top_losers: StockData[]
+    total_companies: number
   }
 }
 
@@ -47,28 +32,16 @@ export default function MoversTable() {
   const [currentPage, setCurrentPage] = useState(1)
   const [sortBy, setSortBy] = useState<'change_percent' | 'volume' | 'market_cap'>('change_percent')
 
-  const { data, error, isLoading } = useSWR<QuotesResponse>(
-    `/api/markets/quotes?page=${currentPage}&limit=50&sort_by=${sortBy}`,
+  const { data, error, isLoading } = useSWR<MoversResponse>(
+    `/api/markets/movers`,
     fetcher,
     { refreshInterval: 30000 } // Refresh every 30 seconds
   )
 
   // Get top gainers and losers from the data
   const getTopMovers = () => {
-    if (!data?.data?.quotes) return { gainers: [], losers: [] }
-
-    const quotes = data.data.quotes
-    const gainers = quotes
-      .filter(quote => quote.change_percent > 0)
-      .sort((a, b) => b.change_percent - a.change_percent)
-      .slice(0, 5)
-
-    const losers = quotes
-      .filter(quote => quote.change_percent < 0)
-      .sort((a, b) => a.change_percent - b.change_percent)
-      .slice(0, 5)
-
-    return { gainers, losers }
+    if (!data?.data) return { gainers: [], losers: [] }
+    return { gainers: data.data.top_gainers, losers: data.data.top_losers }
   }
 
   const { gainers, losers } = getTopMovers()
@@ -212,27 +185,25 @@ export default function MoversTable() {
       </div>
 
       {/* Pagination */}
-      {data?.data?.pagination && (
+      {false && data?.data && (
         <div className="mt-6 flex justify-between items-center">
           <div className="text-sm text-gray-500">
-            Showing {((data.data.pagination.page - 1) * data.data.pagination.limit) + 1} to{' '}
-            {Math.min(data.data.pagination.page * data.data.pagination.limit, data.data.pagination.total)} of{' '}
-            {data.data.pagination.total} companies
+            {/* pagination removed for movers endpoint */}
           </div>
           <div className="flex space-x-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={!data.data.pagination.has_prev}
+              disabled
               className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Previous
             </button>
             <span className="px-3 py-1 text-sm text-gray-700">
-              Page {data.data.pagination.page} of {data.data.pagination.total_pages}
+              Page 1 of 1
             </span>
             <button
               onClick={() => setCurrentPage(prev => prev + 1)}
-              disabled={!data.data.pagination.has_next}
+              disabled
               className="px-3 py-1 text-sm border border-gray-300 rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               Next
