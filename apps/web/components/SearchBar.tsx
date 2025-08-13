@@ -20,6 +20,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [loading, setLoading] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [suggestions, setSuggestions] = useState<Company[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
@@ -66,6 +67,16 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       setResults([])
       setIsOpen(false)
       setSelectedIndex(-1)
+      // Load suggestions when empty
+      ;(async () => {
+        try {
+          const r = await fetch('/api/search/companies?suggest=1')
+          if (r.ok) {
+            const d = await r.json()
+            setSuggestions(d.data || [])
+          }
+        } catch {}
+      })()
     }
   }, [query])
 
@@ -241,7 +252,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       </div>
 
       {/* Results dropdown */}
-      {isOpen && isExpanded && (
+      {isExpanded && (
         <div
           ref={resultsRef}
           className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-[100] max-h-60 overflow-y-auto min-w-0"
@@ -251,7 +262,8 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-casablanca-blue mx-auto"></div>
               <p className="mt-2 text-sm">Searching...</p>
             </div>
-          ) : results.length > 0 ? (
+          ) : (query.trim() ? (
+            results.length > 0 ? (
             <div className="py-1">
               {results.map((company, index) => (
                 <button
@@ -279,12 +291,23 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 </button>
               ))}
             </div>
-          ) : query.trim() ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-              <p className="text-sm">No companies found</p>
-              <p className="text-xs mt-1">Try searching by ticker or company name</p>
+          ) : (
+            <div className="p-4 text-gray-700 dark:text-gray-200">
+              <div className="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">Suggested</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {suggestions.map((s) => (
+                  <button
+                    key={s.ticker}
+                    onClick={() => handleSelect(s)}
+                    className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-dark-hover text-left"
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white">{s.ticker}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{s.name}</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : null}
+          ))}
         </div>
       )}
     </div>
