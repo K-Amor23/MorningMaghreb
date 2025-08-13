@@ -50,8 +50,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { page = '1', limit = '20', ticker, sector, sort_by = 'market_cap_billion' } = req.query;
 
     // Load data sources
-    const africanMarketsData = loadJsonData('apps/backend/data/cse_companies_african_markets.json') || [];
+    let africanMarketsData = loadJsonData('apps/backend/data/cse_companies_african_markets.json') || [];
     const bourseData = loadJsonData('apps/backend/etl/casablanca_bourse_data_20250725_123947.json') || {};
+
+    // In production on Vercel, the backend data file may not be present on the server filesystem.
+    // Fall back to loading from the public data copy if needed.
+    if (!africanMarketsData || africanMarketsData.length === 0) {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || ''
+        const url = baseUrl ? `${baseUrl}/data/cse_companies_african_markets.json` : `${req.headers['x-forwarded-proto'] || 'https'}://${req.headers.host}/data/cse_companies_african_markets.json`
+        const r = await fetch(url)
+        if (r.ok) {
+          africanMarketsData = await r.json()
+        }
+      } catch (e) {
+        console.warn('Could not load public data fallback for african markets:', e)
+      }
+    }
 
     // Transform data into quotes format
     let quotes = africanMarketsData.map((company: any) => {
