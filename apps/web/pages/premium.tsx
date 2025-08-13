@@ -2,7 +2,8 @@ import { useState } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { 
+import Script from 'next/script'
+import {
   CheckIcon,
   XMarkIcon,
   ChevronDownIcon,
@@ -21,6 +22,8 @@ export default function Premium() {
   const router = useRouter()
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
+  const pricingTableId = process.env.NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
   const features = [
     {
@@ -188,7 +191,13 @@ export default function Premium() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
-                  onClick={handleUpgrade}
+                  onClick={() => {
+                    if (pricingTableId && publishableKey) {
+                      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+                    } else {
+                      handleUpgrade()
+                    }
+                  }}
                   className="bg-white text-casablanca-blue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
                 >
                   Start Free Trial
@@ -217,8 +226,8 @@ export default function Premium() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {features.map((feature, index) => (
-                  <Link 
-                    key={index} 
+                  <Link
+                    key={index}
                     href={feature.href}
                     className="text-center p-6 rounded-lg bg-gray-50 dark:bg-dark-bg hover:bg-gray-100 dark:hover:bg-dark-hover transition-colors cursor-pointer group"
                   >
@@ -299,57 +308,21 @@ export default function Premium() {
               <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
                 Choose the plan that works best for you
               </p>
-
-              {/* Billing Toggle */}
-              <div className="flex items-center justify-center mb-8">
-                <span className={`mr-4 text-sm ${billingCycle === 'monthly' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
-                  Monthly
-                </span>
-                <button
-                  onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    billingCycle === 'yearly' ? 'bg-casablanca-blue' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-1'
-                    }`}
+              {/* Stripe Pricing Table Embed */}
+              <div className="max-w-3xl mx-auto">
+                <Script src="https://js.stripe.com/v3/pricing-table.js" strategy="afterInteractive" />
+                {(!pricingTableId || !publishableKey) ? (
+                  <div className="rounded-md border border-yellow-300 bg-yellow-50 text-yellow-800 p-4 text-left">
+                    <p className="font-medium">Stripe pricing table is not configured.</p>
+                    <p className="text-sm mt-1">Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY and NEXT_PUBLIC_STRIPE_PRICING_TABLE_ID in Vercel env vars for this project.</p>
+                  </div>
+                ) : (
+                  // @ts-ignore - custom element provided by Stripe script
+                  <stripe-pricing-table
+                    pricing-table-id={pricingTableId}
+                    publishable-key={publishableKey}
                   />
-                </button>
-                <span className={`ml-4 text-sm ${billingCycle === 'yearly' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
-                  Yearly <span className="text-green-600 font-semibold">(Save 17%)</span>
-                </span>
-              </div>
-
-              {/* Pricing Card */}
-              <div className="bg-gradient-to-br from-casablanca-blue to-blue-600 rounded-2xl p-8 text-white max-w-md mx-auto">
-                <h3 className="text-2xl font-bold mb-4">Premium</h3>
-                <div className="mb-6">
-                  <span className="text-4xl font-bold">
-                    ${billingCycle === 'monthly' ? '9' : '90'}
-                  </span>
-                  <span className="text-xl text-blue-100">
-                    /{billingCycle === 'monthly' ? 'month' : 'year'}
-                  </span>
-                </div>
-                <ul className="text-left mb-8 space-y-3">
-                  {features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <CheckIcon className="w-5 h-5 text-green-400 mr-3 flex-shrink-0" />
-                      <span>{feature.title}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={handleUpgrade}
-                  className="w-full bg-white text-casablanca-blue py-4 px-6 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
-                >
-                  {billingCycle === 'monthly' ? 'Start Free Trial' : 'Start Free Trial'}
-                </button>
-                <p className="text-sm text-blue-100 mt-4">
-                  7-day free trial • Cancel anytime
-                </p>
+                )}
               </div>
             </div>
           </section>
@@ -405,7 +378,13 @@ export default function Premium() {
                 Join thousands of investors who trust Casablanca Insight Premium
               </p>
               <button
-                onClick={handleUpgrade}
+                onClick={() => {
+                  if (pricingTableId && publishableKey) {
+                    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })
+                  } else {
+                    handleUpgrade()
+                  }
+                }}
                 className="bg-white text-casablanca-blue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors"
               >
                 Upgrade to Premium

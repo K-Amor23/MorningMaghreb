@@ -12,16 +12,34 @@ export function useAuth() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // For now, create a mock admin user
-        // In production, this would check for JWT token and validate with backend
-        const mockUser: User = {
-            id: '1',
-            email: 'admin@morningmaghreb.com',
-            role: 'admin',
-            name: 'Admin User'
+        const env = process.env.NEXT_PUBLIC_ENV || 'production'
+
+        // In development, keep the old behavior for local testing only
+        if (env === 'development') {
+            const mockUser: User = {
+                id: '1',
+                email: 'admin@morningmaghreb.com',
+                role: 'admin',
+                name: 'Admin User'
+            }
+            setUser(mockUser)
+            setLoading(false)
+            return
         }
 
-        setUser(mockUser)
+        // In non-development, derive role from the lightweight cookie set by auth flow/middleware
+        if (typeof document !== 'undefined') {
+            const cookie = document.cookie || ''
+            const match = cookie.split('; ').find((c) => c.startsWith('mm_tier='))
+            const tier = match ? match.split('=')[1] : ''
+
+            if (tier === 'admin') {
+                setUser({ id: 'cookie-user', email: '', role: 'admin', name: 'Admin' })
+            } else {
+                setUser(null)
+            }
+        }
+
         setLoading(false)
     }, [])
 
