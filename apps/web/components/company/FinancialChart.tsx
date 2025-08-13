@@ -104,11 +104,10 @@ export default function FinancialChart({ data }: FinancialChartProps) {
 
       {showInteractive && (
         <InteractiveChart
-          ticker={selectedMetric.toUpperCase()}
-          candles={chartData.map((d) => ({ time: `${d.year}-01-01`, open: d.value, high: d.value, low: d.value, close: d.value }))}
+          ticker={/* pass company ticker if available in parent; fallback */ 'TICKER'}
           onClose={() => setShowInteractive(false)}
           dark={false}
-          initialStyle="line"
+          initialStyle="candlestick"
         />
       )}
     </div>
