@@ -202,12 +202,6 @@ export default function Header() {
               )}
             </div>
             <Link
-              href="/portfolio"
-              className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
-            >
-              {t('nav.portfolio')}
-            </Link>
-            <Link
               href="/news"
               className="text-gray-700 dark:text-dark-text hover:text-casablanca-blue dark:hover:text-casablanca-blue px-2 py-2 text-sm font-medium transition-colors"
             >
