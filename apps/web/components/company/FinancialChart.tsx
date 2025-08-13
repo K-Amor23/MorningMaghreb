@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
+
+const InteractiveChart = dynamic(() => import('../charts/InteractiveChart'), { ssr: false })
 
 interface FinancialData {
   revenue: { year: number; value: number }[]
@@ -14,6 +17,7 @@ type ChartType = 'revenue' | 'netIncome' | 'eps'
 
 export default function FinancialChart({ data }: FinancialChartProps) {
   const [selectedMetric, setSelectedMetric] = useState<ChartType>('revenue')
+  const [showInteractive, setShowInteractive] = useState(false)
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000000) {
@@ -73,8 +77,7 @@ export default function FinancialChart({ data }: FinancialChartProps) {
           ))}
         </div>
       </div>
-
-      <div className="h-64 flex items-end justify-between space-x-2">
+      <div className="h-64 flex items-end justify-between space-x-2 cursor-pointer" onClick={() => setShowInteractive(true)}>
         {chartData.map((item, index) => (
           <div key={item.year} className="flex-1 flex flex-col items-center">
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-t relative" style={{ height: `${getBarHeight(item.value)}%` }}>
@@ -98,6 +101,16 @@ export default function FinancialChart({ data }: FinancialChartProps) {
         {selectedMetric === 'netIncome' && 'Net Income in MAD'}
         {selectedMetric === 'eps' && 'Earnings Per Share in MAD'}
       </div>
+
+      {showInteractive && (
+        <InteractiveChart
+          ticker={selectedMetric.toUpperCase()}
+          candles={chartData.map((d) => ({ time: `${d.year}-01-01`, open: d.value, high: d.value, low: d.value, close: d.value }))}
+          onClose={() => setShowInteractive(false)}
+          dark={false}
+          initialStyle="line"
+        />
+      )}
     </div>
   )
 } 
