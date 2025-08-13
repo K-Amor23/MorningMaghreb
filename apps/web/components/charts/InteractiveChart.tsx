@@ -122,14 +122,14 @@ export default function InteractiveChart({ ticker, candles, compareTickers = [],
       case 'heikin': {
         // Simple Heikin Ashi transform
         const ha: Candle[] = []
-        let prev: Candle | null = null
+        let prev: { open: number; close: number } | null = null
         for (const c of filteredCandles) {
-          const close = (c.open + c.high + c.low + c.close) / 4
-          const open = prev ? (prev.open + prev.close) / 2 : (c.open + c.close) / 2
-          const high = Math.max(c.high, open, close)
-          const low = Math.min(c.low, open, close)
-          ha.push({ time: c.time, open, high, low, close, volume: c.volume })
-          prev = { time: c.time, open, high, low, close }
+          const haClose: number = (c.open + c.high + c.low + c.close) / 4
+          const haOpen: number = prev ? (prev.open + prev.close) / 2 : (c.open + c.close) / 2
+          const haHigh: number = Math.max(c.high, haOpen, haClose)
+          const haLow: number = Math.min(c.low, haOpen, haClose)
+          ha.push({ time: c.time, open: haOpen, high: haHigh, low: haLow, close: haClose, volume: c.volume })
+          prev = { open: haOpen, close: haClose }
         }
         series = chartRef.current.addCandlestickSeries({ upColor: '#16a34a', downColor: '#dc2626', borderVisible: false, wickUpColor: '#16a34a', wickDownColor: '#dc2626' })
         series.setData(ha)
