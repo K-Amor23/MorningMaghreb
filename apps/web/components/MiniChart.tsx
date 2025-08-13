@@ -1,5 +1,8 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
+
+const InteractiveChart = dynamic(() => import('./charts/InteractiveChart'), { ssr: false })
 
 interface ChartData {
   date: string
@@ -32,6 +35,7 @@ const generateMockData = (): ChartData[] => {
 export default function MiniChart() {
   const [chartData, setChartData] = useState<ChartData[]>([])
   const [mounted, setMounted] = useState(false)
+  const [showInteractive, setShowInteractive] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -60,7 +64,7 @@ export default function MiniChart() {
         <div className="text-sm text-gray-500">30 days</div>
       </div>
       
-      <div className="h-48">
+      <div className="h-48 cursor-pointer" onClick={() => setShowInteractive(true)}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
             <XAxis 
@@ -113,5 +117,14 @@ export default function MiniChart() {
         </div>
       </div>
     </div>
+    {showInteractive && (
+      <InteractiveChart
+        ticker="MASI"
+        candles={chartData.map(d => ({ time: new Date(`${d.date} ${new Date().getFullYear()}`).toISOString().slice(0,10), open: d.value, high: d.value, low: d.value, close: d.value }))}
+        initialStyle="line"
+        dark={false}
+        onClose={() => setShowInteractive(false)}
+      />
+    )}
   )
 } 
