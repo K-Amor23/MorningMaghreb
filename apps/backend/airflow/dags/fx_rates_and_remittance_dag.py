@@ -18,6 +18,7 @@ import logging
 import requests
 from decimal import Decimal
 from supabase import create_client, Client
+import os
 
 
 default_args = {
@@ -32,11 +33,20 @@ default_args = {
 
 
 def get_sb() -> Client:
-    conn = BaseHook.get_connection("supabase")
-    url = conn.host
-    key = conn.extra_dejson.get('service_role_key') or conn.password
+    """Get Supabase admin client from Airflow connection 'supabase' or env vars as fallback."""
+    try:
+        conn = BaseHook.get_connection("supabase")
+        url = conn.host
+        key = conn.extra_dejson.get('service_role_key') or conn.password
+        if url and key:
+            return create_client(url, key)
+    except Exception as e:
+        logging.warning(f"Airflow connection 'supabase' not available or incomplete: {e}")
+
+    url = os.getenv("NEXT_PUBLIC_SUPABASE_URL") or os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
     if not url or not key:
-        raise RuntimeError("Supabase connection not configured")
+        raise RuntimeError("Supabase credentials missing: set Airflow connection 'supabase' or env vars NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY")
     return create_client(url, key)
 
 
