@@ -54,3 +54,7 @@ with DAG(
     seed_companies >> scrape_news >> generate_weekly_summary >> send_newsletter_test
 
 
+
+
+
+

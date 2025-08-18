@@ -12,8 +12,19 @@ from pathlib import Path
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables from project root .env.local first, then .env
+def _load_env_chain() -> None:
+    try:
+        project_root = Path(__file__).resolve().parents[2]
+        env_local = project_root / '.env.local'
+        if env_local.exists():
+            load_dotenv(dotenv_path=env_local, override=False)
+    except Exception:
+        pass
+    # Fallback to default .env resolution
+    load_dotenv(override=False)
+
+_load_env_chain()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

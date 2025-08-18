@@ -1,0 +1,62 @@
+ticker,name,sector,source,url,scraped_at,exchange,country
+ATW,Attijariwafa Bank,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645507,Casablanca Stock Exchange,Morocco
+BCP,Banque Centrale Populaire,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645516,Casablanca Stock Exchange,Morocco
+BMCE,BMCE Bank of Africa,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645520,Casablanca Stock Exchange,Morocco
+CIH,Crédit Immobilier et Hôtelier,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645523,Casablanca Stock Exchange,Morocco
+CDM,Crédit du Maroc,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645526,Casablanca Stock Exchange,Morocco
+BOA,Bank of Africa,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645529,Casablanca Stock Exchange,Morocco
+IAM,Itissalat Al-Maghrib (Maroc Telecom),Telecommunications,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645532,Casablanca Stock Exchange,Morocco
+WAA,Wafa Assurance,Insurance,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645534,Casablanca Stock Exchange,Morocco
+SAH,Saham Assurance,Insurance,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645537,Casablanca Stock Exchange,Morocco
+ATL,Atlantasanad,Insurance,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645540,Casablanca Stock Exchange,Morocco
+ADH,Addoha,Real Estate,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645542,Casablanca Stock Exchange,Morocco
+RDS,Résidences Dar Saada,Real Estate,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645545,Casablanca Stock Exchange,Morocco
+CEN,Ciments du Maroc,Construction Materials,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645548,Casablanca Stock Exchange,Morocco
+HOL,Holcim Maroc,Construction Materials,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645550,Casablanca Stock Exchange,Morocco
+LAF,Lafarge Ciments,Construction Materials,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645553,Casablanca Stock Exchange,Morocco
+JET,Jet Contractors,Construction,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645556,Casablanca Stock Exchange,Morocco
+TIM,Timar,Construction Materials,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645558,Casablanca Stock Exchange,Morocco
+LBV,Label Vie,Retail,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645561,Casablanca Stock Exchange,Morocco
+MAR,Marjane Holding,Retail,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645564,Casablanca Stock Exchange,Morocco
+AUT,Auto Hall,Automotive Retail,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645567,Casablanca Stock Exchange,Morocco
+DIS,Disway,Retail,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645569,Casablanca Stock Exchange,Morocco
+LES,Lesieur Cristal,Food & Beverages,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645572,Casablanca Stock Exchange,Morocco
+COL,Cosumar,Food & Beverages,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645575,Casablanca Stock Exchange,Morocco
+BCI,Brasseries du Maroc,Beverages,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645580,Casablanca Stock Exchange,Morocco
+UNI,Unimer,Food & Beverages,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645583,Casablanca Stock Exchange,Morocco
+MSA,Managem,Mining,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645585,Casablanca Stock Exchange,Morocco
+SMI,SMI (Société Métallurgique d'Imiter),Mining,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645588,Casablanca Stock Exchange,Morocco
+CMT,Ciments du Maroc,Mining & Materials,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645590,Casablanca Stock Exchange,Morocco
+TMA,Taqa Morocco,Energy,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645593,Casablanca Stock Exchange,Morocco
+SNA,Société Nationale d'Autoroutes,Infrastructure,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645605,Casablanca Stock Exchange,Morocco
+LYD,Lydec,Utilities,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645608,Casablanca Stock Exchange,Morocco
+RED,Redal,Utilities,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645610,Casablanca Stock Exchange,Morocco
+SOT,Sothema,Pharmaceuticals,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645613,Casablanca Stock Exchange,Morocco
+COP,Cooper Pharma,Pharmaceuticals,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645616,Casablanca Stock Exchange,Morocco
+PHA,Pharma 5,Pharmaceuticals,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645618,Casablanca Stock Exchange,Morocco
+CTM,Compagnie de Transports au Maroc,Transportation,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645621,Casablanca Stock Exchange,Morocco
+RAM,Royal Air Maroc,Airlines,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645623,Casablanca Stock Exchange,Morocco
+HPS,HPS (High Payment Systems),Technology,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645629,Casablanca Stock Exchange,Morocco
+M2M,M2M Group,Technology,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645631,Casablanca Stock Exchange,Morocco
+IB2,IB Maroc.com,Technology,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645634,Casablanca Stock Exchange,Morocco
+DEL,Delattre Levivier Maroc,Textiles,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645636,Casablanca Stock Exchange,Morocco
+FEN,Fenie Brossette,Industrial Distribution,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645639,Casablanca Stock Exchange,Morocco
+RIS,Risma,Hotels & Tourism,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645642,Casablanca Stock Exchange,Morocco
+MOG,Mogador,Hotels & Tourism,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645644,Casablanca Stock Exchange,Morocco
+SAL,Salafin,Financial Services,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645647,Casablanca Stock Exchange,Morocco
+CRE,Crédit Agricole du Maroc,Banking,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645649,Casablanca Stock Exchange,Morocco
+PAP,Papelera de Tetuán,Paper & Packaging,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645652,Casablanca Stock Exchange,Morocco
+SNE,Snep,Chemicals,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645655,Casablanca Stock Exchange,Morocco
+ONA,ONA (Omnium Nord Africain),Holding Company,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645660,Casablanca Stock Exchange,Morocco
+SNI,SNI (Société Nationale d'Investissement),Holding Company,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645662,Casablanca Stock Exchange,Morocco
+FIN,Financecom,Financial Services,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645665,Casablanca Stock Exchange,Morocco
+ALM,Aluminium du Maroc,Metals,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645668,Casablanca Stock Exchange,Morocco
+STR,Stroc Industrie,Industrial,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645670,Casablanca Stock Exchange,Morocco
+MUT,Mutandis,Holding Company,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645673,Casablanca Stock Exchange,Morocco
+ZEL,Zellidja,Mining,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645675,Casablanca Stock Exchange,Morocco
+AFR,Afriquia Gaz,Energy,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645678,Casablanca Stock Exchange,Morocco
+MIC,Microdata,Technology,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645680,Casablanca Stock Exchange,Morocco
+NEX,Nexans Maroc,Industrial,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645683,Casablanca Stock Exchange,Morocco
+ALI,Alliances,Real Estate,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645686,Casablanca Stock Exchange,Morocco
+BAL,Balima,Industrial,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645688,Casablanca Stock Exchange,Morocco
+BER,Berliet Maroc,Automotive,Comprehensive Known Companies,Research Based,2025-08-18T15:10:13.645691,Casablanca Stock Exchange,Morocco

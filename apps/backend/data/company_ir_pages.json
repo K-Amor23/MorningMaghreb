@@ -1,4 +1,42 @@
 {
+    "ATW": {
+        "name": "Attijariwafa Bank",
+        "ir_url": "https://ir.attijariwafabank.com/financial-information/annual-reports",
+        "base_url": "https://ir.attijariwafabank.com",
+        "report_pages": [
+            "https://ir.attijariwafabank.com/financial-information/annual-reports",
+            "https://ir.attijariwafabank.com/financial-information/financial-results"
+        ]
+    },
+    "IAM": {
+        "name": "Maroc Telecom",
+        "ir_url": "https://www.iam.ma/fr/investisseurs/informations-financieres",
+        "base_url": "https://www.iam.ma",
+        "report_pages": [
+            "https://www.iam.ma/fr/investisseurs/informations-financieres",
+            "https://www.iam.ma/fr/investisseurs/publications-financieres"
+        ]
+    },
+    "WAA": {
+        "name": "Wafa Assurance",
+        "ir_url": "https://www.wafaassurance.ma/fr/investisseurs",
+        "base_url": "https://www.wafaassurance.ma",
+        "report_pages": [
+            "https://www.wafaassurance.ma/fr/investisseurs",
+            "https://www.wafaassurance.ma/fr/publications"
+        ]
+    },
+    "MNG": {
+        "name": "Managem",
+        "ir_url": "https://www.managemgroup.com/fr/investisseurs",
+        "base_url": "https://www.managemgroup.com",
+        "report_pages": [
+            "https://www.managemgroup.com/fr/investisseurs",
+            "https://www.managemgroup.com/fr/publications"
+        ]
+    }
+}
+{
     "ADH": {
         "name": "ADH",
         "ir_url": "https://www.adh.ma/fr/investisseurs",
@@ -66,8 +104,12 @@
     },
     "BCP": {
         "name": "Banque Centrale Populaire",
-        "ir_url": "https://www.banquecentrale.ma/fr/investisseurs",
-        "base_url": "https://www.banquecentrale.ma"
+        "ir_url": "https://www.bcp.ma/fr/investisseurs",
+        "base_url": "https://www.bcp.ma",
+        "report_pages": [
+            "https://www.bcp.ma/fr/investisseurs/informations-financieres",
+            "https://www.bcp.ma/fr/investisseurs/publications-financieres"
+        ]
     },
     "BOA": {
         "name": "BOA",
@@ -87,7 +129,11 @@
     "CIH": {
         "name": "CIH Bank",
         "ir_url": "https://www.cihbank.ma/fr/investisseurs",
-        "base_url": "https://www.cihbank.ma"
+        "base_url": "https://www.cihbank.ma",
+        "report_pages": [
+            "https://www.cihbank.ma/fr/investisseurs/informations-financieres",
+            "https://www.cihbank.ma/fr/investisseurs/publications-financieres"
+        ]
     },
     "CMA": {
         "name": "CMA",

@@ -1,0 +1,12 @@
+{
+  "started_at": "2025-08-14T20:20:16.947292",
+  "companies": [
+    {
+      "ticker": "BCP",
+      "name": "Banque Centrale Populaire",
+      "error": "(sqlalchemy.dialects.postgresql.asyncpg.ProgrammingError) <class 'asyncpg.exceptions.UndefinedObjectError'>: type \"report_type_enum\" does not exist\n[SQL: \n        INSERT INTO public.company_reports\n            (id, ticker, company_name, url, title, source, report_type, year, quarter, language, published_date, created_at, updated_at)\n        VALUES\n            (\n                gen_random_uuid(),\n                %s,\n                %s,\n                %s,\n                %s,\n                %s,\n                CAST(%s AS report_type_enum),\n                %s,\n                %s,\n                %s,\n                %s,\n                now(),\n                now()\n            )\n        ON CONFLICT (url) DO NOTHING\n        ]\n[parameters: ('BCP', 'Banque Centrale Populaire', 'https://media.casablanca-bourse.com/sites/default/files/2025-07/ni_bcp_rachat_017_2025.pdf', 'Financial Report - BCP', 'issuer', 'financial_statement', 2025, None, 'fr', None)]\n(Background on this error at: https://sqlalche.me/e/14/f405)"
+    }
+  ],
+  "total_found": 10,
+  "finished_at": "2025-08-14T20:21:17.675428"
+}

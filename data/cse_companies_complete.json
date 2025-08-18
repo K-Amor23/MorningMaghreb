@@ -1,0 +1,612 @@
+[
+  {
+    "ticker": "ATW",
+    "name": "Attijariwafa Bank",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645507",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BCP",
+    "name": "Banque Centrale Populaire",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645516",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BMCE",
+    "name": "BMCE Bank of Africa",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645520",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CIH",
+    "name": "Crédit Immobilier et Hôtelier",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645523",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CDM",
+    "name": "Crédit du Maroc",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645526",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BOA",
+    "name": "Bank of Africa",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645529",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "IAM",
+    "name": "Itissalat Al-Maghrib (Maroc Telecom)",
+    "sector": "Telecommunications",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645532",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "WAA",
+    "name": "Wafa Assurance",
+    "sector": "Insurance",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645534",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SAH",
+    "name": "Saham Assurance",
+    "sector": "Insurance",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645537",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ATL",
+    "name": "Atlantasanad",
+    "sector": "Insurance",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645540",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ADH",
+    "name": "Addoha",
+    "sector": "Real Estate",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645542",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RDS",
+    "name": "Résidences Dar Saada",
+    "sector": "Real Estate",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645545",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CEN",
+    "name": "Ciments du Maroc",
+    "sector": "Construction Materials",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645548",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "HOL",
+    "name": "Holcim Maroc",
+    "sector": "Construction Materials",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645550",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LAF",
+    "name": "Lafarge Ciments",
+    "sector": "Construction Materials",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645553",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "JET",
+    "name": "Jet Contractors",
+    "sector": "Construction",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645556",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "TIM",
+    "name": "Timar",
+    "sector": "Construction Materials",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645558",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LBV",
+    "name": "Label Vie",
+    "sector": "Retail",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645561",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MAR",
+    "name": "Marjane Holding",
+    "sector": "Retail",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645564",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "AUT",
+    "name": "Auto Hall",
+    "sector": "Automotive Retail",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645567",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "DIS",
+    "name": "Disway",
+    "sector": "Retail",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645569",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LES",
+    "name": "Lesieur Cristal",
+    "sector": "Food & Beverages",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645572",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "COL",
+    "name": "Cosumar",
+    "sector": "Food & Beverages",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645575",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BCI",
+    "name": "Brasseries du Maroc",
+    "sector": "Beverages",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645580",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "UNI",
+    "name": "Unimer",
+    "sector": "Food & Beverages",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645583",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MSA",
+    "name": "Managem",
+    "sector": "Mining",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645585",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SMI",
+    "name": "SMI (Société Métallurgique d'Imiter)",
+    "sector": "Mining",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645588",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CMT",
+    "name": "Ciments du Maroc",
+    "sector": "Mining & Materials",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645590",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "TMA",
+    "name": "Taqa Morocco",
+    "sector": "Energy",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645593",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SNA",
+    "name": "Société Nationale d'Autoroutes",
+    "sector": "Infrastructure",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645605",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "LYD",
+    "name": "Lydec",
+    "sector": "Utilities",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645608",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RED",
+    "name": "Redal",
+    "sector": "Utilities",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645610",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SOT",
+    "name": "Sothema",
+    "sector": "Pharmaceuticals",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645613",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "COP",
+    "name": "Cooper Pharma",
+    "sector": "Pharmaceuticals",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645616",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "PHA",
+    "name": "Pharma 5",
+    "sector": "Pharmaceuticals",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645618",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CTM",
+    "name": "Compagnie de Transports au Maroc",
+    "sector": "Transportation",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645621",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RAM",
+    "name": "Royal Air Maroc",
+    "sector": "Airlines",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645623",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "HPS",
+    "name": "HPS (High Payment Systems)",
+    "sector": "Technology",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645629",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "M2M",
+    "name": "M2M Group",
+    "sector": "Technology",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645631",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "IB2",
+    "name": "IB Maroc.com",
+    "sector": "Technology",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645634",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "DEL",
+    "name": "Delattre Levivier Maroc",
+    "sector": "Textiles",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645636",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "FEN",
+    "name": "Fenie Brossette",
+    "sector": "Industrial Distribution",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645639",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "RIS",
+    "name": "Risma",
+    "sector": "Hotels & Tourism",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645642",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MOG",
+    "name": "Mogador",
+    "sector": "Hotels & Tourism",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645644",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SAL",
+    "name": "Salafin",
+    "sector": "Financial Services",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645647",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "CRE",
+    "name": "Crédit Agricole du Maroc",
+    "sector": "Banking",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645649",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "PAP",
+    "name": "Papelera de Tetuán",
+    "sector": "Paper & Packaging",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645652",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SNE",
+    "name": "Snep",
+    "sector": "Chemicals",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645655",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ONA",
+    "name": "ONA (Omnium Nord Africain)",
+    "sector": "Holding Company",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645660",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "SNI",
+    "name": "SNI (Société Nationale d'Investissement)",
+    "sector": "Holding Company",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645662",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "FIN",
+    "name": "Financecom",
+    "sector": "Financial Services",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645665",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ALM",
+    "name": "Aluminium du Maroc",
+    "sector": "Metals",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645668",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "STR",
+    "name": "Stroc Industrie",
+    "sector": "Industrial",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645670",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MUT",
+    "name": "Mutandis",
+    "sector": "Holding Company",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645673",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ZEL",
+    "name": "Zellidja",
+    "sector": "Mining",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645675",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "AFR",
+    "name": "Afriquia Gaz",
+    "sector": "Energy",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645678",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "MIC",
+    "name": "Microdata",
+    "sector": "Technology",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645680",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "NEX",
+    "name": "Nexans Maroc",
+    "sector": "Industrial",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645683",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "ALI",
+    "name": "Alliances",
+    "sector": "Real Estate",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645686",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BAL",
+    "name": "Balima",
+    "sector": "Industrial",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645688",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  },
+  {
+    "ticker": "BER",
+    "name": "Berliet Maroc",
+    "sector": "Automotive",
+    "source": "Comprehensive Known Companies",
+    "url": "Research Based",
+    "scraped_at": "2025-08-18T15:10:13.645691",
+    "exchange": "Casablanca Stock Exchange",
+    "country": "Morocco"
+  }
+]

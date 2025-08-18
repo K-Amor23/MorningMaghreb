@@ -11,8 +11,8 @@ type ChartStyle = 'line' | 'candlestick' | 'area' | 'bar' | 'ohlc' | 'heikin'
 type Timeframe = '1D' | '5D' | '1M' | '6M' | '1Y' | '5Y' | 'Max'
 
 export interface InteractiveChartProps {
-  ticker: string
-  candles?: Candle[]
+    ticker: string
+    candles?: Candle[]
     compareTickers?: string[]
     onLoadCompareData?: (ticker: string, timeframe: Timeframe) => Promise<Candle[] | LinePoint[]>
     corporateEvents?: { date: string; type: 'earnings' | 'dividend' | 'news'; label?: string }[]
@@ -52,8 +52,8 @@ export default function InteractiveChart({ ticker, candles, compareTickers = [],
     const containerRef = useRef<HTMLDivElement>(null)
     const chartRef = useRef<any>(null)
     const mainSeriesRef = useRef<any>(null)
-  const [chartReady, setChartReady] = useState(false)
-  const [loadedCandles, setLoadedCandles] = useState<Candle[]>([])
+    const [chartReady, setChartReady] = useState(false)
+    const [loadedCandles, setLoadedCandles] = useState<Candle[]>([])
     const [style, setStyle] = useState<ChartStyle>(initialStyle)
     const [timeframe, setTimeframe] = useState<Timeframe>('6M')
     const [showSMA, setShowSMA] = useState(true)
@@ -64,30 +64,30 @@ export default function InteractiveChart({ ticker, candles, compareTickers = [],
     const [compareData, setCompareData] = useState<Record<string, LinePoint[]>>({})
 
     // Filter candles by timeframe (basic implementation using last N days)
-  const sourceCandles = (candles && candles.length > 0) ? candles : loadedCandles
-  const filteredCandles = useMemo(() => {
+    const sourceCandles = (candles && candles.length > 0) ? candles : loadedCandles
+    const filteredCandles = useMemo(() => {
         const map: Record<Timeframe, number> = { '1D': 1, '5D': 5, '1M': 22, '6M': 132, '1Y': 264, '5Y': 1320, 'Max': Number.MAX_SAFE_INTEGER }
         const take = map[timeframe]
-    return take >= sourceCandles.length ? sourceCandles : sourceCandles.slice(-take)
-  }, [sourceCandles, timeframe])
+        return take >= sourceCandles.length ? sourceCandles : sourceCandles.slice(-take)
+    }, [sourceCandles, timeframe])
 
-  // Load price candles if not provided
-  useEffect(() => {
-    let abort = false
-    if (!candles || candles.length === 0) {
-      ;(async () => {
-        try {
-          const r = await fetch(`/api/companies/${encodeURIComponent(ticker)}/trading?days=365`)
-          if (!r.ok) return
-          const d = await r.json()
-          const arr = (d?.priceData?.last90Days || []) as Array<{ date: string; open: number; high: number; low: number; close: number; volume?: number }>
-          const mapped: Candle[] = arr.map(p => ({ time: p.date, open: p.open, high: p.high, low: p.low, close: p.close, volume: p.volume }))
-          if (!abort) setLoadedCandles(mapped)
-        } catch {}
-      })()
-    }
-    return () => { abort = true }
-  }, [ticker, candles])
+    // Load price candles if not provided
+    useEffect(() => {
+        let abort = false
+        if (!candles || candles.length === 0) {
+            ; (async () => {
+                try {
+                    const r = await fetch(`/api/companies/${encodeURIComponent(ticker)}/trading?days=365`)
+                    if (!r.ok) return
+                    const d = await r.json()
+                    const arr = (d?.priceData?.last90Days || []) as Array<{ date: string; open: number; high: number; low: number; close: number; volume?: number }>
+                    const mapped: Candle[] = arr.map(p => ({ time: p.date, open: p.open, high: p.high, low: p.low, close: p.close, volume: p.volume }))
+                    if (!abort) setLoadedCandles(mapped)
+                } catch { }
+            })()
+        }
+        return () => { abort = true }
+    }, [ticker, candles])
 
     useEffect(() => {
         if (!containerRef.current) return
@@ -135,11 +135,11 @@ export default function InteractiveChart({ ticker, candles, compareTickers = [],
                 series = chartRef.current.addBarSeries({ upColor: '#16a34a', downColor: '#dc2626' })
                 series.setData(filteredCandles)
                 break
-      case 'ohlc':
-        // Use bar series to emulate OHLC bars
-        series = chartRef.current.addBarSeries({ upColor: '#16a34a', downColor: '#dc2626' })
-        series.setData(filteredCandles)
-        break
+            case 'ohlc':
+                // Use bar series to emulate OHLC bars
+                series = chartRef.current.addBarSeries({ upColor: '#16a34a', downColor: '#dc2626' })
+                series.setData(filteredCandles)
+                break
             case 'heikin': {
                 // Simple Heikin Ashi transform
                 const ha: Candle[] = []

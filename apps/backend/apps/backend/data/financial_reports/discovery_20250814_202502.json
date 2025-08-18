@@ -1,0 +1,12 @@
+{
+  "started_at": "2025-08-14T20:22:15.878880",
+  "companies": [
+    {
+      "ticker": "BCP",
+      "name": "Banque Centrale Populaire",
+      "error": "(sqlalchemy.dialects.postgresql.asyncpg.Error) <class 'asyncpg.exceptions.DataError'>: invalid input for query argument $5: 2025 (expected str, got int)\n[SQL: \n        INSERT INTO public.company_reports\n            (id, ticker, company_name, title, report_type, report_year, report_quarter, url, source, scraped_at, created_at, updated_at)\n        VALUES\n            (\n                gen_random_uuid(),\n                %s,\n                %s,\n                %s,\n                %s,\n                %s,\n                %s,\n                %s,\n                %s,\n                now(),\n                now(),\n                now()\n            )\n        ON CONFLICT (url) DO NOTHING\n        ]\n[parameters: ('BCP', 'Banque Centrale Populaire', 'Financial Report - BCP', 'financial_statement', 2025, None, 'https://media.casablanca-bourse.com/sites/default/files/2025-07/ni_bcp_rachat_017_2025.pdf', 'issuer')]\n(Background on this error at: https://sqlalche.me/e/14/dbapi)"
+    }
+  ],
+  "total_found": 10,
+  "finished_at": "2025-08-14T20:25:02.562621"
+}

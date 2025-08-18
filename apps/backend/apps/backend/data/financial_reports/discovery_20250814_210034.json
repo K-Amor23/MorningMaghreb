@@ -1,0 +1,22 @@
+{
+  "started_at": "2025-08-14T20:39:43.528400",
+  "companies": [
+    {
+      "ticker": "BCP",
+      "name": "Banque Centrale Populaire",
+      "count": 10
+    },
+    {
+      "ticker": "CIH",
+      "name": "CIH Bank",
+      "count": 2
+    },
+    {
+      "ticker": "IAM",
+      "name": "Maroc Telecom",
+      "count": 1
+    }
+  ],
+  "total_found": 13,
+  "finished_at": "2025-08-14T21:00:34.821522"
+}

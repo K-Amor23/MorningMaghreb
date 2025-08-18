@@ -106,15 +106,9 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl/Cmd + K to focus search
-      if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+      if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
         inputRef.current?.focus()
-        setIsExpanded(true)
-        // Dispatch custom event to notify header
-        document.dispatchEvent(new CustomEvent('searchStateChange', { 
-          detail: { isExpanded: true } 
-        }))
       }
     }
 
@@ -127,7 +121,6 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
     }
   }, [query])
 
-  // Cleanup effect to reset header state when component unmounts
   useEffect(() => {
     return () => {
       if (isExpanded) {

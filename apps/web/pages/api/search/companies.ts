@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const all = await loadPublicCompanies(req)
   if (suggest || !q) {
     // simple top suggestions by a static priority list
-    const priority = ['IAM', 'ATW', 'BCP', 'GAZ', 'BMCI', 'CIH', 'ADD', 'SNEP']
+    const priority = ['IAM', 'ATW', 'BCP', 'GAZ', 'BMCI', 'CIH', 'ADD', 'SNEP', 'WAA']
     const suggested = priority
       .map((t) => all.find((c) => c.ticker === t))
       .filter(Boolean)
@@ -76,8 +76,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const needle = q.toLowerCase()
+  
+  // Improved search algorithm with better scoring
   const filtered = all
-    .filter((c) => c.ticker.toLowerCase().includes(needle) || c.name.toLowerCase().includes(needle))
+    .map(company => {
+      const tickerMatch = company.ticker.toLowerCase()
+      const nameMatch = company.name.toLowerCase()
+      
+      let score = 0
+      
+      // Exact ticker match gets highest score
+      if (tickerMatch === needle) score += 100
+      // Ticker starts with query gets high score
+      else if (tickerMatch.startsWith(needle)) score += 50
+      // Ticker contains query gets medium score
+      else if (tickerMatch.includes(needle)) score += 30
+      
+      // Exact name match gets high score
+      if (nameMatch === needle) score += 80
+      // Name starts with query gets medium-high score
+      else if (nameMatch.startsWith(needle)) score += 40
+      // Name contains query gets medium score
+      else if (nameMatch.includes(needle)) score += 25
+      
+      // Word boundary matches get bonus
+      const nameWords = nameMatch.split(/\s+/)
+      nameWords.forEach(word => {
+        if (word.startsWith(needle)) score += 15
+        if (word.includes(needle)) score += 10
+      })
+      
+      return { ...company, score }
+    })
+    .filter(company => company.score > 0)
+    .sort((a, b) => b.score - a.score)
     .slice(0, 12)
+    .map(({ score, ...company }) => company) // Remove score from final result
+
   return res.status(200).json({ data: filtered })
 }

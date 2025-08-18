@@ -107,9 +107,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
         // Try to get data from database
-        let company = null;
-        let news = null;
-        let sentimentAggregates = null;
+        let company: any = null;
+        let news: any[] | null = null;
+        let sentimentAggregates: any = null;
 
         try {
             // Get company information

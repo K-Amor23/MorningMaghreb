@@ -66,11 +66,10 @@ export default function FinancialChart({ data }: FinancialChartProps) {
             <button
               key={metric.key}
               onClick={() => setSelectedMetric(metric.key)}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                selectedMetric === metric.key
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${selectedMetric === metric.key
                   ? 'bg-casablanca-blue text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-dark-hover dark:text-gray-300 dark:hover:bg-gray-700'
-              }`}
+                }`}
             >
               {metric.label}
             </button>
@@ -86,7 +85,7 @@ export default function FinancialChart({ data }: FinancialChartProps) {
             <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 text-center">
               <div className="font-medium">{item.year}</div>
               <div className="text-xs">
-                {selectedMetric === 'eps' 
+                {selectedMetric === 'eps'
                   ? item.value.toFixed(2)
                   : formatCurrency(item.value)
                 }

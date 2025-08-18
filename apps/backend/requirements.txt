@@ -18,6 +18,7 @@ openai>=1.0.0
 supabase>=2.0.0
 stripe==7.8.0
 sendgrid>=6.10.0
+resend>=2.4.0
 celery==5.3.4
 redis==5.0.1
 beautifulsoup4==4.12.2

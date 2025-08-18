@@ -327,6 +327,133 @@ def scrape_news_and_sentiment(**context):
         logger.error(f"❌ Error in scrape_news_and_sentiment: {e}")
         raise
 
+def scrape_moroccan_news(**context):
+    """Scrape Moroccan business news using the real scraper and store in Supabase"""
+    try:
+        logger.info("Starting Moroccan business news scraping (real scraper)...")
+        
+        import sys as _sys
+        from pathlib import Path as _Path
+        import asyncio as _asyncio
+        
+        # Resolve local/project paths for imports
+        try:
+            _sys.path.extend(['/opt/airflow/etl', '/opt/airflow'])
+        except Exception:
+            pass
+        project_root = _Path(__file__).resolve().parents[3]
+        _sys.path.append(str(project_root / 'apps' / 'backend' / 'etl'))
+        _sys.path.append(str(project_root / 'apps' / 'backend'))
+        
+        from news_sentiment_scraper import NewsSentimentScraper  # type: ignore
+        
+        async def run_scraping():
+            async with NewsSentimentScraper(batch_size=10, max_concurrent=10) as scraper:
+                results = await scraper.run_batch_scraping()
+                return results
+        
+        results = _asyncio.run(run_scraping())
+        total_news = int(results.get('total_news', 0))
+        
+        context['task_instance'].xcom_push(key='news_data', value=total_news)
+        logger.info(f"✅ Moroccan news scraping complete: total_news={total_news}")
+        return total_news
+    except Exception as e:
+        logger.error(f"❌ Error in scrape_moroccan_news: {e}")
+        raise
+
+def summarize_news_for_newsletter(**context):
+    """Summarize Moroccan business news for the weekly newsletter with AI guardrails"""
+    try:
+        logger.info("Starting AI summary for Moroccan business news...")
+        
+        supabase = initialize_supabase_client()
+        seven_days_ago = datetime.now() - timedelta(days=7)
+        
+        # Fetch recent news items
+        try:
+            news_resp = supabase.table('company_news') \
+                .select('ticker,headline,source,sentiment,published_at') \
+                .gte('published_at', seven_days_ago.date().isoformat()) \
+                .order('published_at', desc=True) \
+                .limit(200) \
+                .execute()
+            news_items = news_resp.data or []
+        except Exception as fetch_err:
+            logger.warning(f"Could not fetch company_news from Supabase: {fetch_err}")
+            news_items = []
+        
+        # Build concise context
+        top_items = news_items[:50]
+        headlines_blob = "\n".join([
+            f"- [{n.get('published_at', '')}] {n.get('ticker', 'MKT')}: {n.get('headline', '')} ({n.get('source', '')}) [{n.get('sentiment', 'neutral')}]"
+            for n in top_items
+        ])
+        
+        # Generate AI summary with guardrails
+        summary_text = "Weekly Moroccan business recap is unavailable."
+        try:
+            from openai import OpenAI as _OpenAI
+            api_key = os.getenv('OPENAI_API_KEY') or os.getenv('OpenAi_API_KEY')
+            if not api_key:
+                raise RuntimeError('OPENAI_API_KEY not set')
+            _client = _OpenAI(api_key=api_key)
+            system_prompt = (
+                "You are a careful financial editor for Moroccan business markets. "
+                "Produce a concise weekly recap (<= 250 words) covering macro highlights, sectors, and notable company news. "
+                "Be factual, avoid speculation, neutral tone."
+            )
+            user_prompt = (
+                "Summarize the Moroccan business news for the last week from these headlines:\n" + headlines_blob +
+                "\nFocus on signal over noise. Include 3-5 specific items."
+            )
+            completion = _client.chat.completions.create(
+                model='gpt-4o-mini',
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt},
+                ],
+                temperature=0.4,
+                max_tokens=600,
+            )
+            summary_text = completion.choices[0].message.content or summary_text
+        except Exception as ai_err:
+            logger.error(f"OpenAI summary generation failed: {ai_err}")
+        
+        # Apply AI moderation guardrails
+        try:
+            import asyncio as _asyncio
+            from lib.ai_moderation import moderation_service  # type: ignore
+            moderation = _asyncio.run(moderation_service.moderate_text(summary_text))  # type: ignore
+            if not moderation.get('is_appropriate', True):
+                logger.warning("Summary flagged by moderation. Using safe placeholder.")
+                summary_text = "Weekly Moroccan business recap is unavailable due to content review."
+        except Exception as mod_err:
+            logger.warning(f"Moderation step failed (continuing): {mod_err}")
+        
+        subject = f"Moroccan Business Weekly Recap — {datetime.now().strftime('%Y-%m-%d')}"
+        
+        # Persist summary
+        try:
+            supabase.table('newsletter_summaries').upsert({
+                'summary_date': datetime.now().date().isoformat(),
+                'language': 'en',
+                'subject': subject,
+                'content': summary_text,
+                'created_at': datetime.now().isoformat(),
+            }, on_conflict='summary_date,language').execute()
+        except Exception as db_err:
+            logger.warning(f"Could not store newsletter summary to Supabase: {db_err}")
+        
+        # XComs
+        context['task_instance'].xcom_push(key='newsletter_subject', value=subject)
+        context['task_instance'].xcom_push(key='newsletter_summary', value=summary_text)
+        logger.info("✅ Weekly Moroccan business news summary generated")
+        return True
+    except Exception as e:
+        logger.error(f"❌ Error in summarize_news_for_newsletter: {e}")
+        raise
+
 def validate_data_quality(**context):
     """Validate data quality and completeness"""
     try:
@@ -510,6 +637,20 @@ scrape_news_sentiment_task = PythonOperator(
     dag=dag,
 )
 
+# Real Moroccan news scraping task (uses actual scraper)
+scrape_moroccan_news_task = PythonOperator(
+    task_id='scrape_moroccan_news',
+    python_callable=scrape_moroccan_news,
+    dag=dag,
+)
+
+# Summarize Moroccan business news for newsletter with guardrails
+summarize_news_task = PythonOperator(
+    task_id='summarize_news_for_newsletter',
+    python_callable=summarize_news_for_newsletter,
+    dag=dag,
+)
+
 validate_data_task = PythonOperator(
     task_id='validate_data_quality',
     python_callable=validate_data_quality,
@@ -531,6 +672,6 @@ failure_notification_task = PythonOperator(
 )
 
 # Define task dependencies
-[scrape_african_markets_task, scrape_casablanca_bourse_task, scrape_macro_data_task, scrape_news_sentiment_task] >> validate_data_task
+[scrape_african_markets_task, scrape_casablanca_bourse_task, scrape_macro_data_task, scrape_moroccan_news_task] >> summarize_news_task >> validate_data_task
 
 validate_data_task >> [success_notification_task, failure_notification_task] 

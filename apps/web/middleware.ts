@@ -37,6 +37,15 @@ export function middleware(req: NextRequest) {
     }
   }
 
+  // Admin token gate for protected API endpoints
+  const protectedApi = [/^\/api\/summary\//, /^\/api\/news\//]
+  if (protectedApi.some((re) => re.test(pathname))) {
+    const token = req.headers.get('x-admin-token')
+    if (!token || token !== process.env.ADMIN_API_TOKEN) {
+      return new NextResponse('Unauthorized', { status: 401 })
+    }
+  }
+
   return NextResponse.next()
 }
 

@@ -41,8 +41,8 @@ class FinancialReportsScraper:
         self.company_ir_pages = {
             'ATW': {
                 'name': 'Attijariwafa Bank',
-                'ir_url': 'https://www.attijariwafabank.com/fr/investisseurs',
-                'base_url': 'https://www.attijariwafabank.com'
+                'ir_url': 'https://ir.attijariwafabank.com/financial-information/annual-reports',
+                'base_url': 'https://ir.attijariwafabank.com'
             },
             'IAM': {
                 'name': 'Maroc Telecom',
@@ -87,7 +87,11 @@ class FinancialReportsScraper:
         self.session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
             headers={
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive'
             }
         )
         return self
@@ -105,8 +109,14 @@ class FinancialReportsScraper:
             ir_url = company_info['ir_url']
             base_url = company_info['base_url']
             
+            # Preflight: visit base URL to obtain Cloudflare cookies if any
+            try:
+                await self.session.get(base_url, allow_redirects=True)
+            except Exception:
+                pass
+            
             # Get the IR page
-            async with self.session.get(ir_url) as response:
+            async with self.session.get(ir_url, allow_redirects=True) as response:
                 if response.status != 200:
                     logger.warning(f"Failed to fetch IR page for {ticker}: {response.status}")
                     return []
@@ -117,7 +127,7 @@ class FinancialReportsScraper:
                 reports = []
                 
                 # Look for PDF links
-                pdf_links = soup.find_all('a', href=re.compile(r'\.pdf$', re.IGNORECASE))
+                pdf_links = soup.find_all('a', href=re.compile(r'\.pdf(\?|$)', re.IGNORECASE))
                 
                 for link in pdf_links:
                     href = link.get('href')
@@ -154,7 +164,7 @@ class FinancialReportsScraper:
                         href = link.get('href')
                         text = link.get_text(strip=True)
                         
-                        if href and text and not any(r['url'] == href for r in reports):
+                        if href and text and not any(r['url'] == urllib.parse.urljoin(base_url, href) for r in reports):
                             report_info = self.analyze_report_link(text, href)
                             if report_info:
                                 full_url = urllib.parse.urljoin(base_url, href)
@@ -344,7 +354,15 @@ class FinancialReportsScraper:
             
             # Scrape company IR pages
             logger.info("Scraping company IR pages...")
+            import os as _os
+            selected = _os.environ.get('TICKERS')
+            selected_set = None
+            if selected:
+                selected_set = {t.strip().upper() for t in selected.split(',') if t.strip()}
+
             for ticker, company_info in self.company_ir_pages.items():
+                if selected_set and ticker.upper() not in selected_set:
+                    continue
                 try:
                     reports = await self.scrape_company_ir_page(ticker, company_info)
                     all_reports.extend(reports)

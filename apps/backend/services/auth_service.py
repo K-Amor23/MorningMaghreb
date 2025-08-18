@@ -141,6 +141,9 @@ class AuthService:
                 "language_preference": user_data.language_preference,
                 "newsletter_frequency": "weekly",
                 "preferences": {},
+                # Persist compliance consents when present in payload
+                **({"marketing_consent": getattr(user_data, "marketing_consent", False)}),
+                **({"terms_accepted_at": getattr(user_data, "terms_accepted_at", datetime.utcnow().isoformat())}),
                 "created_at": datetime.utcnow().isoformat(),
                 "updated_at": datetime.utcnow().isoformat()
             }

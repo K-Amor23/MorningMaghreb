@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from typing import List, Optional
 from datetime import datetime, timedelta
 import os
@@ -8,6 +9,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
+security = HTTPBearer()
+
+OWNER_EMAIL = os.getenv("OWNER_EMAIL", "karimamor@hotmail.com").strip().lower()
+
+async def require_owner(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Allow only the owner email to access admin backend.
+    Verifies Supabase JWT and checks email equals OWNER_EMAIL.
+    """
+    try:
+        # Lazy import to avoid circular deps
+        from auth.supabase_auth import SupabaseAuth  # type: ignore
+        token = credentials.credentials
+        user_data = await SupabaseAuth().verify_token(token)
+        email = (user_data.get("email") or "").strip().lower()
+        if email != OWNER_EMAIL:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access restricted")
+    except HTTPException:
+        raise
+    except Exception:
+        # Fall back to 401 if verification fails
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
 # Mock data - replace with actual database queries
 def get_mock_users():
@@ -109,7 +131,7 @@ def get_mock_newsletter_campaigns():
     ]
 
 @router.get("/dashboard/stats")
-async def get_dashboard_stats():
+async def get_dashboard_stats(_: None = Depends(require_owner)):
     """Get dashboard overview statistics"""
     users = get_mock_users()
     subscribers = get_mock_newsletter_subscribers()
@@ -132,7 +154,8 @@ async def get_dashboard_stats():
 async def get_users(
     search: Optional[str] = None,
     status: Optional[str] = None,
-    role: Optional[str] = None
+    role: Optional[str] = None,
+    _: None = Depends(require_owner)
 ):
     """Get users with optional filtering"""
     users = get_mock_users()
@@ -155,7 +178,7 @@ async def get_users(
     }
 
 @router.get("/newsletter/subscribers")
-async def get_newsletter_subscribers():
+async def get_newsletter_subscribers(_: None = Depends(require_owner)):
     """Get newsletter subscribers"""
     subscribers = get_mock_newsletter_subscribers()
     
@@ -166,7 +189,7 @@ async def get_newsletter_subscribers():
     }
 
 @router.get("/newsletter/campaigns")
-async def get_newsletter_campaigns():
+async def get_newsletter_campaigns(_: None = Depends(require_owner)):
     """Get newsletter campaigns"""
     campaigns = get_mock_newsletter_campaigns()
     
@@ -179,7 +202,7 @@ async def get_newsletter_campaigns():
     }
 
 @router.get("/paper-trading/accounts")
-async def get_paper_trading_accounts():
+async def get_paper_trading_accounts(_: None = Depends(require_owner)):
     """Get paper trading accounts and performance"""
     # Mock data for paper trading accounts
     accounts = [
@@ -214,7 +237,7 @@ async def get_paper_trading_accounts():
     }
 
 @router.get("/system/status")
-async def get_system_status():
+async def get_system_status(_: None = Depends(require_owner)):
     """Get system monitoring status"""
     return {
         "apiStatus": "healthy",
@@ -227,7 +250,7 @@ async def get_system_status():
     }
 
 @router.post("/newsletter/export-subscribers")
-async def export_newsletter_subscribers():
+async def export_newsletter_subscribers(_: None = Depends(require_owner)):
     """Export newsletter subscribers as CSV"""
     subscribers = get_mock_newsletter_subscribers()
     

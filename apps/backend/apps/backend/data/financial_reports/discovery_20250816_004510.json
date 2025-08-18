@@ -1,0 +1,42 @@
+{
+  "started_at": "2025-08-15T23:01:03.630798",
+  "companies": [
+    {
+      "ticker": "ATW",
+      "name": "Attijariwafa Bank",
+      "count": 185
+    },
+    {
+      "ticker": "BCP",
+      "name": "Banque Centrale Populaire",
+      "count": 11
+    },
+    {
+      "ticker": "CIH",
+      "name": "CIH Bank",
+      "count": 11
+    },
+    {
+      "ticker": "IAM",
+      "name": "Maroc Telecom",
+      "count": 1
+    },
+    {
+      "ticker": "MNG",
+      "name": "Managem",
+      "error": "[Errno 60] Connect call failed ('2600:1f18:2e13:9d0d:ba92:1fe8:eb5d:1c64', 5432, 0, 0)"
+    },
+    {
+      "ticker": "SNP",
+      "name": "SNEP",
+      "count": 0
+    },
+    {
+      "ticker": "WAA",
+      "name": "Wafa Assurance",
+      "count": 11
+    }
+  ],
+  "total_found": 230,
+  "finished_at": "2025-08-16T00:45:10.077861"
+}

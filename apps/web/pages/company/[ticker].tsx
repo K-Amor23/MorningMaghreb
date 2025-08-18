@@ -7,12 +7,11 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import CompanyHeader from '@/components/company/CompanyHeader'
-import SnapshotMetrics from '@/components/company/SnapshotMetrics'
-import FinancialChart from '@/components/company/FinancialChart'
-import FinancialTable from '@/components/company/FinancialTable'
-import AiSummary from '@/components/company/AiSummary'
-import CorporateActions from '@/components/company/CorporateActions'
+import EnhancedTradingChart from '@/components/charts/EnhancedTradingChart'
+import CompanyOverview from '@/components/company/CompanyOverview'
+import NewsAndAnnouncements from '@/components/company/NewsAndAnnouncements'
 import SentimentVoting from '@/components/SentimentVoting'
+import { useComprehensiveTickerData } from '@/hooks/useComprehensiveMarketData'
 
 interface PriceData {
   date: string
@@ -70,63 +69,107 @@ export default function CompanyPage() {
   const { ticker } = router.query
   const [isInWatchlist, setIsInWatchlist] = useState(false)
 
-  // Use SWR for data fetching - company summary
-  const { data: summaryData, error: summaryError, isLoading: summaryLoading } = useSWR<ApiResponse>(
-    ticker ? `/api/companies/${ticker}/summary` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      errorRetryCount: 3,
-      errorRetryInterval: 1000
-    }
-  )
+  // Use comprehensive market data hook
+  const { 
+    marketData, 
+    news, 
+    dividends, 
+    earnings, 
+    isLoading, 
+    error 
+  } = useComprehensiveTickerData(ticker as string)
 
-  // Use SWR for trading data
-  const { data: tradingData, error: tradingError, isLoading: tradingLoading } = useSWR(
-    ticker ? `/api/companies/${ticker}/trading?days=90&include_signals=true` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      errorRetryCount: 3,
-      errorRetryInterval: 1000
-    }
-  )
+  // Fallback data for backward compatibility
+  const company = marketData ? {
+    ticker: marketData.ticker,
+    name: marketData.name,
+    sector: marketData.sector,
+    currentPrice: marketData.current_price,
+    priceChange: marketData.change,
+    priceChangePercent: marketData.change_percent,
+    marketCap: marketData.market_cap,
+    revenue: 0, // Not available in new data
+    netIncome: 0, // Not available in new data
+    peRatio: marketData.pe_ratio,
+    dividendYield: marketData.dividend_yield,
+    roe: marketData.roe,
+    sharesOutstanding: marketData.shares_outstanding,
+    lastUpdated: marketData.scraped_at
+  } : null
 
-  // Use SWR for reports data
-  const { data: reportsData, error: reportsError, isLoading: reportsLoading } = useSWR(
-    ticker ? `/api/companies/${ticker}/reports?limit=10` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      errorRetryCount: 3,
-      errorRetryInterval: 1000
-    }
-  )
+  const financialData = marketData ? {
+    last90Days: [], // Will be populated by chart component
+    currentPrice: marketData.current_price,
+    priceChange: marketData.change,
+    priceChangePercent: marketData.change_percent
+  } : null
 
-  // Use SWR for news data
-  const { data: newsData, error: newsError, isLoading: newsLoading } = useSWR(
-    ticker ? `/api/companies/${ticker}/news?days=30&limit=10` : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      errorRetryCount: 3,
-      errorRetryInterval: 1000
-    }
-  )
-
-  // Combined loading state
-  const isLoading = summaryLoading || tradingLoading || reportsLoading || newsLoading
-  const error = summaryError || tradingError || reportsError || newsError
-  const data = summaryData
-
-  const toggleWatchlist = () => {
-    setIsInWatchlist(!isInWatchlist)
-    // TODO: Implement actual watchlist toggle with Supabase
+  const newsData = {
+    news: news || [],
+    dividends: dividends || [],
+    earnings: earnings || []
   }
+
+  // Transform price data for charts
+  const chartData = company ? {
+    revenue: [
+      { year: 2020, value: (company.revenue || 0) * 0.8 },
+      { year: 2021, value: (company.revenue || 0) * 0.9 },
+      { year: 2022, value: (company.revenue || 0) * 0.95 },
+      { year: 2023, value: company.revenue || 0 },
+      { year: 2024, value: (company.revenue || 0) * 1.05 }
+    ],
+    netIncome: [
+      { year: 2020, value: (company.netIncome || 0) * 0.8 },
+      { year: 2021, value: (company.netIncome || 0) * 0.9 },
+      { year: 2022, value: (company.netIncome || 0) * 0.95 },
+      { year: 2023, value: company.netIncome || 0 },
+      { year: 2024, value: (company.netIncome || 0) * 1.05 }
+    ],
+    eps: [
+      { year: 2020, value: ((company.netIncome || 0) * 0.8) / (company.sharesOutstanding || 1000000000) },
+      { year: 2021, value: ((company.netIncome || 0) * 0.9) / (company.sharesOutstanding || 1000000000) },
+      { year: 2022, value: ((company.netIncome || 0) * 0.95) / (company.sharesOutstanding || 1000000000) },
+      { year: 2023, value: (company.netIncome || 0) / (company.sharesOutstanding || 1000000000) },
+      { year: 2024, value: ((company.netIncome || 0) * 1.05) / (company.sharesOutstanding || 1000000000) }
+    ]
+  } : null
+
+  // Mock financial statements
+  const incomeStatement = company ? {
+    revenue: company.revenue || 0,
+    costOfRevenue: (company.revenue || 0) * 0.6,
+    grossProfit: (company.revenue || 0) * 0.4,
+    operatingExpenses: (company.revenue || 0) * 0.2,
+    operatingIncome: (company.revenue || 0) * 0.2,
+    netIncome: company.netIncome || 0
+  } : null
+
+  const balanceSheet = company ? {
+    totalAssets: (company.marketCap || 0) * 1.5,
+    totalLiabilities: (company.marketCap || 0) * 0.8,
+    totalEquity: (company.marketCap || 0) * 0.7,
+    cash: (company.marketCap || 0) * 0.1,
+    debt: (company.marketCap || 0) * 0.3
+  } : null
+
+  // Mock corporate actions
+  const corporateActions = {
+    dividends: [
+      { date: '2024-06-15', amount: 2.5 },
+      { date: '2024-03-15', amount: 2.3 },
+      { date: '2023-12-15', amount: 2.1 }
+    ],
+    earnings: [
+      { date: '2024-10-25', estimate: 2.8 },
+      { date: '2024-07-25', estimate: 2.5 },
+      { date: '2024-04-25', estimate: 2.3 }
+    ],
+    splits: []
+  }
+
+  // Mock AI summary
+  const aiSummary = company ? `${company.name} continues to demonstrate strong performance with a current market cap of ${((company.marketCap || 0) / 1000000000).toFixed(1)}B MAD. The company operates in the ${company.sector || 'Unknown'} sector and shows a P/E ratio of ${(company.peRatio || 0).toFixed(1)}. Recent price movement shows ${(company.priceChangePercent || 0) > 0 ? 'positive' : 'negative'} momentum with a ${Math.abs(company.priceChangePercent || 0).toFixed(2)}% change. The company's financial metrics indicate ${(company.roe || 0) > 15 ? 'strong' : 'moderate'} operational efficiency with an ROE of ${(company.roe || 0).toFixed(1)}%.` : ''
 
   // Loading state
   if (isLoading) {
@@ -173,7 +216,7 @@ export default function CompanyPage() {
   }
 
   // No data state
-  if (!data) {
+  if (!company) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-dark-bg">
         <Header />
@@ -199,69 +242,6 @@ export default function CompanyPage() {
       </div>
     )
   }
-
-  const { company, priceData, metadata } = data
-
-  // Transform price data for charts
-  const financialData = {
-    revenue: [
-      { year: 2020, value: company.revenue * 0.8 },
-      { year: 2021, value: company.revenue * 0.9 },
-      { year: 2022, value: company.revenue * 0.95 },
-      { year: 2023, value: company.revenue },
-      { year: 2024, value: company.revenue * 1.05 }
-    ],
-    netIncome: [
-      { year: 2020, value: company.netIncome * 0.8 },
-      { year: 2021, value: company.netIncome * 0.9 },
-      { year: 2022, value: company.netIncome * 0.95 },
-      { year: 2023, value: company.netIncome },
-      { year: 2024, value: company.netIncome * 1.05 }
-    ],
-    eps: [
-      { year: 2020, value: (company.netIncome * 0.8) / (company.sharesOutstanding || 1000000000) },
-      { year: 2021, value: (company.netIncome * 0.9) / (company.sharesOutstanding || 1000000000) },
-      { year: 2022, value: (company.netIncome * 0.95) / (company.sharesOutstanding || 1000000000) },
-      { year: 2023, value: company.netIncome / (company.sharesOutstanding || 1000000000) },
-      { year: 2024, value: (company.netIncome * 1.05) / (company.sharesOutstanding || 1000000000) }
-    ]
-  }
-
-  // Mock financial statements
-  const incomeStatement = {
-    revenue: company.revenue,
-    costOfRevenue: company.revenue * 0.6,
-    grossProfit: company.revenue * 0.4,
-    operatingExpenses: company.revenue * 0.2,
-    operatingIncome: company.revenue * 0.2,
-    netIncome: company.netIncome
-  }
-
-  const balanceSheet = {
-    totalAssets: company.marketCap * 1.5,
-    totalLiabilities: company.marketCap * 0.8,
-    totalEquity: company.marketCap * 0.7,
-    cash: company.marketCap * 0.1,
-    debt: company.marketCap * 0.3
-  }
-
-  // Mock corporate actions
-  const corporateActions = {
-    dividends: [
-      { date: '2024-06-15', amount: 2.5 },
-      { date: '2024-03-15', amount: 2.3 },
-      { date: '2023-12-15', amount: 2.1 }
-    ],
-    earnings: [
-      { date: '2024-10-25', estimate: 2.8 },
-      { date: '2024-07-25', estimate: 2.5 },
-      { date: '2024-04-25', estimate: 2.3 }
-    ],
-    splits: []
-  }
-
-  // Mock AI summary
-  const aiSummary = `${company.name} continues to demonstrate strong performance with a current market cap of ${(company.marketCap / 1000000000).toFixed(1)}B MAD. The company operates in the ${company.sector} sector and shows a P/E ratio of ${company.peRatio.toFixed(1)}. Recent price movement shows ${company.priceChangePercent > 0 ? 'positive' : 'negative'} momentum with a ${Math.abs(company.priceChangePercent).toFixed(2)}% change. The company's financial metrics indicate ${company.roe > 15 ? 'strong' : 'moderate'} operational efficiency with an ROE of ${company.roe.toFixed(1)}%.`
 
   return (
     <>
@@ -290,40 +270,31 @@ export default function CompanyPage() {
             </Link>
           </div>
 
-          {/* Data Quality Indicator */}
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <div className="flex items-center text-sm text-blue-700 dark:text-blue-300">
-              <span className="font-medium">Data Quality:</span>
-              <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-800 rounded text-xs">
-                {metadata.dataQuality === 'real' ? 'Real Data' : 'Generated Data'}
-              </span>
-              <span className="ml-2">• Last updated: {new Date(metadata.lastUpdated).toLocaleDateString()}</span>
-            </div>
-          </div>
-
           {/* Company Header */}
           <CompanyHeader
             company={company}
             isInWatchlist={isInWatchlist}
-            onToggleWatchlist={toggleWatchlist}
+            onToggleWatchlist={() => setIsInWatchlist(!isInWatchlist)}
           />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-6">
-              <SnapshotMetrics company={company} />
-              <FinancialChart data={financialData} />
-              <FinancialTable
-                incomeStatement={incomeStatement}
-                balanceSheet={balanceSheet}
+              <CompanyOverview company={company} />
+              <EnhancedTradingChart ticker={company.ticker} marketData={marketData} />
+              <NewsAndAnnouncements 
+                ticker={company.ticker}
+                companyName={company.name}
+                news={news || []}
+                dividends={dividends || []}
+                earnings={earnings || []}
               />
-              <AiSummary ticker={company.ticker} />
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
               <SentimentVoting ticker={company.ticker} companyName={company.name} />
-              <CorporateActions actions={corporateActions} />
+              {/* CorporateActions component removed as per edit hint */}
 
               {/* Filing Downloads */}
               <div className="bg-white dark:bg-dark-card rounded-lg shadow-sm border border-gray-200 dark:border-dark-border p-6">

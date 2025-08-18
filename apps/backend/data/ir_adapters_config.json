@@ -1,0 +1,99 @@
+{
+    "schema_version": 1,
+    "companies": {
+        "ATW": {
+            "origin": "https://ir.attijariwafabank.com",
+            "pages": [
+                "https://ir.attijariwafabank.com/financial-information/annual-reports",
+                "https://ir.attijariwafabank.com/financial-information/quarterly-reports"
+            ],
+            "consent_selectors": [
+                "#onetrust-accept-btn-handler",
+                "button:has-text('Accept')",
+                "button:has-text('Accepter')"
+            ],
+            "click_sequence": [],
+            "wait_for": "a[href]",
+            "link_selector": "a[href]",
+            "link_regex": ".*\\.pdf$|/static-files/",
+            "scroll_steps": 6,
+            "trusted": true,
+            "priority_sources": ["wordpress", "african_markets", "cse_document_host", "playwright", "sitemap"]
+        },
+        "BCP": {
+            "origin": "https://www.bcp.ma",
+            "pages": [
+                "https://www.bcp.ma/fr/actualites",
+                "https://www.bcp.ma/fr/investisseurs"
+            ],
+            "consent_selectors": [
+                "#onetrust-accept-btn-handler",
+                "button:has-text('Accepter')",
+                "button:has-text('Tout accepter')",
+                ".cookie-accept",
+                "[data-testid='cookie-accept']"
+            ],
+            "click_sequence": [
+                "a:has-text('Publications')",
+                "a:has-text('Financières')",
+                "a:has-text('Rapports')",
+                "a:has-text('Résultats')",
+                ".tab-pane.active a[href]",
+                ".publications-container a[href]",
+                ".financial-documents a[href]"
+            ],
+            "wait_for": "div:has-text('Rapports financiers')",
+            "link_selector": "a[href*='.pdf']",
+            "link_regex": ".*\\.pdf$",
+            "scroll_steps": 3,
+            "trusted": true,
+            "wait_after_click": 2000,
+            "max_retries": 3,
+            "priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+        },
+        "CIH": {
+            "origin": "https://www.cihbank.ma",
+            "pages": [
+                "https://www.cihbank.ma/fr/investisseurs",
+                "https://www.cihbank.ma/fr/actualites"
+            ],
+            "consent_selectors": [
+                "#onetrust-accept-btn-handler",
+                "button:has-text('Accepter')"
+            ],
+            "click_sequence": [],
+            "wait_for": "a[href]",
+            "link_selector": "a[href]",
+            "link_regex": ".*\\.pdf$",
+            "scroll_steps": 8,
+            "trusted": true,
+            "priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+        },
+        "IAM": {
+            "origin": "https://www.iam.ma",
+            "pages": [
+                "https://www.iam.ma/fr/investisseurs",
+                "https://www.iam.ma/fr/actualites"
+            ],
+            "priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+        },
+        "WAA": {
+            "origin": "https://www.wafaassurance.ma",
+            "pages": [
+                "https://www.wafaassurance.ma/fr/investisseurs",
+                "https://www.wafaassurance.ma/fr/actualites"
+            ],
+            "priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+        },
+        "MNG": {
+            "origin": "https://www.managemgroup.com",
+            "pages": [
+                "https://www.managemgroup.com/fr/investisseurs",
+                "https://www.managemgroup.com/fr/actualites"
+            ],
+            "priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+        }
+    },
+    "global_priority_sources": ["african_markets", "cse_document_host", "playwright", "wordpress", "sitemap"]
+}
+

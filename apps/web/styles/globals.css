@@ -112,11 +112,11 @@ body {
 
 /* Search bar styling */
 .search-bar-container {
-  @apply relative w-full max-w-lg;
+  @apply relative;
 }
 
 .search-bar-input {
-  @apply w-full px-4 py-2 pl-10 pr-4 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400;
+  @apply px-4 py-2 pl-10 pr-4 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400;
 }
 
 .search-bar-input:focus {

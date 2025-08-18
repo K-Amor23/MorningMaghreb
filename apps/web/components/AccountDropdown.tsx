@@ -159,14 +159,7 @@ export default function AccountDropdown() {
                   Dashboard
                 </Link>
 
-                <Link
-                  href="/portfolio"
-                  className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  onClick={() => setShowDropdown(false)}
-                >
-                  <HeartIcon className="h-4 w-4 mr-3" />
-                  Watchlist
-                </Link>
+
 
                 <Link
                   href="/account/alerts"
