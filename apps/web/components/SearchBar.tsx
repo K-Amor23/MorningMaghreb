@@ -27,26 +27,31 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   // Search companies from API
   const searchCompanies = async (searchQuery: string): Promise<Company[]> => {
     try {
+      console.log('🔍 Searching for:', searchQuery)
       const response = await fetch(`/api/search/companies?q=${encodeURIComponent(searchQuery)}`)
       if (!response.ok) throw new Error('Search failed')
       
       const data = await response.json()
+      console.log('📊 Search results:', data)
       return data.data || []
     } catch (error) {
-      console.error('Error searching companies:', error)
+      console.error('❌ Error searching companies:', error)
       // Fallback to basic filtering if API fails
       const fallbackCompanies: Company[] = [
         { ticker: 'ATW', name: 'Attijariwafa Bank', sector: 'Banks' },
+        { ticker: 'WAA', name: 'Wafa Assurance', sector: 'Insurance' },
         { ticker: 'IAM', name: 'Maroc Telecom', sector: 'Telecommunications' },
         { ticker: 'BCP', name: 'Banque Centrale Populaire', sector: 'Banks' },
         { ticker: 'BMCE', name: 'BMCE Bank', sector: 'Banks' },
         { ticker: 'ONA', name: 'Omnium Nord Africain', sector: 'Conglomerates' },
       ]
       
-      return fallbackCompanies.filter(company =>
+      const filtered = fallbackCompanies.filter(company =>
         company.ticker.toLowerCase().includes(searchQuery.toLowerCase()) ||
         company.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
+      console.log('🔄 Fallback results:', filtered)
+      return filtered
     }
   }
 
@@ -134,16 +139,16 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   }, [isExpanded])
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen) return
-
     switch (e.key) {
       case 'ArrowDown':
+        if (!isOpen) return
         e.preventDefault()
         setSelectedIndex(prev => 
           prev < results.length - 1 ? prev + 1 : prev
         )
         break
       case 'ArrowUp':
+        if (!isOpen) return
         e.preventDefault()
         setSelectedIndex(prev => prev > 0 ? prev - 1 : -1)
         break
@@ -153,6 +158,17 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
           handleSelect(results[selectedIndex])
         } else if (results.length === 1) {
           handleSelect(results[0])
+        } else if (results.length > 1) {
+          // If multiple results, select the first one
+          handleSelect(results[0])
+        } else if (query.trim() && results.length === 0 && !loading) {
+          // If there's a query but no results, try to search again
+          // This handles the case where the user hits Enter before results load
+          searchCompanies(query).then(searchResults => {
+            if (searchResults.length > 0) {
+              handleSelect(searchResults[0])
+            }
+          })
         }
         break
       case 'Escape':
@@ -216,11 +232,11 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
   }
 
   return (
-    <div className={`relative search-bar-wrapper w-full ${className}`}>
-      <div className={`relative search-bar-container transition-all duration-300 ease-in-out w-full ${
+    <div className={`relative search-bar-wrapper ${className}`}>
+      <div className={`relative search-bar-container transition-all duration-300 ease-in-out ${
         isExpanded ? 'w-full' : 'w-12'
       }`}>
-        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
+        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500 z-10" />
         <input
           ref={inputRef}
           type="text"
@@ -230,7 +246,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={isExpanded ? "Search companies... (⌘K)" : ""}
-          className={`search-bar-input w-full pl-10 pr-10 py-3 text-sm border border-gray-300 dark:border-dark-border rounded-lg bg-white dark:bg-dark-card text-gray-900 dark:text-dark-text placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:border-transparent transition-all duration-300 ease-in-out ${
+          className={`search-bar-input pl-10 pr-10 py-3 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-casablanca-blue focus:border-transparent transition-all duration-300 ease-in-out ${
             !isExpanded ? 'cursor-pointer' : ''
           }`}
           style={{
@@ -255,22 +271,22 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
       {isExpanded && (
         <div
           ref={resultsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-dark-card border border-gray-200 dark:border-dark-border rounded-lg shadow-lg z-[100] max-h-60 overflow-y-auto min-w-0"
+          className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-[100] max-h-60 overflow-y-auto min-w-0"
         >
-          {loading ? (
+          {loading && (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-casablanca-blue mx-auto"></div>
               <p className="mt-2 text-sm">Searching...</p>
             </div>
-          ) : (query.trim() ? (
-            results.length > 0 ? (
+          )}
+          {!loading && query.trim() && results.length > 0 && (
             <div className="py-1">
               {results.map((company, index) => (
                 <button
                   key={company.ticker}
                   onClick={() => handleSelect(company)}
-                  className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-dark-hover transition-colors ${
-                    index === selectedIndex ? 'bg-gray-50 dark:bg-dark-hover' : ''
+                  className={`w-full px-4 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                    index === selectedIndex ? 'bg-gray-50 dark:bg-gray-700' : ''
                   }`}
                 >
                   <div className="flex items-center justify-between min-w-0">
@@ -283,7 +299,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                       </div>
                     </div>
                     {company.sector && (
-                      <div className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-dark-border px-2 py-1 rounded flex-shrink-0 ml-2">
+                      <div className="text-xs text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded flex-shrink-0 ml-2">
                         {company.sector}
                       </div>
                     )}
@@ -291,7 +307,14 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 </button>
               ))}
             </div>
-          ) : (
+          )}
+          {!loading && query.trim() && results.length === 0 && (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <p className="text-sm">No companies found</p>
+              <p className="text-xs mt-1">Try searching by ticker or company name</p>
+            </div>
+          )}
+          {!loading && !query.trim() && (
             <div className="p-4 text-gray-700 dark:text-gray-200">
               <div className="text-xs uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">Suggested</div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -299,7 +322,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                   <button
                     key={s.ticker}
                     onClick={() => handleSelect(s)}
-                    className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-dark-hover text-left"
+                    className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 text-left"
                   >
                     <div className="font-medium text-gray-900 dark:text-white">{s.ticker}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{s.name}</div>
@@ -307,7 +330,7 @@ export default function SearchBar({ className = '' }: SearchBarProps) {
                 ))}
               </div>
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>
