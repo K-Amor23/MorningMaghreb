@@ -1,0 +1,11 @@
+# Airflow requirements for Casablanca Insights (Python 3.11 compatible)
+supabase==2.3.4
+aiohttp==3.9.1
+beautifulsoup4==4.12.2
+pandas==2.1.4
+requests==2.31.0
+python-dotenv==1.0.0
+brotli==1.1.0
+PyPDF2==3.0.1
+yfinance==0.2.36
+lxml==5.1.0

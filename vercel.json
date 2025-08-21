@@ -7,16 +7,15 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_SUPABASE_URL": "https://supabase-sky-garden.supabase.co",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "YOUR_NEW_ANON_KEY_HERE",
-    "SUPABASE_SERVICE_ROLE_KEY": "YOUR_NEW_SERVICE_ROLE_KEY_HERE",
+    "NEXT_PUBLIC_SUPABASE_URL": "https://gzsgehciddnrssuqxtsj.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0MTk5OTEsImV4cCI6MjA2OTk5NTk5MX0.DiaqtEop6spZT7l1g0PIdljVcBAWfalFEemlZqgwdrk",
+    "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0",
     "NEXT_PUBLIC_API_URL": "https://morningmaghreb-api.onrender.com",
     "SENDGRID_FROM_EMAIL": "admin@morningmaghreb.com",
     "NEXT_PUBLIC_ENV": "production",
     "NEXT_PUBLIC_PREMIUM_ENFORCEMENT": "true",
-    "NEXT_PUBLIC_ENABLE_PASSWORD_PROTECTION": "true",
-    "NEXT_PUBLIC_SITE_PASSWORD": "morningmaghreb2024",
-    "ADMIN_API_TOKEN": "CHANGE_ME_ADMIN_TOKEN"
+    "NEXT_PUBLIC_ENABLE_PASSWORD_PROTECTION": "false",
+    "NEXT_PUBLIC_SITE_PASSWORD": "morningmaghreb2024"
   },
   "headers": [
     {
@@ -35,6 +34,23 @@
           "value": "Content-Type, Authorization"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -42,5 +58,10 @@
       "source": "/api/backend/(.*)",
       "destination": "https://morningmaghreb-api.onrender.com/api/$1"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
 }
