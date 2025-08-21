@@ -6,6 +6,7 @@ with real company profiles, market data, and sample content.
 """
 
 from datetime import datetime, timedelta
+from airflow.utils.dates import days_ago
 import logging
 import random
 from pathlib import Path
@@ -22,12 +23,11 @@ logger = logging.getLogger(__name__)
 default_args = {
     'owner': 'casablanca_team',
     'depends_on_past': False,
-    'start_date': datetime(2024, 1, 1),
+    'start_date': days_ago(1),
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 2,
     'retry_delay': timedelta(minutes=5),
-    'catchup': False,
 }
 
 # DAG definition
@@ -36,6 +36,7 @@ dag = DAG(
     default_args=default_args,
     description='Working ETL pipeline for Sky Garden database population',
     schedule_interval='0 6 * * *',  # Daily at 6:00 AM UTC
+    catchup=False,
     max_active_runs=1,
     tags=['etl', 'working', 'sky_garden', 'morocco'],
 )
@@ -126,6 +127,7 @@ def populate_database_tables(**context):
             json.dump(data_export, f, default=str)
         
         logger.info("✅ Database population data prepared")
+        logger.info(f"📊 Data summary: {len(companies)} companies, {len(sample_news)} news, {len(sample_dividends)} dividends, {len(sample_earnings)} earnings")
         return len(companies)
         
     except Exception as e:
@@ -290,6 +292,7 @@ def generate_sample_earnings(companies):
 def generate_market_status():
     """Generate current market status"""
     return {
+        "status": "open",
         "market_status": "open",
         "current_time": datetime.now().strftime("%H:%M:%S"),
         "trading_hours": "09:00 - 16:00",
@@ -339,10 +342,35 @@ def finalize_database_population(**context):
         # Get the scraped data from XCom
         ti = context['task_instance']
         companies = ti.xcom_pull(task_ids='scrape_companies', key='companies')
-        news_data = ti.xcom_pull(task_ids='scrape_companies', key='news_data')
-        dividend_data = ti.xcom_pull(task_ids='scrape_companies', key='dividend_data')
-        earnings_data = ti.xcom_pull(task_ids='scrape_companies', key='earnings_data')
-        market_status_data = ti.xcom_pull(task_ids='scrape_companies', key='market_status')
+        
+        # Get the prepared data from populate_database task
+        comprehensive_data = ti.xcom_pull(task_ids='populate_database', key='return_value')
+        
+        # If no companies from scraping, try to get from comprehensive data
+        if not companies and comprehensive_data:
+            # Load the comprehensive data file
+            import json
+            from pathlib import Path
+            data_file = Path("/tmp/airflow_data/comprehensive_data.json")
+            if data_file.exists():
+                with open(data_file) as f:
+                    data = json.load(f)
+                    companies = data.get('companies', [])
+                    news_data = data.get('news', [])
+                    dividend_data = data.get('dividends', [])
+                    earnings_data = data.get('earnings', [])
+                    market_status_data = data.get('market_status', {})
+            else:
+                news_data = []
+                dividend_data = []
+                earnings_data = []
+                market_status_data = {}
+        else:
+            # Use data from scraping task
+            news_data = ti.xcom_pull(task_ids='scrape_companies', key='news_data') or []
+            dividend_data = ti.xcom_pull(task_ids='scrape_companies', key='dividend_data') or []
+            earnings_data = ti.xcom_pull(task_ids='scrape_companies', key='earnings_data') or []
+            market_status_data = ti.xcom_pull(task_ids='scrape_companies', key='market_status') or {}
         
         if not companies:
             logger.warning("⚠️ No companies data found in XCom")

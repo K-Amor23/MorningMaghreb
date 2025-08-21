@@ -17,6 +17,8 @@ services:
     depends_on:
       - postgres
       - redis
+    env_file:
+      - ../.env.local
     command: bash -c "pip install -r /opt/airflow/requirements.txt && airflow db upgrade && airflow webserver"
     environment:
       - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
@@ -26,6 +28,8 @@ services:
       - AIRFLOW__CORE__FERNET_KEY=mLl9wE5h4nx8hwjdNztweHE3L-dm-WIRxGe36SrlYRs=
       - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=True
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - PGSSLMODE=disable
+
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -47,6 +51,8 @@ services:
     depends_on:
       - postgres
       - redis
+    env_file:
+      - ../.env.local
     command: bash -c "pip install -r /opt/airflow/requirements.txt && airflow db upgrade && airflow scheduler"
     environment:
       - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
@@ -55,6 +61,8 @@ services:
       - AIRFLOW__CELERY__BROKER_URL=redis://:@redis:6379/0
       - AIRFLOW__CORE__FERNET_KEY=mLl9wE5h4nx8hwjdNztweHE3L-dm-WIRxGe36SrlYRs=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - PGSSLMODE=disable
+
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -67,6 +75,8 @@ services:
     depends_on:
       - postgres
       - redis
+    env_file:
+      - ../.env.local
     command: bash -c "pip install -r /opt/airflow/requirements.txt && airflow db upgrade && airflow celery worker"
     environment:
       - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
@@ -75,6 +85,8 @@ services:
       - AIRFLOW__CELERY__BROKER_URL=redis://:@redis:6379/0
       - AIRFLOW__CORE__FERNET_KEY=mLl9wE5h4nx8hwjdNztweHE3L-dm-WIRxGe36SrlYRs=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - PGSSLMODE=disable
+
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
