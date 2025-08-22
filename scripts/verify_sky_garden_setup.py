@@ -16,12 +16,10 @@ SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0"
 
 
-
 def print_header():
     print("🔧 Verifying Sky Garden Supabase Setup")
     print("=" * 50)
     print()
-
 
 
 def test_supabase_connection():
@@ -49,7 +47,6 @@ def test_supabase_connection():
     except Exception as e:
         print(f"❌ Connection error: {e}")
         return False
-
 
 
 def check_newsletter_table():
@@ -83,6 +80,7 @@ def check_newsletter_table():
     except Exception as e:
         print(f"❌ Error checking table: {e}")
         return False
+
 
 def create_newsletter_table():
     """Create the newsletter_subscribers table if it doesn't exist"""
@@ -127,6 +125,7 @@ def create_newsletter_table():
     except Exception as e:
         print(f"❌ Error creating table: {e}")
         return False
+
 
 def test_newsletter_signup():
     """Test the newsletter signup functionality"""
@@ -181,6 +180,7 @@ def test_newsletter_signup():
     except Exception as e:
         print(f"❌ Error testing signup: {e}")
         return False
+
 
 def main():
     print_header()
