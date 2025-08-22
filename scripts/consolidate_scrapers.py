@@ -11,8 +11,11 @@ from pathlib import Path
 from typing import List, Dict, Any
 import json
 
+
 class ScraperConsolidator:
-    def __init__(self, source_dir: str = "apps/backend/etl", target_dir: str = "scrapers"):
+    def __init__(
+        self, source_dir: str = "apps/backend/etl", target_dir: str = "scrapers"
+    ):
         self.source_dir = Path(source_dir)
         self.target_dir = Path(target_dir)
         self.scraper_files = []
@@ -52,80 +55,89 @@ class BaseScraper(ABC):
             self.logger.error(f"Failed to save data: {e}")
             return False
 """
-    
+
     def identify_scrapers(self) -> List[Dict[str, Any]]:
         """Identify all scraper files in the source directory"""
         scrapers = []
-        
+
         # Common scraper patterns
         scraper_patterns = [
             r".*_scraper\.py$",
             r".*_etl\.py$",
             r"scraper.*\.py$",
-            r"etl.*\.py$"
+            r"etl.*\.py$",
         ]
-        
+
         for file_path in self.source_dir.rglob("*.py"):
             if any(re.match(pattern, file_path.name) for pattern in scraper_patterns):
                 # Skip certain files
-                if any(skip in file_path.name.lower() for skip in [
-                    'test_', 'mock_', 'scheduler', 'orchestrator', 'celery'
-                ]):
+                if any(
+                    skip in file_path.name.lower()
+                    for skip in [
+                        "test_",
+                        "mock_",
+                        "scheduler",
+                        "orchestrator",
+                        "celery",
+                    ]
+                ):
                     continue
-                
-                scrapers.append({
-                    "file": file_path,
-                    "name": file_path.stem,
-                    "type": self._classify_scraper(file_path),
-                    "dependencies": self._extract_dependencies(file_path)
-                })
-        
+
+                scrapers.append(
+                    {
+                        "file": file_path,
+                        "name": file_path.stem,
+                        "type": self._classify_scraper(file_path),
+                        "dependencies": self._extract_dependencies(file_path),
+                    }
+                )
+
         return scrapers
-    
+
     def _classify_scraper(self, file_path: Path) -> str:
         """Classify scraper based on filename and content"""
         name = file_path.name.lower()
-        
-        if 'financial' in name or 'reports' in name:
-            return 'financial_reports'
-        elif 'news' in name or 'sentiment' in name:
-            return 'news_sentiment'
-        elif 'market' in name or 'ohlcv' in name:
-            return 'market_data'
-        elif 'macro' in name or 'economic' in name:
-            return 'macro_data'
-        elif 'currency' in name or 'forex' in name:
-            return 'currency_data'
-        elif 'volume' in name:
-            return 'volume_data'
-        elif 'bank' in name or 'bam' in name:
-            return 'bank_data'
-        elif 'african' in name:
-            return 'african_markets'
+
+        if "financial" in name or "reports" in name:
+            return "financial_reports"
+        elif "news" in name or "sentiment" in name:
+            return "news_sentiment"
+        elif "market" in name or "ohlcv" in name:
+            return "market_data"
+        elif "macro" in name or "economic" in name:
+            return "macro_data"
+        elif "currency" in name or "forex" in name:
+            return "currency_data"
+        elif "volume" in name:
+            return "volume_data"
+        elif "bank" in name or "bam" in name:
+            return "bank_data"
+        elif "african" in name:
+            return "african_markets"
         else:
-            return 'general'
-    
+            return "general"
+
     def _extract_dependencies(self, file_path: Path) -> List[str]:
         """Extract dependencies from scraper file"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
-            
+
             # Extract imports
             imports = []
-            lines = content.split('\n')
+            lines = content.split("\n")
             for line in lines:
-                if line.strip().startswith(('import ', 'from ')):
+                if line.strip().startswith(("import ", "from ")):
                     imports.append(line.strip())
-            
+
             return imports
         except Exception:
             return []
-    
+
     def create_scraper_structure(self):
         """Create the new scraper directory structure"""
         print("🏗️  Creating scraper directory structure...")
-        
+
         # Create main directories
         (self.target_dir / "base").mkdir(parents=True, exist_ok=True)
         (self.target_dir / "financial_reports").mkdir(parents=True, exist_ok=True)
@@ -137,44 +149,44 @@ class BaseScraper(ABC):
         (self.target_dir / "bank_data").mkdir(parents=True, exist_ok=True)
         (self.target_dir / "african_markets").mkdir(parents=True, exist_ok=True)
         (self.target_dir / "utils").mkdir(parents=True, exist_ok=True)
-        
+
         # Create __init__.py files
         for subdir in self.target_dir.iterdir():
             if subdir.is_dir():
                 (subdir / "__init__.py").touch()
-    
+
     def create_base_interface(self):
         """Create the base scraper interface"""
         print("📋 Creating base scraper interface...")
-        
+
         base_file = self.target_dir / "base" / "scraper_interface.py"
-        with open(base_file, 'w') as f:
+        with open(base_file, "w") as f:
             f.write(self.common_interface)
-        
+
         # Create __init__.py for base
         init_content = """
 from .scraper_interface import BaseScraper
 
 __all__ = ['BaseScraper']
 """
-        with open(self.target_dir / "base" / "__init__.py", 'w') as f:
+        with open(self.target_dir / "base" / "__init__.py", "w") as f:
             f.write(init_content)
-    
+
     def extract_common_utils(self):
         """Extract common utilities used across scrapers"""
         print("🔧 Extracting common utilities...")
-        
+
         utils = {
             "http_helpers.py": self._create_http_helpers(),
             "date_parsers.py": self._create_date_parsers(),
             "config_loader.py": self._create_config_loader(),
-            "data_validators.py": self._create_data_validators()
+            "data_validators.py": self._create_data_validators(),
         }
-        
+
         for filename, content in utils.items():
-            with open(self.target_dir / "utils" / filename, 'w') as f:
+            with open(self.target_dir / "utils" / filename, "w") as f:
                 f.write(content)
-        
+
         # Create utils __init__.py
         utils_init = """
 from .http_helpers import *
@@ -189,9 +201,9 @@ __all__ = [
     'validate_dataframe'
 ]
 """
-        with open(self.target_dir / "utils" / "__init__.py", 'w') as f:
+        with open(self.target_dir / "utils" / "__init__.py", "w") as f:
             f.write(utils_init)
-    
+
     def _create_http_helpers(self) -> str:
         return '''
 import requests
@@ -246,7 +258,7 @@ def add_delay(seconds: float = 1.0):
     """Add delay between requests"""
     time.sleep(seconds)
 '''
-    
+
     def _create_date_parsers(self) -> str:
         return '''
 from datetime import datetime, date
@@ -294,7 +306,7 @@ def extract_date_from_text(text: str) -> Optional[date]:
     
     return None
 '''
-    
+
     def _create_config_loader(self) -> str:
         return '''
 import os
@@ -351,7 +363,7 @@ def get_scraper_config(scraper_name: str) -> Dict[str, Any]:
     
     return {**config, **scraper_configs.get(scraper_name, {})}
 '''
-    
+
     def _create_data_validators(self) -> str:
         return '''
 import pandas as pd
@@ -412,47 +424,49 @@ def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     
     return df
 '''
-    
+
     def migrate_scrapers(self):
         """Migrate existing scrapers to new structure"""
         print("🔄 Migrating scrapers to new structure...")
-        
+
         scrapers = self.identify_scrapers()
-        
+
         for scraper in scrapers:
             self._migrate_scraper(scraper)
-    
+
     def _migrate_scraper(self, scraper: Dict[str, Any]):
         """Migrate individual scraper"""
         source_file = scraper["file"]
         scraper_type = scraper["type"]
         target_dir = self.target_dir / scraper_type
-        
+
         # Create target file
         target_file = target_dir / f"{scraper['name']}.py"
-        
+
         print(f"  📦 Migrating {source_file.name} to {target_file}")
-        
+
         try:
             # Read source file
-            with open(source_file, 'r', encoding='utf-8') as f:
+            with open(source_file, "r", encoding="utf-8") as f:
                 content = f.read()
-            
+
             # Transform content to use new interface
-            transformed_content = self._transform_scraper_content(content, scraper['name'])
-            
+            transformed_content = self._transform_scraper_content(
+                content, scraper["name"]
+            )
+
             # Write to target
-            with open(target_file, 'w', encoding='utf-8') as f:
+            with open(target_file, "w", encoding="utf-8") as f:
                 f.write(transformed_content)
-                
+
         except Exception as e:
             print(f"  ❌ Failed to migrate {source_file.name}: {e}")
-    
+
     def _transform_scraper_content(self, content: str, scraper_name: str) -> str:
         """Transform scraper content to use new interface"""
-        
+
         # Add imports for new structure
-        new_imports = f'''
+        new_imports = f"""
 from ..base.scraper_interface import BaseScraper
 from ..utils.http_helpers import make_request, add_delay
 from ..utils.date_parsers import parse_date, extract_date_from_text
@@ -461,8 +475,8 @@ from ..utils.data_validators import validate_dataframe, clean_dataframe
 import pandas as pd
 import logging
 from typing import Dict, Any, Optional
-'''
-        
+"""
+
         # Add class definition if not present
         if f"class {scraper_name.title().replace('_', '')}" not in content:
             class_def = f'''
@@ -485,13 +499,13 @@ class {scraper_name.title().replace('_', '')}Scraper(BaseScraper):
         return True
 '''
             content += class_def
-        
+
         return new_imports + content
-    
+
     def create_orchestrator(self):
         """Create the master orchestrator"""
         print("🎼 Creating master orchestrator...")
-        
+
         orchestrator_content = '''
 """
 Master Orchestrator for All Scrapers
@@ -614,16 +628,16 @@ def main():
 if __name__ == "__main__":
     main()
 '''
-        
+
         orchestrator_file = self.target_dir / "orchestrator.py"
-        with open(orchestrator_file, 'w') as f:
+        with open(orchestrator_file, "w") as f:
             f.write(orchestrator_content)
-    
+
     def create_requirements(self):
         """Create requirements.txt for scrapers"""
         print("📦 Creating requirements.txt...")
-        
-        requirements = '''
+
+        requirements = """
 # Scraper Dependencies
 requests>=2.28.0
 pandas>=1.5.0
@@ -649,16 +663,16 @@ loguru>=0.6.0
 # Testing
 pytest>=7.0.0
 pytest-asyncio>=0.21.0
-'''
-        
-        with open(self.target_dir / "requirements.txt", 'w') as f:
+"""
+
+        with open(self.target_dir / "requirements.txt", "w") as f:
             f.write(requirements)
-    
+
     def create_readme(self):
         """Create README for scrapers"""
         print("📖 Creating README...")
-        
-        readme_content = '''
+
+        readme_content = """
 # Scrapers Module
 
 This module contains all data scrapers organized by type with a common interface.
@@ -713,33 +727,35 @@ results = orchestrator.run_pipeline()
 
 Scrapers use configuration from environment variables or config files.
 See `utils/config_loader.py` for details.
-'''
-        
-        with open(self.target_dir / "README.md", 'w') as f:
+"""
+
+        with open(self.target_dir / "README.md", "w") as f:
             f.write(readme_content)
+
 
 def main():
     """Main consolidation execution"""
     print("🚀 Starting scraper consolidation...")
-    
+
     consolidator = ScraperConsolidator()
-    
+
     # Create structure
     consolidator.create_scraper_structure()
     consolidator.create_base_interface()
     consolidator.extract_common_utils()
-    
+
     # Migrate scrapers
     consolidator.migrate_scrapers()
-    
+
     # Create orchestrator
     consolidator.create_orchestrator()
     consolidator.create_requirements()
     consolidator.create_readme()
-    
+
     print("✅ Scraper consolidation complete!")
     print(f"📁 New structure created at: {consolidator.target_dir}")
     print("📖 See README.md for usage instructions")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

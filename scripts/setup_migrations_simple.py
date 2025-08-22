@@ -8,21 +8,22 @@ import os
 from pathlib import Path
 from datetime import datetime
 
+
 class SimpleMigrationManager:
     def __init__(self):
         self.migrations_dir = Path(__file__).parent.parent / "database" / "migrations"
         self.migrations_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # Create subdirectories
         (self.migrations_dir / "up").mkdir(exist_ok=True)
         (self.migrations_dir / "down").mkdir(exist_ok=True)
         (self.migrations_dir / "checks").mkdir(exist_ok=True)
-    
+
     def create_migration_structure(self):
         """Create basic migration structure"""
         print("🚀 Setting up Supabase Migration System")
         print("=" * 50)
-        
+
         self._create_initial_migration()
         self._create_schema_migration()
         self._create_data_migration()
@@ -30,13 +31,13 @@ class SimpleMigrationManager:
         self._create_migration_script()
         self._create_ci_hook()
         self._create_readme()
-        
+
         print("✅ Migration system setup complete!")
-    
+
     def _create_initial_migration(self):
         """Create initial database setup migration"""
         timestamp = datetime.now().isoformat()
-        
+
         migration_content = """-- Migration: 001_initial_setup
 -- Description: Initial database setup for Casablanca Insights
 -- Created: {timestamp}
@@ -114,12 +115,14 @@ CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
 
 CREATE TRIGGER update_companies_updated_at BEFORE UPDATE ON companies
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-""".format(timestamp=timestamp)
-        
+""".format(
+            timestamp=timestamp
+        )
+
         migration_file = self.migrations_dir / "up" / "001_initial_setup.sql"
-        with open(migration_file, 'w') as f:
+        with open(migration_file, "w") as f:
             f.write(migration_content)
-        
+
         # Create down migration
         down_migration = """-- Down Migration: 001_initial_setup
 -- Description: Rollback initial database setup
@@ -136,17 +139,17 @@ DROP TYPE IF EXISTS notification_type;
 DROP TYPE IF EXISTS subscription_status;
 DROP TYPE IF EXISTS user_tier;
 """
-        
+
         down_file = self.migrations_dir / "down" / "001_initial_setup.sql"
-        with open(down_file, 'w') as f:
+        with open(down_file, "w") as f:
             f.write(down_migration)
-        
+
         print("✅ Created initial migration (001_initial_setup.sql)")
-    
+
     def _create_schema_migration(self):
         """Create schema expansion migration"""
         timestamp = datetime.now().isoformat()
-        
+
         migration_content = """-- Migration: 002_schema_expansion
 -- Description: Add additional tables for advanced features
 -- Created: {timestamp}
@@ -229,12 +232,14 @@ CREATE TRIGGER update_portfolios_updated_at BEFORE UPDATE ON portfolios
 
 CREATE TRIGGER update_portfolio_holdings_updated_at BEFORE UPDATE ON portfolio_holdings
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-""".format(timestamp=timestamp)
-        
+""".format(
+            timestamp=timestamp
+        )
+
         migration_file = self.migrations_dir / "up" / "002_schema_expansion.sql"
-        with open(migration_file, 'w') as f:
+        with open(migration_file, "w") as f:
             f.write(migration_content)
-        
+
         # Create down migration
         down_migration = """-- Down Migration: 002_schema_expansion
 -- Description: Rollback schema expansion
@@ -248,17 +253,17 @@ DROP TABLE IF EXISTS portfolios;
 DROP TABLE IF EXISTS news_articles;
 DROP TABLE IF EXISTS financial_reports;
 """
-        
+
         down_file = self.migrations_dir / "down" / "002_schema_expansion.sql"
-        with open(down_file, 'w') as f:
+        with open(down_file, "w") as f:
             f.write(down_migration)
-        
+
         print("✅ Created schema migration (002_schema_expansion.sql)")
-    
+
     def _create_data_migration(self):
         """Create data migration for initial data"""
         timestamp = datetime.now().isoformat()
-        
+
         migration_content = """-- Migration: 003_initial_data
 -- Description: Insert initial data for development
 -- Created: {timestamp}
@@ -280,12 +285,14 @@ INSERT INTO market_data (ticker, price, change_percent, volume, high, low, open_
 ('CIH', 18.20, 1.5, 450000, 18.50, 17.90, 17.95, 18.20, CURRENT_DATE),
 ('CMT', 12.40, -0.5, 320000, 12.60, 12.20, 12.45, 12.40, CURRENT_DATE)
 ON CONFLICT DO NOTHING;
-""".format(timestamp=timestamp)
-        
+""".format(
+            timestamp=timestamp
+        )
+
         migration_file = self.migrations_dir / "up" / "003_initial_data.sql"
-        with open(migration_file, 'w') as f:
+        with open(migration_file, "w") as f:
             f.write(migration_content)
-        
+
         # Create down migration
         down_migration = """-- Down Migration: 003_initial_data
 -- Description: Remove initial data
@@ -293,17 +300,17 @@ ON CONFLICT DO NOTHING;
 DELETE FROM market_data WHERE ticker IN ('ATW', 'BMCE', 'IAM', 'CIH', 'CMT');
 DELETE FROM companies WHERE ticker IN ('ATW', 'BMCE', 'IAM', 'CIH', 'CMT');
 """
-        
+
         down_file = self.migrations_dir / "down" / "003_initial_data.sql"
-        with open(down_file, 'w') as f:
+        with open(down_file, "w") as f:
             f.write(down_migration)
-        
+
         print("✅ Created data migration (003_initial_data.sql)")
-    
+
     def _create_indexes_migration(self):
         """Create indexes migration for performance"""
         timestamp = datetime.now().isoformat()
-        
+
         migration_content = """-- Migration: 004_performance_indexes
 -- Description: Add performance indexes for better query performance
 -- Created: {timestamp}
@@ -327,12 +334,14 @@ ANALYZE companies;
 ANALYZE market_data;
 ANALYZE financial_reports;
 ANALYZE news_articles;
-""".format(timestamp=timestamp)
-        
+""".format(
+            timestamp=timestamp
+        )
+
         migration_file = self.migrations_dir / "up" / "004_performance_indexes.sql"
-        with open(migration_file, 'w') as f:
+        with open(migration_file, "w") as f:
             f.write(migration_content)
-        
+
         # Create down migration
         down_migration = """-- Down Migration: 004_performance_indexes
 -- Description: Remove performance indexes
@@ -346,13 +355,13 @@ DROP INDEX IF EXISTS idx_financial_reports_type_period;
 DROP INDEX IF EXISTS idx_companies_sector_market_cap;
 DROP INDEX IF EXISTS idx_market_data_ticker_date_price;
 """
-        
+
         down_file = self.migrations_dir / "down" / "004_performance_indexes.sql"
-        with open(down_file, 'w') as f:
+        with open(down_file, "w") as f:
             f.write(down_migration)
-        
+
         print("✅ Created indexes migration (004_performance_indexes.sql)")
-    
+
     def _create_migration_script(self):
         """Create migration runner script"""
         script_content = """#!/usr/bin/env python3
@@ -406,15 +415,15 @@ if __name__ == "__main__":
     
     run_migration(direction, migration_name)
 """
-        
+
         script_file = self.migrations_dir.parent / "run_migrations.py"
-        with open(script_file, 'w') as f:
+        with open(script_file, "w") as f:
             f.write(script_content)
-        
+
         # Make executable
         os.chmod(script_file, 0o755)
         print("✅ Created migration runner script (run_migrations.py)")
-    
+
     def _create_ci_hook(self):
         """Create CI hook for migration validation"""
         hook_content = """#!/bin/bash
@@ -450,15 +459,15 @@ done
 
 echo "✅ All migrations validated successfully"
 """
-        
+
         hook_file = self.migrations_dir.parent / "ci_hook.sh"
-        with open(hook_file, 'w') as f:
+        with open(hook_file, "w") as f:
             f.write(hook_content)
-        
+
         # Make executable
         os.chmod(hook_file, 0o755)
         print("✅ Created CI hook (ci_hook.sh)")
-    
+
     def _create_readme(self):
         """Create migration README"""
         readme_content = """# Database Migrations
@@ -502,16 +511,18 @@ When creating new migrations:
 2. Test the rollback works correctly
 3. Update this README with migration details
 """
-        
+
         readme_file = self.migrations_dir / "README.md"
-        with open(readme_file, 'w') as f:
+        with open(readme_file, "w") as f:
             f.write(readme_content)
-        
+
         print("✅ Created migration README")
+
 
 def main():
     manager = SimpleMigrationManager()
     manager.create_migration_structure()
 
+
 if __name__ == "__main__":
-    main() 
+    main()

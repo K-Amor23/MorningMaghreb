@@ -27,12 +27,22 @@ except Exception:
     sys.exit(1)
 
 
-def fetch_recent_news(client, tickers: List[str], days: int = 7) -> List[Dict[str, Any]]:
+def fetch_recent_news(
+    client, tickers: List[str], days: int = 7
+) -> List[Dict[str, Any]]:
     since = (datetime.utcnow() - timedelta(days=days)).date().isoformat()
     rows: List[Dict[str, Any]] = []
     for t in tickers:
         try:
-            res = client.table("company_news").select("ticker,headline,source,published_at").gte("published_at", since).eq("ticker", t).order("published_at", desc=True).limit(50).execute()
+            res = (
+                client.table("company_news")
+                .select("ticker,headline,source,published_at")
+                .gte("published_at", since)
+                .eq("ticker", t)
+                .order("published_at", desc=True)
+                .limit(50)
+                .execute()
+            )
             rows.extend(res.data or [])
         except Exception:
             pass
@@ -46,7 +56,9 @@ def build_markdown_summary(items: List[Dict[str, Any]]) -> str:
     # Group a few highlights
     for it in items[:10]:
         ts = (it.get("published_at") or "")[:10]
-        lines.append(f"- [{ts}] {it.get('ticker')}: {it.get('headline')} ({it.get('source')})")
+        lines.append(
+            f"- [{ts}] {it.get('ticker')}: {it.get('headline')} ({it.get('source')})"
+        )
     lines.append("")
     return "\n".join(lines)
 
@@ -56,7 +68,9 @@ def main() -> None:
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
     oai = os.getenv("OPENAI_API_KEY")
     if not url or not key or not oai:
-        print("❌ Env vars missing: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY")
+        print(
+            "❌ Env vars missing: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY"
+        )
         sys.exit(1)
 
     client = create_client(url, key)
@@ -64,7 +78,12 @@ def main() -> None:
     news = fetch_recent_news(client, tickers, days=7)
 
     # Prepare context for OpenAI
-    head_blob = "\n".join([f"- {n.get('ticker')}: {n.get('headline')} ({n.get('source')})" for n in news[:50]])
+    head_blob = "\n".join(
+        [
+            f"- {n.get('ticker')}: {n.get('headline')} ({n.get('source')})"
+            for n in news[:50]
+        ]
+    )
     md_seed = build_markdown_summary(news)
 
     # Generate with OpenAI (constrained, factual)
@@ -79,7 +98,10 @@ def main() -> None:
     try:
         resp = ai.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
             temperature=0.4,
             max_tokens=600,
         )
@@ -91,23 +113,22 @@ def main() -> None:
     summary_date = datetime.utcnow().date().isoformat()
 
     # Upsert Markdown summary
-    client.table("newsletter_summaries").upsert({
-        "summary_date": summary_date,
-        "language": "en",
-        "subject": subject,
-        "content": content,
-    }, on_conflict="summary_date,language").execute()
+    client.table("newsletter_summaries").upsert(
+        {
+            "summary_date": summary_date,
+            "language": "en",
+            "subject": subject,
+            "content": content,
+        },
+        on_conflict="summary_date,language",
+    ).execute()
 
     print("✅ Weekly summary created (Markdown)")
     print("Post-run checklist:")
-    print("- SELECT subject, created_at FROM newsletter_summaries ORDER BY created_at DESC LIMIT 1;")
+    print(
+        "- SELECT subject, created_at FROM newsletter_summaries ORDER BY created_at DESC LIMIT 1;"
+    )
 
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

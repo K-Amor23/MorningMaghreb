@@ -14,7 +14,9 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 # Add the backend directory to the path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.append(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 try:
     from supabase import create_client, Client
@@ -22,36 +24,40 @@ except ImportError:
     print("❌ Supabase client not available. Install with: pip install supabase")
     sys.exit(1)
 
+
 class SupabaseDeployer:
     """Handles Supabase deployment and data synchronization"""
-    
+
     def __init__(self):
-        self.supabase_url = os.getenv('SUPABASE_URL')
-        self.supabase_key = os.getenv('SUPABASE_ANON_KEY')
-        self.supabase_service_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
-        
+        self.supabase_url = os.getenv("SUPABASE_URL")
+        self.supabase_key = os.getenv("SUPABASE_ANON_KEY")
+        self.supabase_service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
         if not self.supabase_url or not self.supabase_key:
             print("❌ Supabase credentials not found in environment variables")
             print("   Set SUPABASE_URL and SUPABASE_ANON_KEY")
             sys.exit(1)
-        
+
         self.client = create_client(self.supabase_url, self.supabase_key)
-        self.service_client = create_client(self.supabase_url, self.supabase_service_key)
-        
+        self.service_client = create_client(
+            self.supabase_url, self.supabase_service_key
+        )
+
         print(f"✅ Connected to Supabase: {self.supabase_url}")
-    
+
     def check_supabase_cli(self):
         """Check if Supabase CLI is installed"""
         try:
-            result = subprocess.run(['supabase', '--version'], 
-                                  capture_output=True, text=True, check=True)
+            result = subprocess.run(
+                ["supabase", "--version"], capture_output=True, text=True, check=True
+            )
             print(f"✅ Supabase CLI: {result.stdout.strip()}")
             return True
         except (subprocess.CalledProcessError, FileNotFoundError):
             print("❌ Supabase CLI not found")
             print("   Install with: npm install -g supabase")
             return False
-    
+
     def create_database_schema(self):
         """Create the database schema for OHLCV data"""
         schema_sql = """
@@ -124,130 +130,145 @@ class SupabaseDeployer:
         CREATE INDEX IF NOT EXISTS idx_market_data_type ON market_data(data_type);
         CREATE INDEX IF NOT EXISTS idx_market_data_ticker_type ON market_data(ticker, data_type);
         """
-        
+
         try:
             # Execute schema creation
-            result = self.service_client.rpc('exec_sql', {'sql': schema_sql}).execute()
+            result = self.service_client.rpc("exec_sql", {"sql": schema_sql}).execute()
             print("✅ Database schema created successfully")
             return True
         except Exception as e:
             print(f"❌ Error creating schema: {str(e)}")
             return False
-    
+
     def load_ohlcv_data(self):
         """Load OHLCV data from CSV files and insert into Supabase"""
         ohlcv_dir = "apps/backend/etl/data/ohlcv"
-        
+
         if not os.path.exists(ohlcv_dir):
             print(f"❌ OHLCV data directory not found: {ohlcv_dir}")
             return False
-        
-        csv_files = [f for f in os.listdir(ohlcv_dir) if f.endswith('_ohlcv_90days.csv')]
-        
+
+        csv_files = [
+            f for f in os.listdir(ohlcv_dir) if f.endswith("_ohlcv_90days.csv")
+        ]
+
         if not csv_files:
             print(f"❌ No OHLCV CSV files found in {ohlcv_dir}")
             return False
-        
+
         total_records = 0
         successful_companies = 0
-        
+
         for csv_file in csv_files:
-            ticker = csv_file.split('_')[0]
+            ticker = csv_file.split("_")[0]
             file_path = os.path.join(ohlcv_dir, csv_file)
-            
+
             print(f"📊 Processing {ticker}...")
-            
+
             try:
                 # Read CSV file
                 records = []
-                with open(file_path, 'r', encoding='utf-8') as f:
+                with open(file_path, "r", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     for row in reader:
-                        records.append({
-                            'ticker': ticker,
-                            'date': row['date'],
-                            'open_price': float(row['open']),
-                            'high_price': float(row['high']),
-                            'low_price': float(row['low']),
-                            'close_price': float(row['close']),
-                            'volume': int(row['volume']),
-                            'created_at': datetime.now().isoformat()
-                        })
-                
+                        records.append(
+                            {
+                                "ticker": ticker,
+                                "date": row["date"],
+                                "open_price": float(row["open"]),
+                                "high_price": float(row["high"]),
+                                "low_price": float(row["low"]),
+                                "close_price": float(row["close"]),
+                                "volume": int(row["volume"]),
+                                "created_at": datetime.now().isoformat(),
+                            }
+                        )
+
                 # Insert data in batches
                 batch_size = 50
                 for i in range(0, len(records), batch_size):
-                    batch = records[i:i + batch_size]
-                    
+                    batch = records[i : i + batch_size]
+
                     # Use upsert to handle duplicates
-                    result = self.service_client.table('company_prices').upsert(
-                        batch, 
-                        on_conflict='ticker,date'
-                    ).execute()
-                    
-                    if hasattr(result, 'error') and result.error:
+                    result = (
+                        self.service_client.table("company_prices")
+                        .upsert(batch, on_conflict="ticker,date")
+                        .execute()
+                    )
+
+                    if hasattr(result, "error") and result.error:
                         print(f"❌ Error inserting batch for {ticker}: {result.error}")
                         continue
-                
+
                 total_records += len(records)
                 successful_companies += 1
                 print(f"✅ {ticker}: {len(records)} records inserted")
-                
+
             except Exception as e:
                 print(f"❌ Error processing {ticker}: {str(e)}")
-        
+
         print(f"\n📊 OHLCV Data Summary:")
         print(f"   Companies processed: {successful_companies}/{len(csv_files)}")
         print(f"   Total records: {total_records}")
-        
+
         return successful_companies > 0
-    
+
     def sync_company_data(self):
         """Sync company metadata from African Markets data"""
         try:
             # Load African Markets data
-            african_markets_file = "apps/backend/data/cse_companies_african_markets.json"
-            
+            african_markets_file = (
+                "apps/backend/data/cse_companies_african_markets.json"
+            )
+
             if not os.path.exists(african_markets_file):
                 print(f"❌ African Markets data not found: {african_markets_file}")
                 return False
-            
-            with open(african_markets_file, 'r', encoding='utf-8') as f:
+
+            with open(african_markets_file, "r", encoding="utf-8") as f:
                 companies_data = json.load(f)
-            
+
             # Prepare company records
             company_records = []
             for company in companies_data:
-                if company.get('ticker'):
-                    company_records.append({
-                        'ticker': company['ticker'].upper(),
-                        'name': company.get('name') or company.get('company_name', ''),
-                        'sector': company.get('sector', ''),
-                        'market_cap': company.get('market_cap_billion', 0) * 1000000000 if company.get('market_cap_billion') else None,
-                        'pe_ratio': company.get('pe_ratio'),
-                        'dividend_yield': company.get('dividend_yield'),
-                        'roe': company.get('roe'),
-                        'shares_outstanding': company.get('shares_outstanding'),
-                        'last_updated': datetime.now().isoformat()
-                    })
-            
+                if company.get("ticker"):
+                    company_records.append(
+                        {
+                            "ticker": company["ticker"].upper(),
+                            "name": company.get("name")
+                            or company.get("company_name", ""),
+                            "sector": company.get("sector", ""),
+                            "market_cap": (
+                                company.get("market_cap_billion", 0) * 1000000000
+                                if company.get("market_cap_billion")
+                                else None
+                            ),
+                            "pe_ratio": company.get("pe_ratio"),
+                            "dividend_yield": company.get("dividend_yield"),
+                            "roe": company.get("roe"),
+                            "shares_outstanding": company.get("shares_outstanding"),
+                            "last_updated": datetime.now().isoformat(),
+                        }
+                    )
+
             # Insert company data
-            result = self.service_client.table('companies').upsert(
-                company_records,
-                on_conflict='ticker'
-            ).execute()
-            
-            if hasattr(result, 'error') and result.error:
+            result = (
+                self.service_client.table("companies")
+                .upsert(company_records, on_conflict="ticker")
+                .execute()
+            )
+
+            if hasattr(result, "error") and result.error:
                 print(f"❌ Error syncing company data: {result.error}")
                 return False
-            
+
             print(f"✅ Company data synced: {len(company_records)} companies")
             return True
-            
+
         except Exception as e:
             print(f"❌ Error syncing company data: {str(e)}")
             return False
-    
+
     def create_api_endpoints(self):
         """Create database functions for API endpoints"""
         functions_sql = """
@@ -363,78 +384,82 @@ class SupabaseDeployer:
         END;
         $$ LANGUAGE plpgsql;
         """
-        
+
         try:
-            result = self.service_client.rpc('exec_sql', {'sql': functions_sql}).execute()
+            result = self.service_client.rpc(
+                "exec_sql", {"sql": functions_sql}
+            ).execute()
             print("✅ API functions created successfully")
             return True
         except Exception as e:
             print(f"❌ Error creating API functions: {str(e)}")
             return False
-    
+
     def test_deployment(self):
         """Test the deployment by querying the data"""
         try:
             # Test company data
-            result = self.client.table('companies').select('*').limit(5).execute()
+            result = self.client.table("companies").select("*").limit(5).execute()
             print(f"✅ Company data test: {len(result.data)} companies found")
-            
+
             # Test OHLCV data
-            result = self.client.table('company_prices').select('*').limit(5).execute()
+            result = self.client.table("company_prices").select("*").limit(5).execute()
             print(f"✅ OHLCV data test: {len(result.data)} price records found")
-            
+
             # Test API function
-            result = self.client.rpc('get_company_summary', {'ticker_param': 'ATW'}).execute()
+            result = self.client.rpc(
+                "get_company_summary", {"ticker_param": "ATW"}
+            ).execute()
             if result.data:
                 print("✅ API function test: Company summary retrieved successfully")
             else:
                 print("⚠️  API function test: No data returned")
-            
+
             return True
-            
+
         except Exception as e:
             print(f"❌ Deployment test failed: {str(e)}")
             return False
-    
+
     def deploy(self):
         """Main deployment process"""
         print("🚀 Starting Supabase Deployment")
         print("=" * 60)
-        
+
         # Check Supabase CLI
         if not self.check_supabase_cli():
             print("⚠️  Continuing without Supabase CLI...")
-        
+
         # Create database schema
         print("\n📊 Creating database schema...")
         if not self.create_database_schema():
             print("❌ Schema creation failed")
             return False
-        
+
         # Sync company data
         print("\n🏢 Syncing company data...")
         if not self.sync_company_data():
             print("❌ Company data sync failed")
             return False
-        
+
         # Load OHLCV data
         print("\n📈 Loading OHLCV data...")
         if not self.load_ohlcv_data():
             print("❌ OHLCV data loading failed")
             return False
-        
+
         # Create API functions
         print("\n🔧 Creating API functions...")
         if not self.create_api_endpoints():
             print("❌ API functions creation failed")
             return False
-        
+
         # Test deployment
         print("\n🧪 Testing deployment...")
         if not self.test_deployment():
             print("❌ Deployment test failed")
             return False
-        
+
         print("\n" + "=" * 60)
         print("✅ Supabase Deployment Complete!")
         print("=" * 60)
@@ -447,19 +472,21 @@ class SupabaseDeployer:
         print("   1. Update frontend to use Supabase API")
         print("   2. Test all endpoints with real data")
         print("   3. Deploy to production")
-        
+
         return True
+
 
 def main():
     """Main function"""
     deployer = SupabaseDeployer()
     success = deployer.deploy()
-    
+
     if success:
         print("\n🎉 Deployment successful! Your data is now live on Supabase.")
     else:
         print("\n❌ Deployment failed. Check the errors above.")
         sys.exit(1)
 
+
 if __name__ == "__main__":
-    main() 
+    main()

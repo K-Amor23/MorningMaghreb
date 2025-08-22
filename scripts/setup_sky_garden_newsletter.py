@@ -17,21 +17,23 @@ from pathlib import Path
 SUPABASE_URL = "https://gzsgehciddnrssuqxtsj.supabase.co"
 SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6c2dlaGNpZGRucnNzdXF4dHNqIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQxOTk5MSwiZXhwIjoyMDY5OTk1OTkxfQ.RxCuA9XIdNriIEUBk90m9jEZNV11uHAVaQKH76lavX0"
 
+
 def print_header():
     print("🔧 Setting up Sky Garden Newsletter Table")
     print("=" * 50)
     print()
 
+
 def create_newsletter_table():
     """Create the newsletter_subscribers table"""
     print("🔧 Creating Newsletter Table...")
-    
+
     headers = {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
-        'Content-Type': 'application/json'
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
     }
-    
+
     # First, let's check what tables exist
     try:
         response = requests.get(f"{SUPABASE_URL}/rest/v1/", headers=headers)
@@ -44,22 +46,22 @@ def create_newsletter_table():
     except Exception as e:
         print(f"❌ Connection error: {e}")
         return False
-    
+
     # Try to create the table using a direct SQL approach
     # We'll use the existing database schema from the project
     print("\n📋 Using existing database schema...")
-    
+
     # Read the database schema file
     schema_file = Path("database/advanced_features_supabase.sql")
     if schema_file.exists():
         print("✅ Found database schema file")
-        
+
         # Extract the newsletter table creation SQL
-        with open(schema_file, 'r') as f:
+        with open(schema_file, "r") as f:
             content = f.read()
-        
+
         # Find the newsletter_subscribers table definition
-        if 'newsletter_subscribers' in content:
+        if "newsletter_subscribers" in content:
             print("✅ Newsletter table definition found in schema")
             print("📝 You can create the table manually in Supabase Dashboard:")
             print("   1. Go to https://supabase.com/dashboard")
@@ -67,7 +69,8 @@ def create_newsletter_table():
             print("   3. Go to SQL Editor")
             print("   4. Run this SQL:")
             print()
-            print("""
+            print(
+                """
 CREATE TABLE IF NOT EXISTS newsletter_subscribers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -77,18 +80,20 @@ CREATE TABLE IF NOT EXISTS newsletter_subscribers (
     subscribed_at TIMESTAMPTZ DEFAULT NOW(),
     unsubscribed_at TIMESTAMPTZ
 );
-            """)
+            """
+            )
         else:
             print("❌ Newsletter table definition not found in schema")
     else:
         print("❌ Database schema file not found")
-    
+
     return True
+
 
 def test_newsletter_functionality():
     """Test if the newsletter functionality works"""
     print("\n🧪 Testing Newsletter Functionality...")
-    
+
     # Test the API endpoint
     test_url = "https://morningmaghreb.com/api/newsletter/signup"
     test_data = {
@@ -97,20 +102,20 @@ def test_newsletter_functionality():
         "preferences": {
             "language": "en",
             "delivery_time": "08:00",
-            "frequency": "daily"
-        }
+            "frequency": "daily",
+        },
     }
-    
+
     try:
         response = requests.post(
             test_url,
-            headers={'Content-Type': 'application/json'},
+            headers={"Content-Type": "application/json"},
             json=test_data,
-            timeout=10
+            timeout=10,
         )
-        
+
         print(f"📊 API Response Status: {response.status_code}")
-        
+
         if response.status_code == 201:
             print("✅ Newsletter signup API is working!")
             return True
@@ -127,21 +132,22 @@ def test_newsletter_functionality():
             print(f"⚠️ Unexpected status code: {response.status_code}")
             print(f"Response: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error testing API: {e}")
         return False
 
+
 def main():
     print_header()
-    
+
     # Create the newsletter table
     if create_newsletter_table():
         print("\n✅ Sky Garden setup instructions provided")
     else:
         print("\n❌ Failed to set up Sky Garden")
         return
-    
+
     # Test the newsletter functionality
     if test_newsletter_functionality():
         print("\n🎉 Newsletter functionality is working!")
@@ -149,12 +155,13 @@ def main():
     else:
         print("\n⚠️ Newsletter functionality needs the table to be created")
         print("📝 Please create the newsletter_subscribers table in Supabase Dashboard")
-    
+
     print("\n🔗 Next Steps:")
     print("1. Create the newsletter_subscribers table in Supabase Dashboard")
     print("2. Deploy the updated vercel.json to production")
     print("3. Test the newsletter signup on your site")
     print("\n🌐 Your site: https://morningmaghreb.com")
 
+
 if __name__ == "__main__":
-    main() 
+    main()

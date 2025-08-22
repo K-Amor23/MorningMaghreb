@@ -7,34 +7,36 @@ import os
 import sys
 from supabase import create_client, Client
 
+
 # Load environment variables
 def load_env():
     env_file = "apps/web/.env"
     if os.path.exists(env_file):
-        with open(env_file, 'r') as f:
+        with open(env_file, "r") as f:
             for line in f:
-                if '=' in line and not line.startswith('#'):
-                    key, value = line.strip().split('=', 1)
+                if "=" in line and not line.startswith("#"):
+                    key, value = line.strip().split("=", 1)
                     os.environ[key] = value
+
 
 def create_tables():
     """Create the required database tables"""
-    
+
     # Load environment variables
     load_env()
-    
-    supabase_url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
-    supabase_service_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
-    
+
+    supabase_url = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
+    supabase_service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+
     if not supabase_url or not supabase_service_key:
         print("❌ Supabase credentials not found")
         return False
-    
+
     print(f"✅ Connecting to Supabase: {supabase_url}")
-    
+
     # Create Supabase client
     supabase = create_client(supabase_url, supabase_service_key)
-    
+
     # SQL statements to create tables
     sql_statements = [
         """
@@ -58,7 +60,6 @@ def create_tables():
             created_at TIMESTAMPTZ DEFAULT NOW()
         );
         """,
-        
         """
         -- Create company_prices table
         CREATE TABLE IF NOT EXISTS company_prices (
@@ -76,7 +77,6 @@ def create_tables():
             UNIQUE(ticker, date)
         );
         """,
-        
         """
         -- Create company_reports table
         CREATE TABLE IF NOT EXISTS company_reports (
@@ -96,7 +96,6 @@ def create_tables():
             UNIQUE(ticker, url)
         );
         """,
-        
         """
         -- Create company_news table
         CREATE TABLE IF NOT EXISTS company_news (
@@ -115,7 +114,6 @@ def create_tables():
             UNIQUE(ticker, url, published_at)
         );
         """,
-        
         """
         -- Create sentiment_aggregates table
         CREATE TABLE IF NOT EXISTS sentiment_aggregates (
@@ -129,7 +127,6 @@ def create_tables():
             last_updated TIMESTAMPTZ DEFAULT NOW()
         );
         """,
-        
         """
         -- Create indexes
         CREATE INDEX IF NOT EXISTS idx_companies_ticker ON companies(ticker);
@@ -150,33 +147,33 @@ def create_tables():
         CREATE INDEX IF NOT EXISTS idx_company_news_ticker_published ON company_news(ticker, published_at DESC);
         
         CREATE INDEX IF NOT EXISTS idx_sentiment_aggregates_ticker ON sentiment_aggregates(ticker);
-        """
+        """,
     ]
-    
+
     try:
         print("🔧 Creating database tables...")
-        
+
         # Since we can't execute SQL directly, we'll create tables by inserting test data
         # and handling the errors gracefully
-        
+
         # Test if companies table exists by trying to insert a test record
         try:
             test_company = {
                 "ticker": "TEST",
                 "name": "Test Company",
-                "sector": "Technology"
+                "sector": "Technology",
             }
-            result = supabase.table('companies').insert(test_company).execute()
+            result = supabase.table("companies").insert(test_company).execute()
             print("✅ Companies table exists")
-            
+
             # Clean up test record
-            supabase.table('companies').delete().eq('ticker', 'TEST').execute()
-            
+            supabase.table("companies").delete().eq("ticker", "TEST").execute()
+
         except Exception as e:
             print(f"❌ Companies table error: {str(e)}")
             print("📝 Please create the tables manually in your Supabase SQL editor")
             return False
-        
+
         # Test if company_prices table exists
         try:
             test_price = {
@@ -186,25 +183,26 @@ def create_tables():
                 "high": 110.0,
                 "low": 90.0,
                 "close": 105.0,
-                "volume": 1000000
+                "volume": 1000000,
             }
-            result = supabase.table('company_prices').insert(test_price).execute()
+            result = supabase.table("company_prices").insert(test_price).execute()
             print("✅ Company_prices table exists")
-            
+
             # Clean up test record
-            supabase.table('company_prices').delete().eq('ticker', 'TEST').execute()
-            
+            supabase.table("company_prices").delete().eq("ticker", "TEST").execute()
+
         except Exception as e:
             print(f"❌ Company_prices table error: {str(e)}")
             print("📝 Please create the tables manually in your Supabase SQL editor")
             return False
-        
+
         print("✅ All tables exist and are working!")
         return True
-        
+
     except Exception as e:
         print(f"❌ Error: {str(e)}")
         return False
+
 
 if __name__ == "__main__":
     success = create_tables()
@@ -212,4 +210,4 @@ if __name__ == "__main__":
         print("\n🎉 Database tables are ready!")
     else:
         print("\n💡 Please create the tables manually in your Supabase SQL editor")
-        print("📝 Copy and paste the SQL statements from the script above") 
+        print("📝 Copy and paste the SQL statements from the script above")

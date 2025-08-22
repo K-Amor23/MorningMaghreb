@@ -26,8 +26,19 @@ except Exception:
 
 TICKERS = ["ATW", "IAM", "BCP"]
 NEWS_KEYS = [
-    "actualite", "actualités", "actu", "communiqué", "communiques", "communiqués",
-    "presse", "press", "news", "investisseur", "investisseurs", "relations", "relations-investisseurs"
+    "actualite",
+    "actualités",
+    "actu",
+    "communiqué",
+    "communiques",
+    "communiqués",
+    "presse",
+    "press",
+    "news",
+    "investisseur",
+    "investisseurs",
+    "relations",
+    "relations-investisseurs",
 ]
 
 
@@ -40,7 +51,12 @@ def get_client():
 
 
 def fetch_company_rows(client) -> List[Dict]:
-    res = client.table("companies").select("ticker,company_url,ir_url,name").in_("ticker", TICKERS).execute()
+    res = (
+        client.table("companies")
+        .select("ticker,company_url,ir_url,name")
+        .in_("ticker", TICKERS)
+        .execute()
+    )
     return res.data or []
 
 
@@ -78,21 +94,30 @@ def upsert_candidate(client, ticker: str, name: str, url: str):
     preview = f"Site update link for {name}"
     # Check if exists by ticker+url
     try:
-        existing = client.table("company_news").select("id").eq("ticker", ticker).eq("url", url).limit(1).execute()
+        existing = (
+            client.table("company_news")
+            .select("id")
+            .eq("ticker", ticker)
+            .eq("url", url)
+            .limit(1)
+            .execute()
+        )
         if existing.data:
             return
     except Exception:
         pass
     # Insert with a default published_at to satisfy unique(ticker,url,published_at)
-    client.table("company_news").insert({
-        "ticker": ticker,
-        "headline": preview,
-        "source": source,
-        "url": url,
-        "published_at": datetime.utcnow().isoformat(),
-        "content_preview": preview,
-        "scraped_at": datetime.utcnow().isoformat(),
-    }).execute()
+    client.table("company_news").insert(
+        {
+            "ticker": ticker,
+            "headline": preview,
+            "source": source,
+            "url": url,
+            "published_at": datetime.utcnow().isoformat(),
+            "content_preview": preview,
+            "scraped_at": datetime.utcnow().isoformat(),
+        }
+    ).execute()
 
 
 def main():
@@ -109,10 +134,10 @@ def main():
                 total += 1
     print(f"✅ Company site crawl complete. Upserted ~{total} candidate links.")
     print("Post-run checklist:")
-    print("- SELECT ticker, headline, url FROM company_news WHERE ticker IN ('ATW','IAM','BCP') ORDER BY scraped_at DESC LIMIT 20;")
+    print(
+        "- SELECT ticker, headline, url FROM company_news WHERE ticker IN ('ATW','IAM','BCP') ORDER BY scraped_at DESC LIMIT 20;"
+    )
 
 
 if __name__ == "__main__":
     main()
-
-

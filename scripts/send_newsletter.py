@@ -32,7 +32,13 @@ def fetch_latest_summary() -> Optional[dict]:
     if not url or not key:
         return None
     client = create_client(url, key)
-    res = client.table("newsletter_summaries").select("*").order("created_at", desc=True).limit(1).execute()
+    res = (
+        client.table("newsletter_summaries")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(1)
+        .execute()
+    )
     rows = res.data or []
     return rows[0] if rows else None
 
@@ -40,6 +46,7 @@ def fetch_latest_summary() -> Optional[dict]:
 def markdown_to_html(md: str) -> str:
     # Minimal conversion: wrap in <pre> for safety. Replace with proper renderer if desired.
     from html import escape
+
     return f"<pre style='font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;'>{escape(md)}</pre>"
 
 
@@ -48,7 +55,9 @@ def main() -> None:
     sender = os.getenv("NEWSLETTER_FROM")
     to = os.getenv("NEWSLETTER_TO_TEST")
     if not api_key or not sender or not to:
-        print("❌ Env vars missing: RESEND_API_KEY, NEWSLETTER_FROM, NEWSLETTER_TO_TEST")
+        print(
+            "❌ Env vars missing: RESEND_API_KEY, NEWSLETTER_FROM, NEWSLETTER_TO_TEST"
+        )
         sys.exit(1)
 
     summary = fetch_latest_summary()
@@ -61,12 +70,14 @@ def main() -> None:
     html = markdown_to_html(content)
 
     resend.api_key = api_key
-    resend.Emails.send({
-        "from": sender,
-        "to": [to],
-        "subject": subject,
-        "html": html,
-    })
+    resend.Emails.send(
+        {
+            "from": sender,
+            "to": [to],
+            "subject": subject,
+            "html": html,
+        }
+    )
 
     print(f"✅ Test newsletter sent to {to}")
     print("Post-run checklist:")
@@ -75,5 +86,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

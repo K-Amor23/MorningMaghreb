@@ -16,74 +16,76 @@ from typing import Dict, List, Any
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class E2ETestingSetup:
     """Setup comprehensive E2E testing with Playwright"""
-    
+
     def __init__(self):
         self.project_root = Path(__file__).parent.parent
         self.web_dir = self.project_root / "apps" / "web"
         self.tests_dir = self.web_dir / "tests" / "e2e"
         self.companies = ["IAM", "ATW", "BCP"]
-        
+
     def setup_e2e_testing(self) -> bool:
         """Setup complete E2E testing infrastructure"""
         logger.info("🚀 Setting up End-to-End Testing Infrastructure")
-        
+
         try:
             # 1. Setup Playwright
             self.setup_playwright()
-            
+
             # 2. Create test configuration
             self.create_playwright_config()
-            
+
             # 3. Create company-specific tests
             self.create_company_tests()
-            
+
             # 4. Create authentication tests
             self.create_auth_tests()
-            
+
             # 5. Create data quality tests
             self.create_data_quality_tests()
-            
+
             # 6. Create chart rendering tests
             self.create_chart_tests()
-            
+
             # 7. Create test utilities
             self.create_test_utilities()
-            
+
             # 8. Create test runner script
             self.create_test_runner()
-            
+
             logger.info("✅ E2E testing setup completed successfully")
             return True
-            
+
         except Exception as e:
             logger.error(f"❌ E2E testing setup failed: {e}")
             return False
-    
+
     def setup_playwright(self):
         """Setup Playwright testing framework"""
         logger.info("📦 Setting up Playwright...")
-        
+
         # Navigate to web directory
         os.chdir(self.web_dir)
-        
+
         # Install Playwright if not already installed
         try:
-            subprocess.run(["npx", "playwright", "--version"], 
-                         capture_output=True, check=True)
+            subprocess.run(
+                ["npx", "playwright", "--version"], capture_output=True, check=True
+            )
             logger.info("✅ Playwright already installed")
         except subprocess.CalledProcessError:
             logger.info("Installing Playwright...")
             subprocess.run(["npm", "install", "-D", "@playwright/test"], check=True)
             subprocess.run(["npx", "playwright", "install"], check=True)
             logger.info("✅ Playwright installed successfully")
-    
+
     def create_playwright_config(self):
         """Create Playwright configuration"""
         logger.info("⚙️ Creating Playwright configuration...")
-        
-        config_content = '''
+
+        config_content = """
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
@@ -132,27 +134,27 @@ export default defineConfig({
     timeout: 120 * 1000,
   },
 });
-'''
-        
+"""
+
         config_file = self.web_dir / "playwright.config.ts"
-        with open(config_file, 'w') as f:
+        with open(config_file, "w") as f:
             f.write(config_content)
-        
+
         logger.info(f"✅ Playwright config created: {config_file}")
-    
+
     def create_company_tests(self):
         """Create company-specific E2E tests"""
         logger.info("🏢 Creating company-specific tests...")
-        
+
         # Create tests directory
         self.tests_dir.mkdir(parents=True, exist_ok=True)
-        
+
         for company in self.companies:
             self.create_company_test_file(company)
-    
+
     def create_company_test_file(self, company: str):
         """Create test file for specific company"""
-        test_content = f'''
+        test_content = f"""
 import {{ test, expect }} from '@playwright/test';
 import {{ CompanyPage }} from '../utils/company-page';
 
@@ -271,19 +273,19 @@ test.describe('{company} Company Page', () => {{
     await expect(page.locator('[data-testid="error-message"]')).toContainText('Company not found');
   }});
 }});
-'''
-        
+"""
+
         test_file = self.tests_dir / f"{company.lower()}.spec.ts"
-        with open(test_file, 'w') as f:
+        with open(test_file, "w") as f:
             f.write(test_content)
-        
+
         logger.info(f"✅ Created test file: {test_file}")
-    
+
     def create_auth_tests(self):
         """Create authentication flow tests"""
         logger.info("🔐 Creating authentication tests...")
-        
-        auth_test_content = '''
+
+        auth_test_content = """
 import { test, expect } from '@playwright/test';
 
 test.describe('Authentication Flows', () => {
@@ -351,19 +353,19 @@ test.describe('Authentication Flows', () => {
     await expect(page).toHaveURL(/.*login.*/);
   });
 });
-'''
-        
+"""
+
         auth_test_file = self.tests_dir / "auth.spec.ts"
-        with open(auth_test_file, 'w') as f:
+        with open(auth_test_file, "w") as f:
             f.write(auth_test_content)
-        
+
         logger.info(f"✅ Created auth test file: {auth_test_file}")
-    
+
     def create_data_quality_tests(self):
         """Create data quality validation tests"""
         logger.info("📊 Creating data quality tests...")
-        
-        data_quality_content = '''
+
+        data_quality_content = """
 import { test, expect } from '@playwright/test';
 
 test.describe('Data Quality Validation', () => {
@@ -448,19 +450,19 @@ test.describe('Data Quality Validation', () => {
     }
   });
 });
-'''
-        
+"""
+
         data_quality_file = self.tests_dir / "data-quality.spec.ts"
-        with open(data_quality_file, 'w') as f:
+        with open(data_quality_file, "w") as f:
             f.write(data_quality_content)
-        
+
         logger.info(f"✅ Created data quality test file: {data_quality_file}")
-    
+
     def create_chart_tests(self):
         """Create chart rendering tests"""
         logger.info("📈 Creating chart rendering tests...")
-        
-        chart_test_content = '''
+
+        chart_test_content = """
 import { test, expect } from '@playwright/test';
 
 test.describe('Chart Rendering Tests', () => {
@@ -578,23 +580,23 @@ test.describe('Chart Rendering Tests', () => {
     await expect(errorState).toBeVisible();
   });
 });
-'''
-        
+"""
+
         chart_test_file = self.tests_dir / "charts.spec.ts"
-        with open(chart_test_file, 'w') as f:
+        with open(chart_test_file, "w") as f:
             f.write(chart_test_content)
-        
+
         logger.info(f"✅ Created chart test file: {chart_test_file}")
-    
+
     def create_test_utilities(self):
         """Create test utility classes"""
         logger.info("🛠️ Creating test utilities...")
-        
+
         utils_dir = self.tests_dir / "utils"
         utils_dir.mkdir(exist_ok=True)
-        
+
         # Company page utility
-        company_page_content = '''
+        company_page_content = """
 import { Page, expect } from '@playwright/test';
 
 export class CompanyPage {
@@ -633,19 +635,19 @@ export class CompanyPage {
     await expect(this.page.locator('[data-testid="trading-chart"]')).toBeVisible();
   }
 }
-'''
-        
+"""
+
         company_page_file = utils_dir / "company-page.ts"
-        with open(company_page_file, 'w') as f:
+        with open(company_page_file, "w") as f:
             f.write(company_page_content)
-        
+
         logger.info(f"✅ Created test utilities: {company_page_file}")
-    
+
     def create_test_runner(self):
         """Create test runner script"""
         logger.info("🏃 Creating test runner script...")
-        
-        runner_content = '''#!/bin/bash
+
+        runner_content = """#!/bin/bash
 
 # E2E Test Runner for Casablanca Insights
 # Runs comprehensive end-to-end tests
@@ -791,23 +793,24 @@ main() {
 
 # Run main function
 main "$@"
-'''
-        
+"""
+
         runner_file = self.project_root / "scripts" / "run_e2e_tests.sh"
-        with open(runner_file, 'w') as f:
+        with open(runner_file, "w") as f:
             f.write(runner_content)
-        
+
         # Make executable
         os.chmod(runner_file, 0o755)
-        
+
         logger.info(f"✅ Created test runner: {runner_file}")
+
 
 def main():
     """Main function"""
     setup = E2ETestingSetup()
-    
+
     success = setup.setup_e2e_testing()
-    
+
     if success:
         logger.info("🎉 E2E testing setup completed successfully!")
         logger.info("📁 Test files created in: apps/web/tests/e2e/")
@@ -817,5 +820,6 @@ def main():
         logger.error("💥 E2E testing setup failed!")
         sys.exit(1)
 
+
 if __name__ == "__main__":
-    main() 
+    main()

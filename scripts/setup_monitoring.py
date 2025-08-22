@@ -19,73 +19,76 @@ import subprocess
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler('monitoring_setup.log'),
-        logging.StreamHandler(sys.stdout)
-    ]
+        logging.FileHandler("monitoring_setup.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
 )
 logger = logging.getLogger(__name__)
 
+
 class MonitoringSetup:
     """Comprehensive monitoring setup for Casablanca Insights"""
-    
+
     def __init__(self):
         self.project_root = Path(__file__).parent.parent
         self.config_dir = self.project_root / "monitoring"
         self.config_dir.mkdir(exist_ok=True)
-        
+
         # Environment variables
         self.supabase_url = os.getenv("SUPABASE_URL")
         self.supabase_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
         self.alert_webhook_url = os.getenv("ALERT_WEBHOOK_URL")
         self.sentry_dsn = os.getenv("SENTRY_DSN")
-        
+
         # Monitoring endpoints
         self.api_base_url = os.getenv("API_BASE_URL", "http://localhost:8000")
         self.websocket_url = os.getenv("WEBSOCKET_URL", "ws://localhost:8000/ws")
-        
+
     async def setup_complete_monitoring(self) -> bool:
         """Setup complete monitoring infrastructure"""
         logger.info("🚀 Setting up comprehensive monitoring for Casablanca Insights")
-        
+
         try:
             # 1. Supabase monitoring
             await self.setup_supabase_monitoring()
-            
+
             # 2. Airflow alerts
             await self.setup_airflow_alerts()
-            
+
             # 3. WebSocket monitoring
             await self.setup_websocket_monitoring()
-            
+
             # 4. Grafana dashboards
             await self.setup_grafana_dashboards()
-            
+
             # 5. Sentry integration
             await self.setup_sentry_integration()
-            
+
             # 6. Health check endpoints
             await self.setup_health_checks()
-            
+
             # 7. Performance monitoring
             await self.setup_performance_monitoring()
-            
+
             logger.info("✅ Complete monitoring setup finished")
             return True
-            
+
         except Exception as e:
             logger.error(f"❌ Monitoring setup failed: {e}")
             return False
-    
+
     async def setup_supabase_monitoring(self):
         """Setup Supabase monitoring and alerts"""
         logger.info("📊 Setting up Supabase monitoring...")
-        
+
         if not self.supabase_url or not self.supabase_key:
-            logger.warning("⚠️  Supabase credentials not found, skipping Supabase monitoring")
+            logger.warning(
+                "⚠️  Supabase credentials not found, skipping Supabase monitoring"
+            )
             return
-        
+
         # Create monitoring queries
         monitoring_queries = {
             "row_counts": """
@@ -127,25 +130,25 @@ class MonitoringSetup:
                     count(*) as connections
                 FROM pg_stat_activity 
                 GROUP BY state;
-            """
+            """,
         }
-        
+
         # Save monitoring queries
         queries_file = self.config_dir / "supabase_monitoring_queries.json"
-        with open(queries_file, 'w') as f:
+        with open(queries_file, "w") as f:
             json.dump(monitoring_queries, f, indent=2)
-        
+
         # Create monitoring script
         monitoring_script = self.config_dir / "supabase_monitor.py"
-        with open(monitoring_script, 'w') as f:
+        with open(monitoring_script, "w") as f:
             f.write(self._generate_supabase_monitor_script())
-        
+
         logger.info(f"✅ Supabase monitoring configured: {monitoring_script}")
-    
+
     async def setup_airflow_alerts(self):
         """Setup Airflow alerts and notifications"""
         logger.info("🔄 Setting up Airflow alerts...")
-        
+
         # Create Airflow alert configuration
         alert_config = {
             "slack_webhook": self.alert_webhook_url,
@@ -154,57 +157,57 @@ class MonitoringSetup:
                 "dag_failure": {
                     "enabled": True,
                     "channels": ["slack", "email"],
-                    "retry_delay": 300
+                    "retry_delay": 300,
                 },
                 "sla_miss": {
                     "enabled": True,
                     "channels": ["slack", "email"],
-                    "threshold_minutes": 60
+                    "threshold_minutes": 60,
                 },
                 "task_timeout": {
                     "enabled": True,
                     "channels": ["slack"],
-                    "threshold_minutes": 30
-                }
-            }
+                    "threshold_minutes": 30,
+                },
+            },
         }
-        
+
         # Save alert configuration
         alert_file = self.config_dir / "airflow_alerts.json"
-        with open(alert_file, 'w') as f:
+        with open(alert_file, "w") as f:
             json.dump(alert_config, f, indent=2)
-        
+
         # Create Airflow alert handler
         alert_handler = self.config_dir / "airflow_alert_handler.py"
-        with open(alert_handler, 'w') as f:
+        with open(alert_handler, "w") as f:
             f.write(self._generate_airflow_alert_handler())
-        
+
         logger.info(f"✅ Airflow alerts configured: {alert_handler}")
-    
+
     async def setup_websocket_monitoring(self):
         """Setup WebSocket uptime monitoring"""
         logger.info("🔌 Setting up WebSocket monitoring...")
-        
+
         # Create WebSocket monitoring script
         websocket_monitor = self.config_dir / "websocket_monitor.py"
-        with open(websocket_monitor, 'w') as f:
+        with open(websocket_monitor, "w") as f:
             f.write(self._generate_websocket_monitor_script())
-        
+
         # Create WebSocket health check
         health_check = self.config_dir / "websocket_health_check.py"
-        with open(health_check, 'w') as f:
+        with open(health_check, "w") as f:
             f.write(self._generate_websocket_health_check())
-        
+
         logger.info(f"✅ WebSocket monitoring configured: {websocket_monitor}")
-    
+
     async def setup_grafana_dashboards(self):
         """Setup Grafana dashboards"""
         logger.info("📈 Setting up Grafana dashboards...")
-        
+
         # Create Grafana configuration directory
         grafana_dir = self.config_dir / "grafana"
         grafana_dir.mkdir(exist_ok=True)
-        
+
         # Create datasources configuration
         datasources = {
             "apiVersion": 1,
@@ -214,7 +217,7 @@ class MonitoringSetup:
                     "type": "prometheus",
                     "url": "http://prometheus:9090",
                     "access": "proxy",
-                    "isDefault": True
+                    "isDefault": True,
                 },
                 {
                     "name": "PostgreSQL",
@@ -222,72 +225,65 @@ class MonitoringSetup:
                     "url": "localhost:5432",
                     "database": "postgres",
                     "user": "postgres",
-                    "secureJsonData": {
-                        "password": "${DB_PASSWORD}"
-                    }
-                }
-            ]
+                    "secureJsonData": {"password": "${DB_PASSWORD}"},
+                },
+            ],
         }
-        
+
         datasources_file = grafana_dir / "datasources.yml"
-        with open(datasources_file, 'w') as f:
+        with open(datasources_file, "w") as f:
             yaml.dump(datasources, f)
-        
+
         # Create dashboard configurations
         dashboards = [
             self._create_api_dashboard(),
             self._create_database_dashboard(),
             self._create_etl_dashboard(),
-            self._create_websocket_dashboard()
+            self._create_websocket_dashboard(),
         ]
-        
+
         dashboards_dir = grafana_dir / "dashboards"
         dashboards_dir.mkdir(exist_ok=True)
-        
+
         for i, dashboard in enumerate(dashboards):
             dashboard_file = dashboards_dir / f"dashboard_{i+1}.json"
-            with open(dashboard_file, 'w') as f:
+            with open(dashboard_file, "w") as f:
                 json.dump(dashboard, f, indent=2)
-        
+
         logger.info(f"✅ Grafana dashboards configured: {grafana_dir}")
-    
+
     async def setup_sentry_integration(self):
         """Setup Sentry error tracking"""
         logger.info("🐛 Setting up Sentry integration...")
-        
+
         if not self.sentry_dsn:
             logger.warning("⚠️  SENTRY_DSN not found, skipping Sentry setup")
             return
-        
+
         # Create Sentry configuration
         sentry_config = {
             "dsn": self.sentry_dsn,
             "environment": "production",
             "traces_sample_rate": 0.1,
             "profiles_sample_rate": 0.1,
-            "integrations": [
-                "fastapi",
-                "sqlalchemy",
-                "redis",
-                "celery"
-            ]
+            "integrations": ["fastapi", "sqlalchemy", "redis", "celery"],
         }
-        
+
         sentry_file = self.config_dir / "sentry_config.json"
-        with open(sentry_file, 'w') as f:
+        with open(sentry_file, "w") as f:
             json.dump(sentry_config, f, indent=2)
-        
+
         # Create Sentry initialization script
         sentry_init = self.config_dir / "sentry_init.py"
-        with open(sentry_init, 'w') as f:
+        with open(sentry_init, "w") as f:
             f.write(self._generate_sentry_init_script())
-        
+
         logger.info(f"✅ Sentry integration configured: {sentry_init}")
-    
+
     async def setup_health_checks(self):
         """Setup comprehensive health checks"""
         logger.info("🏥 Setting up health checks...")
-        
+
         # Create health check configuration
         health_config = {
             "endpoints": [
@@ -295,110 +291,91 @@ class MonitoringSetup:
                     "name": "API Health",
                     "url": f"{self.api_base_url}/health",
                     "timeout": 10,
-                    "expected_status": 200
+                    "expected_status": 200,
                 },
                 {
                     "name": "Database Health",
                     "url": f"{self.api_base_url}/api/health/database",
                     "timeout": 15,
-                    "expected_status": 200
+                    "expected_status": 200,
                 },
                 {
                     "name": "ETL Health",
                     "url": f"{self.api_base_url}/api/etl/health",
                     "timeout": 30,
-                    "expected_status": 200
+                    "expected_status": 200,
                 },
                 {
                     "name": "WebSocket Health",
                     "url": f"{self.websocket_url.replace('ws', 'http')}/health",
                     "timeout": 10,
-                    "expected_status": 200
-                }
+                    "expected_status": 200,
+                },
             ],
             "checks": [
                 {
                     "name": "Database Connectivity",
                     "type": "database",
                     "query": "SELECT 1",
-                    "timeout": 5
+                    "timeout": 5,
                 },
                 {
                     "name": "Redis Connectivity",
                     "type": "redis",
                     "command": "PING",
-                    "timeout": 5
+                    "timeout": 5,
                 },
-                {
-                    "name": "Disk Space",
-                    "type": "system",
-                    "threshold_gb": 5.0
-                },
-                {
-                    "name": "Memory Usage",
-                    "type": "system",
-                    "threshold_percent": 90.0
-                }
-            ]
+                {"name": "Disk Space", "type": "system", "threshold_gb": 5.0},
+                {"name": "Memory Usage", "type": "system", "threshold_percent": 90.0},
+            ],
         }
-        
+
         health_file = self.config_dir / "health_checks.json"
-        with open(health_file, 'w') as f:
+        with open(health_file, "w") as f:
             json.dump(health_config, f, indent=2)
-        
+
         # Create health check script
         health_script = self.config_dir / "health_monitor.py"
-        with open(health_script, 'w') as f:
+        with open(health_script, "w") as f:
             f.write(self._generate_health_monitor_script())
-        
+
         logger.info(f"✅ Health checks configured: {health_script}")
-    
+
     async def setup_performance_monitoring(self):
         """Setup performance monitoring"""
         logger.info("⚡ Setting up performance monitoring...")
-        
+
         # Create Prometheus configuration
         prometheus_config = {
-            "global": {
-                "scrape_interval": "15s",
-                "evaluation_interval": "15s"
-            },
+            "global": {"scrape_interval": "15s", "evaluation_interval": "15s"},
             "rule_files": [],
             "scrape_configs": [
                 {
                     "job_name": "casablanca-api",
-                    "static_configs": [
-                        {
-                            "targets": ["localhost:8000"]
-                        }
-                    ],
+                    "static_configs": [{"targets": ["localhost:8000"]}],
                     "metrics_path": "/metrics",
-                    "scrape_interval": "10s"
+                    "scrape_interval": "10s",
                 },
                 {
                     "job_name": "airflow",
-                    "static_configs": [
-                        {
-                            "targets": ["localhost:8080"]
-                        }
-                    ],
+                    "static_configs": [{"targets": ["localhost:8080"]}],
                     "metrics_path": "/metrics",
-                    "scrape_interval": "30s"
-                }
-            ]
+                    "scrape_interval": "30s",
+                },
+            ],
         }
-        
+
         prometheus_file = self.config_dir / "prometheus.yml"
-        with open(prometheus_file, 'w') as f:
+        with open(prometheus_file, "w") as f:
             yaml.dump(prometheus_config, f)
-        
+
         # Create performance monitoring script
         perf_script = self.config_dir / "performance_monitor.py"
-        with open(perf_script, 'w') as f:
+        with open(perf_script, "w") as f:
             f.write(self._generate_performance_monitor_script())
-        
+
         logger.info(f"✅ Performance monitoring configured: {perf_script}")
-    
+
     def _generate_supabase_monitor_script(self) -> str:
         """Generate Supabase monitoring script"""
         return '''
@@ -512,7 +489,7 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 '''
-    
+
     def _generate_airflow_alert_handler(self) -> str:
         """Generate Airflow alert handler"""
         return '''
@@ -613,7 +590,7 @@ def send_failure_alert(context):
         context=context
     )
 '''
-    
+
     def _generate_websocket_monitor_script(self) -> str:
         """Generate WebSocket monitoring script"""
         return '''
@@ -706,7 +683,7 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 '''
-    
+
     def _generate_websocket_health_check(self) -> str:
         """Generate WebSocket health check"""
         return '''
@@ -753,7 +730,7 @@ if __name__ == "__main__":
     # Exit with appropriate code
     sys.exit(0 if result["status"] == "healthy" else 1)
 '''
-    
+
     def _create_api_dashboard(self) -> Dict[str, Any]:
         """Create API monitoring dashboard"""
         return {
@@ -770,9 +747,9 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])",
-                                "legendFormat": "{{method}} {{route}}"
+                                "legendFormat": "{{method}} {{route}}",
                             }
-                        ]
+                        ],
                     },
                     {
                         "id": 2,
@@ -781,9 +758,9 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "rate(http_requests_total[5m])",
-                                "legendFormat": "{{method}} {{route}}"
+                                "legendFormat": "{{method}} {{route}}",
                             }
-                        ]
+                        ],
                     },
                     {
                         "id": 3,
@@ -791,15 +768,15 @@ if __name__ == "__main__":
                         "type": "graph",
                         "targets": [
                             {
-                                "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
-                                "legendFormat": "{{method}} {{route}}"
+                                "expr": 'rate(http_requests_total{status=~"5.."}[5m])',
+                                "legendFormat": "{{method}} {{route}}",
                             }
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         }
-    
+
     def _create_database_dashboard(self) -> Dict[str, Any]:
         """Create database monitoring dashboard"""
         return {
@@ -816,9 +793,9 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "pg_stat_activity_count",
-                                "legendFormat": "Active Connections"
+                                "legendFormat": "Active Connections",
                             }
-                        ]
+                        ],
                     },
                     {
                         "id": 2,
@@ -827,14 +804,14 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "pg_stat_statements_mean_time_seconds",
-                                "legendFormat": "{{query}}"
+                                "legendFormat": "{{query}}",
                             }
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         }
-    
+
     def _create_etl_dashboard(self) -> Dict[str, Any]:
         """Create ETL monitoring dashboard"""
         return {
@@ -851,9 +828,9 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "airflow_dag_success_rate",
-                                "legendFormat": "Success Rate"
+                                "legendFormat": "Success Rate",
                             }
-                        ]
+                        ],
                     },
                     {
                         "id": 2,
@@ -862,14 +839,14 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "airflow_task_duration_seconds",
-                                "legendFormat": "{{dag_id}} {{task_id}}"
+                                "legendFormat": "{{dag_id}} {{task_id}}",
                             }
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         }
-    
+
     def _create_websocket_dashboard(self) -> Dict[str, Any]:
         """Create WebSocket monitoring dashboard"""
         return {
@@ -886,9 +863,9 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "websocket_connections_total",
-                                "legendFormat": "Active Connections"
+                                "legendFormat": "Active Connections",
                             }
-                        ]
+                        ],
                     },
                     {
                         "id": 2,
@@ -897,14 +874,14 @@ if __name__ == "__main__":
                         "targets": [
                             {
                                 "expr": "rate(websocket_messages_total[5m])",
-                                "legendFormat": "Messages/sec"
+                                "legendFormat": "Messages/sec",
                             }
-                        ]
-                    }
-                ]
+                        ],
+                    },
+                ],
             }
         }
-    
+
     def _generate_sentry_init_script(self) -> str:
         """Generate Sentry initialization script"""
         return '''
@@ -941,7 +918,7 @@ def init_sentry(dsn: str, environment: str = "production"):
 # from monitoring.sentry_init import init_sentry
 # init_sentry("YOUR_SENTRY_DSN", "production")
 '''
-    
+
     def _generate_health_monitor_script(self) -> str:
         """Generate health monitoring script"""
         return '''
@@ -1107,7 +1084,7 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 '''
-    
+
     def _generate_performance_monitor_script(self) -> str:
         """Generate performance monitoring script"""
         return '''
@@ -1250,12 +1227,13 @@ if __name__ == "__main__":
     asyncio.run(main())
 '''
 
+
 async def main():
     """Main monitoring setup function"""
     setup = MonitoringSetup()
-    
+
     success = await setup.setup_complete_monitoring()
-    
+
     if success:
         logger.info("🎉 Monitoring setup completed successfully!")
         logger.info("📁 Configuration files saved to: monitoring/")
@@ -1270,5 +1248,6 @@ async def main():
         logger.error("💥 Monitoring setup failed!")
         sys.exit(1)
 
+
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

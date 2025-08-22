@@ -85,7 +85,9 @@ def main() -> None:
     url = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
     if not url or not key:
-        print("❌ Env vars missing: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY")
+        print(
+            "❌ Env vars missing: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY"
+        )
         sys.exit(1)
 
     client = create_client(url, key)
@@ -114,14 +116,16 @@ def main() -> None:
 
             # Best-effort market_data snapshot
             try:
-                client.table("market_data").insert({
-                    "ticker": c["ticker"],
-                    "price": c.get("current_price"),
-                    "volume": None,
-                    "change_percent": c.get("price_change_percent"),
-                    "timestamp": datetime.utcnow().isoformat(),
-                    "source": "seed_companies",
-                }).execute()
+                client.table("market_data").insert(
+                    {
+                        "ticker": c["ticker"],
+                        "price": c.get("current_price"),
+                        "volume": None,
+                        "change_percent": c.get("price_change_percent"),
+                        "timestamp": datetime.utcnow().isoformat(),
+                        "source": "seed_companies",
+                    }
+                ).execute()
             except Exception:
                 pass
         except Exception as e:
@@ -135,9 +139,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-

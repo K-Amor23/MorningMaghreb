@@ -12,21 +12,23 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 # Add the backend directory to the path
-backend_path = os.path.join(os.path.dirname(__file__), '..', 'apps', 'backend')
+backend_path = os.path.join(os.path.dirname(__file__), "..", "apps", "backend")
 sys.path.insert(0, backend_path)
+
 
 def load_env():
     """Load environment variables from .env file"""
-    env_file = os.path.join(os.path.dirname(__file__), '..', 'apps', 'web', '.env')
+    env_file = os.path.join(os.path.dirname(__file__), "..", "apps", "web", ".env")
     if os.path.exists(env_file):
-        with open(env_file, 'r') as f:
+        with open(env_file, "r") as f:
             for line in f:
-                if '=' in line and not line.startswith('#'):
-                    key, value = line.strip().split('=', 1)
+                if "=" in line and not line.startswith("#"):
+                    key, value = line.strip().split("=", 1)
                     os.environ[key] = value
         print(f"✅ Loaded environment from: {env_file}")
     else:
         print(f"❌ Environment file not found at: {env_file}")
+
 
 def run_market_data_scraper():
     """Run the market data scraper"""
@@ -49,6 +51,7 @@ def run_market_data_scraper():
         print(f"❌ Error running market scraper: {str(e)}")
         return None
 
+
 def run_bank_al_maghrib_scraper():
     """Run the Bank Al Maghrib scraper"""
     print("🏦 Running Bank Al Maghrib Scraper...")
@@ -69,6 +72,7 @@ def run_bank_al_maghrib_scraper():
     except Exception as e:
         print(f"❌ Error running bank scraper: {str(e)}")
         return None
+
 
 def sync_data_to_supabase():
     """Sync scraped data to Supabase"""
@@ -95,6 +99,7 @@ def sync_data_to_supabase():
         print(f"❌ Error syncing to Supabase: {str(e)}")
         return False
 
+
 def main():
     """Main ETL pipeline runner"""
     print("🚀 Starting Casablanca Insights ETL Pipeline")
@@ -104,7 +109,7 @@ def main():
     load_env()
 
     # Check if Supabase is configured
-    supabase_url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
+    supabase_url = os.getenv("NEXT_PUBLIC_SUPABASE_URL")
     if not supabase_url:
         print("❌ Supabase not configured. Please check your .env file.")
         return False
@@ -134,7 +139,8 @@ def main():
         print("\n❌ No data was scraped")
         return False
 
+
 if __name__ == "__main__":
     success = main()
     if not success:
-        sys.exit(1) 
+        sys.exit(1)

@@ -27,9 +27,9 @@ def test_supabase_connection():
     print("🔍 Testing Supabase Connection...")
 
     headers = {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
-        'Content-Type': 'application/json'
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        "Content-Type": "application/json",
     }
 
     try:
@@ -54,16 +54,16 @@ def check_newsletter_table():
     print("\n📊 Checking Newsletter Table...")
 
     headers = {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
-        'Content-Type': 'application/json'
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        "Content-Type": "application/json",
     }
 
     try:
         # Try to query the newsletter_subscribers table
         response = requests.get(
             f"{SUPABASE_URL}/rest/v1/newsletter_subscribers?select=count",
-            headers=headers
+            headers=headers,
         )
 
         if response.status_code == 200:
@@ -87,10 +87,10 @@ def create_newsletter_table():
     print("\n🔧 Creating Newsletter Table...")
 
     headers = {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal",
     }
 
     # SQL to create the table
@@ -111,7 +111,7 @@ def create_newsletter_table():
         response = requests.post(
             f"{SUPABASE_URL}/rest/v1/rpc/exec_sql",
             headers=headers,
-            json={'sql': create_table_sql}
+            json={"sql": create_table_sql},
         )
 
         if response.status_code in [200, 201]:
@@ -132,10 +132,10 @@ def test_newsletter_signup():
     print("\n📝 Testing Newsletter Signup...")
 
     headers = {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": f"Bearer {SUPABASE_ANON_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
     }
 
     test_email = "test@morningmaghreb.com"
@@ -143,20 +143,18 @@ def test_newsletter_signup():
     try:
         # Try to insert a test subscriber
         data = {
-            'email': test_email,
-            'name': 'Test User',
-            'status': 'active',
-            'preferences': {
-                'language': 'en',
-                'delivery_time': '08:00',
-                'frequency': 'daily'
-            }
+            "email": test_email,
+            "name": "Test User",
+            "status": "active",
+            "preferences": {
+                "language": "en",
+                "delivery_time": "08:00",
+                "frequency": "daily",
+            },
         }
 
         response = requests.post(
-            f"{SUPABASE_URL}/rest/v1/newsletter_subscribers",
-            headers=headers,
-            json=data
+            f"{SUPABASE_URL}/rest/v1/newsletter_subscribers", headers=headers, json=data
         )
 
         if response.status_code == 201:
@@ -165,7 +163,7 @@ def test_newsletter_signup():
             # Clean up - delete the test record
             delete_response = requests.delete(
                 f"{SUPABASE_URL}/rest/v1/newsletter_subscribers?email=eq.{test_email}",
-                headers=headers
+                headers=headers,
             )
 
             if delete_response.status_code == 204:
