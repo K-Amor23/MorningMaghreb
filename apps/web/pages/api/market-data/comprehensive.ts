@@ -47,7 +47,8 @@ async function getComprehensiveDataForTicker(
             .from('comprehensive_market_data')
             .select('*')
             .eq('ticker', tickerUpper)
-            .order('scraped_at', { ascending: false })
+            // Some environments may not have scraped_at; order by created_at for robustness
+            .order('created_at', { ascending: false })
             .limit(1)
             .single()
 
