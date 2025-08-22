@@ -23,6 +23,7 @@ def print_header():
     print("=" * 50)
     print()
 
+
 def test_supabase_connection():
     """Test the Supabase connection"""
     print("🔍 Testing Supabase Connection...")
@@ -48,6 +49,7 @@ def test_supabase_connection():
     except Exception as e:
         print(f"❌ Connection error: {e}")
         return False
+
 
 def check_newsletter_table():
     """Check if the newsletter_subscribers table exists"""
@@ -80,6 +82,7 @@ def check_newsletter_table():
     except Exception as e:
         print(f"❌ Error checking table: {e}")
         return False
+
 
 def create_newsletter_table():
     """Create the newsletter_subscribers table if it doesn't exist"""
@@ -124,6 +127,7 @@ def create_newsletter_table():
     except Exception as e:
         print(f"❌ Error creating table: {e}")
         return False
+
 
 def test_newsletter_signup():
     """Test the newsletter signup functionality"""
