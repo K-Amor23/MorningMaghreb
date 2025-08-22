@@ -179,6 +179,7 @@ def test_newsletter_signup():
         print(f"❌ Error testing signup: {e}")
         return False
 
+
 def main():
     print_header()
 
