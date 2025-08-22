@@ -15,6 +15,12 @@ on:
 jobs:
   deploy-and-run-pipeline:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     
     steps:
     - name: Checkout code
@@ -48,10 +54,7 @@ jobs:
         npm ci
         
     - name: Deploy to Supabase (optional)
-      if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
-      env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      if: ${{ env.NEXT_PUBLIC_SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' }}
       run: |
         if [ -f scripts/deploy_master_pipeline_tables.py ]; then
           python scripts/deploy_master_pipeline_tables.py
@@ -60,7 +63,7 @@ jobs:
         fi
         
     - name: Run Pipeline Tasks (mock)
-      if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      if: ${{ env.NEXT_PUBLIC_SUPABASE_URL != '' && env.SUPABASE_SERVICE_ROLE_KEY != '' }}
       run: |
         python - <<'PY'
         from datetime import datetime
@@ -72,12 +75,12 @@ jobs:
         PY
         
     - name: Deploy to Vercel (optional)
-      if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID }}
+      if: ${{ env.VERCEL_TOKEN != '' && env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' }}
       uses: amondnet/vercel-action@v25
       with:
-        vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-token: ${{ env.VERCEL_TOKEN }}
+        vercel-org-id: ${{ env.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ env.VERCEL_PROJECT_ID }}
         working-directory: ./apps/web
         
     - name: Notify on Success
