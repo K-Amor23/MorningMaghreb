@@ -26,17 +26,17 @@ def print_header():
 def test_supabase_connection():
     """Test the Supabase connection"""
     print("🔍 Testing Supabase Connection...")
-    
+
     headers = {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
         'Content-Type': 'application/json'
     }
-    
+
     try:
         # Test basic connection
         response = requests.get(f"{SUPABASE_URL}/rest/v1/", headers=headers)
-        
+
         if response.status_code == 200:
             print("✅ Supabase connection successful")
             return True
@@ -44,7 +44,7 @@ def test_supabase_connection():
             print(f"❌ Supabase connection failed: {response.status_code}")
             print(f"Response: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Connection error: {e}")
         return False
@@ -52,20 +52,20 @@ def test_supabase_connection():
 def check_newsletter_table():
     """Check if the newsletter_subscribers table exists"""
     print("\n📊 Checking Newsletter Table...")
-    
+
     headers = {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
         'Content-Type': 'application/json'
     }
-    
+
     try:
         # Try to query the newsletter_subscribers table
         response = requests.get(
             f"{SUPABASE_URL}/rest/v1/newsletter_subscribers?select=count",
             headers=headers
         )
-        
+
         if response.status_code == 200:
             print("✅ newsletter_subscribers table exists")
             return True
@@ -76,7 +76,7 @@ def check_newsletter_table():
             print(f"⚠️ Unexpected response: {response.status_code}")
             print(f"Response: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error checking table: {e}")
         return False
@@ -84,14 +84,14 @@ def check_newsletter_table():
 def create_newsletter_table():
     """Create the newsletter_subscribers table if it doesn't exist"""
     print("\n🔧 Creating Newsletter Table...")
-    
+
     headers = {
         'apikey': SUPABASE_SERVICE_KEY,
         'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
     }
-    
+
     # SQL to create the table
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS newsletter_subscribers (
@@ -104,7 +104,7 @@ def create_newsletter_table():
         unsubscribed_at TIMESTAMPTZ
     );
     """
-    
+
     try:
         # Execute the SQL
         response = requests.post(
@@ -112,7 +112,7 @@ def create_newsletter_table():
             headers=headers,
             json={'sql': create_table_sql}
         )
-        
+
         if response.status_code in [200, 201]:
             print("✅ Newsletter table created successfully")
             return True
@@ -120,7 +120,7 @@ def create_newsletter_table():
             print(f"❌ Failed to create table: {response.status_code}")
             print(f"Response: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error creating table: {e}")
         return False
@@ -128,16 +128,16 @@ def create_newsletter_table():
 def test_newsletter_signup():
     """Test the newsletter signup functionality"""
     print("\n📝 Testing Newsletter Signup...")
-    
+
     headers = {
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': f'Bearer {SUPABASE_ANON_KEY}',
         'Content-Type': 'application/json',
         'Prefer': 'return=representation'
     }
-    
+
     test_email = "test@morningmaghreb.com"
-    
+
     try:
         # Try to insert a test subscriber
         data = {
@@ -150,52 +150,52 @@ def test_newsletter_signup():
                 'frequency': 'daily'
             }
         }
-        
+
         response = requests.post(
             f"{SUPABASE_URL}/rest/v1/newsletter_subscribers",
             headers=headers,
             json=data
         )
-        
+
         if response.status_code == 201:
             print("✅ Newsletter signup test successful")
-            
+
             # Clean up - delete the test record
             delete_response = requests.delete(
                 f"{SUPABASE_URL}/rest/v1/newsletter_subscribers?email=eq.{test_email}",
                 headers=headers
             )
-            
+
             if delete_response.status_code == 204:
                 print("✅ Test record cleaned up")
-            
+
             return True
         else:
             print(f"❌ Newsletter signup test failed: {response.status_code}")
             print(f"Response: {response.text}")
             return False
-            
+
     except Exception as e:
         print(f"❌ Error testing signup: {e}")
         return False
 
 def main():
     print_header()
-    
+
     # Test connection
     if not test_supabase_connection():
         print("\n❌ Cannot proceed - Supabase connection failed")
         return
-    
+
     # Check if newsletter table exists
     table_exists = check_newsletter_table()
-    
+
     if not table_exists:
         print("\n🔧 Newsletter table not found. Creating it...")
         if not create_newsletter_table():
             print("\n❌ Failed to create newsletter table")
             return
-    
+
     # Test newsletter signup
     if test_newsletter_signup():
         print("\n🎉 Sky Garden Supabase setup is working correctly!")
@@ -205,5 +205,6 @@ def main():
         print("\n❌ Newsletter signup test failed")
         print("Please check the error messages above")
 
+
 if __name__ == "__main__":
-    main() 
+    main()
