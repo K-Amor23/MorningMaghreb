@@ -198,8 +198,8 @@ jobs:
     
     - name: Install dependencies
       run: |
-        pip install -r scripts/requirements.txt
-        pip install -r scrapers/requirements.txt
+        if [ -f scripts/requirements.txt ]; then pip install -r scripts/requirements.txt; else echo "scripts/requirements.txt not found, skipping"; fi
+        if [ -f scrapers/requirements.txt ]; then pip install -r scrapers/requirements.txt; else echo "scrapers/requirements.txt not found, skipping"; fi
     
     - name: Run integration tests
       run: |
