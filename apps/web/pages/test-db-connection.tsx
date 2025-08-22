@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export default function TestDBConnection() {
     const [status, setStatus] = useState<string>('Testing...');
     const [error, setError] = useState<string | null>(null);
@@ -15,6 +10,14 @@ export default function TestDBConnection() {
         async function testConnection() {
             try {
                 setStatus('Testing database connection...');
+
+                const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+                const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+                if (!url || !key) {
+                    throw new Error('supabaseUrl is required.')
+                }
+
+                const supabase = createClient(url, key)
 
                 // Test basic connection
                 const { data, error } = await supabase

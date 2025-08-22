@@ -2,6 +2,7 @@
 // with proper fallback chains and data quality monitoring
 
 import { createClient } from '@supabase/supabase-js'
+import { makeApiUrl } from '../getBaseUrl'
 
 export interface CompanyData {
   ticker: string
@@ -117,7 +118,7 @@ class RealDataService {
       }
 
       // Fallback to African Markets API
-      const response = await fetch('/api/market-data/african-markets-companies')
+      const response = await fetch(makeApiUrl('/api/market-data/african-markets-companies'))
       if (response.ok) {
         const companies = await response.json()
         return companies.map((company: any) => 
@@ -249,7 +250,7 @@ class RealDataService {
    * Fetch from African Markets API
    */
   private async fetchFromAfricanMarkets(ticker: string): Promise<any> {
-    const response = await fetch('/api/market-data/african-markets-companies')
+    const response = await fetch(makeApiUrl('/api/market-data/african-markets-companies'))
     if (!response.ok) throw new Error('African Markets API failed')
 
     const companies = await response.json()

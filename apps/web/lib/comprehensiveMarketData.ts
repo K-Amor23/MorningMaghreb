@@ -272,6 +272,8 @@ const moroccanWarrants = [
   }
 ]
 
+import { makeApiUrl } from './getBaseUrl'
+
 class ComprehensiveMarketDataService {
   private config: MarketDataConfig = {
     delayMinutes: 15,
@@ -292,7 +294,7 @@ class ComprehensiveMarketDataService {
   private async initializeInstruments() {
     try {
       // Load the 78 companies from African markets data
-      const response = await fetch('/api/market-data/african-markets-companies')
+      const response = await fetch(makeApiUrl('/api/market-data/african-markets-companies'))
       if (response.ok) {
         const companies = await response.json()
         this.allInstruments = [
