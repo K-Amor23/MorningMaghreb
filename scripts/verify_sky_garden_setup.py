@@ -84,8 +84,6 @@ def check_newsletter_table():
         print(f"❌ Error checking table: {e}")
         return False
 
-
-
 def create_newsletter_table():
     """Create the newsletter_subscribers table if it doesn't exist"""
     print("\n🔧 Creating Newsletter Table...")
@@ -129,8 +127,6 @@ def create_newsletter_table():
     except Exception as e:
         print(f"❌ Error creating table: {e}")
         return False
-
-
 
 def test_newsletter_signup():
     """Test the newsletter signup functionality"""
@@ -185,8 +181,6 @@ def test_newsletter_signup():
     except Exception as e:
         print(f"❌ Error testing signup: {e}")
         return False
-
-
 
 def main():
     print_header()
