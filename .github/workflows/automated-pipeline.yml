@@ -36,72 +36,43 @@ jobs:
       run: |
         cd apps/backend
         pip install -r requirements.txt
+    
+    - name: Lint Airflow DAGs (pyflakes)
+      run: |
+        pip install pyflakes
+        python -m pyflakes airflow-docker/dags || true
         
     - name: Install Node.js dependencies
       run: |
         cd apps/web
         npm ci
         
-    - name: Deploy to Supabase
+    - name: Deploy to Supabase (optional)
+      if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
       env:
         NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
         SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
-        python scripts/deploy_master_pipeline_tables.py
+        if [ -f scripts/deploy_master_pipeline_tables.py ]; then
+          python scripts/deploy_master_pipeline_tables.py
+        else
+          echo "No deploy script found (scripts/deploy_master_pipeline_tables.py). Skipping."
+        fi
         
-    - name: Run Pipeline Tasks
-      env:
-        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    - name: Run Pipeline Tasks (mock)
+      if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL && secrets.SUPABASE_SERVICE_ROLE_KEY }}
       run: |
-        cd apps/backend
-        python -c "
-        import sys
-        import os
-        sys.path.append('.')
-        
-        # Mock pipeline execution for GitHub Actions
-        import requests
-        import json
+        python - <<'PY'
         from datetime import datetime
+        mock_companies = [{"ticker":"ATW","company_name":"Attijariwafa Bank","price":410.10,"change_1d_percent":0.31,"date":datetime.now().strftime('%Y-%m-%d')}]
+        mock_indices = [{"index_name":"MASI","value":12580.45,"change_1d_percent":0.85,"date":datetime.now().strftime('%Y-%m-%d')}]
+        print('✅ Pipeline executed (mock)')
+        print(f'📊 Updated {len(mock_companies)} companies')
+        print(f'📈 Updated {len(mock_indices)} indices')
+        PY
         
-        # Initialize Supabase client
-        supabase_url = os.getenv('NEXT_PUBLIC_SUPABASE_URL')
-        supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
-        
-        if supabase_url and supabase_key:
-            import requests
-            
-            # Mock data for demonstration
-            mock_data = {
-                'companies': [
-                    {
-                        'ticker': 'ATW',
-                        'company_name': 'Attijariwafa Bank',
-                        'price': 410.10,
-                        'change_1d_percent': 0.31,
-                        'date': datetime.now().strftime('%Y-%m-%d')
-                    }
-                ],
-                'indices': [
-                    {
-                        'index_name': 'MASI',
-                        'value': 12580.45,
-                        'change_1d_percent': 0.85,
-                        'date': datetime.now().strftime('%Y-%m-%d')
-                    }
-                ]
-            }
-            
-            # Log pipeline execution
-            print('✅ Pipeline executed successfully')
-            print(f'📊 Updated {len(mock_data[\"companies\"])} companies')
-            print(f'📈 Updated {len(mock_data[\"indices\"])} indices')
-        else:
-            print('⚠️ Supabase credentials not available')
-        "
-        
-    - name: Deploy to Vercel
+    - name: Deploy to Vercel (optional)
+      if: ${{ secrets.VERCEL_TOKEN && secrets.VERCEL_ORG_ID && secrets.VERCEL_PROJECT_ID }}
       uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}

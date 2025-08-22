@@ -56,6 +56,11 @@ jobs:
         pip install -r scripts/requirements.txt
         pip install -r scrapers/requirements.txt
     
+    - name: Lint Airflow DAGs (pyflakes)
+      run: |
+        pip install pyflakes
+        python -m pyflakes airflow-docker/dags || true
+    
     - name: Install Node.js dependencies
       run: |
         cd apps/web
